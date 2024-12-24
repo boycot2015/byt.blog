@@ -26,7 +26,7 @@ $db->addServer(array (
   'password' => 'KdIEhCKaGFDBn4LH',
   'charset' => 'utf8mb4',
   'database' => 'boycot_blog',
-  'engine' => 'MyISAM',
+  // 'engine' => 'MyISAM',
   // 'sslCa' => '',
   // 'sslVerify' => true,
 ), \Typecho\Db::READ | \Typecho\Db::WRITE);
