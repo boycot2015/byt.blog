@@ -24,11 +24,11 @@ $db->addServer(array (
   'port' => 3306,
   'user' => 'freedb_boycot_blog',
   'password' => 'EPGDg%FYXZcP9s#',
-  'charset' => 'utf8mb4_unicode_ci',
+  'charset' => 'utf8mb4',
   'database' => 'freedb_boycot_blog',
 //   1134573460@qq.com
 //   'engine' => 'MyISAM',
-  'sslCa' => '',
-  'sslVerify' => true,
+  // 'sslCa' => '',
+  // 'sslVerify' => true,
 ), \Typecho\Db::READ | \Typecho\Db::WRITE);
 \Typecho\Db::set($db);
