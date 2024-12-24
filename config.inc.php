@@ -20,13 +20,13 @@ require_once __TYPECHO_ROOT_DIR__ . '/var/Typecho/Common.php';
 // config db
 $db = new \Typecho\Db('Pdo_Mysql', 'boycot_');
 $db->addServer(array (
-  'host' => 'db4free.net',
+  'host' => 'mysql.sqlpub.com',
   'port' => 3306,
-  'user' => 'boycot',
-  'password' => 'zch17184',
-//   'charset' => 'utf8mb4',
-  'charset' => 'utf8',
-  'database' => 'boycot',
+  'user' => 'boycot_blog',
+  'password' => 'KdIEhCKaGFDBn4LH',
+  'charset' => 'utf8mb4',
+  'database' => 'boycot_blog',
+//   1134573460@qq.com
 //   'engine' => 'InnoDB',
 //   'sslCa' => '',
 //   'sslVerify' => true,
