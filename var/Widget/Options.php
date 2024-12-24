@@ -177,14 +177,14 @@ class Options extends Base
 
         /** 初始化站点信息 */
         if (defined('__TYPECHO_SITE_URL__')) {
-            $this->siteUrl = __TYPECHO_SITE_URL__;
-        } elseif (defined('__TYPECHO_DYNAMIC_SITE_URL__') && __TYPECHO_DYNAMIC_SITE_URL__) {
+            $this->siteUrl = '__TYPECHO_SITE_URL__';
+        } elseif (defined('__TYPECHO_DYNAMIC_SITE_URL__') && '__TYPECHO_DYNAMIC_SITE_URL__') {
             $this->siteUrl = $this->rootUrl;
         }
 
         $this->originalSiteUrl = $this->siteUrl;
         $this->siteUrl = Common::url(null, $this->siteUrl);
-        $this->plugins = unserialize($this->plugins);
+        $this->plugins = unserialize($this->plugins[0]);
 
         /** 动态判断皮肤目录 */
         $this->missingTheme = null;
@@ -200,7 +200,7 @@ class Options extends Base
         }
 
         /** 自动初始化路由表 */
-        $this->routingTable = unserialize($this->routingTable);
+        $this->routingTable = unserialize($this->routingTable[0]);
         if (isset($this->db) && !isset($this->routingTable[0])) {
             /** 解析路由并缓存 */
             $parser = new Parser($this->routingTable);
@@ -268,7 +268,7 @@ class Options extends Base
         if (!isset($theme)) {
             echo Common::url($path, $this->themeUrl);
         } else {
-            $url = defined('__TYPECHO_THEME_URL__') ? __TYPECHO_THEME_URL__ :
+            $url = defined('__TYPECHO_THEME_URL__') ? '__TYPECHO_THEME_URL__' :
                 Common::url(__TYPECHO_THEME_DIR__ . '/' . $theme, $this->siteUrl);
 
             return isset($path) ? Common::url($path, $url) : $url;
@@ -471,7 +471,7 @@ class Options extends Base
      */
     protected function ___index(): string
     {
-        return ($this->rewrite || (defined('__TYPECHO_REWRITE__') && __TYPECHO_REWRITE__))
+        return ($this->rewrite || (defined('__TYPECHO_REWRITE__') && '__TYPECHO_REWRITE__'))
             ? $this->rootUrl : Common::url('index.php', $this->rootUrl);
     }
 
@@ -492,7 +492,7 @@ class Options extends Base
      */
     protected function ___pluginUrl(): string
     {
-        return defined('__TYPECHO_PLUGIN_URL__') ? __TYPECHO_PLUGIN_URL__ :
+        return defined('__TYPECHO_PLUGIN_URL__') ? '__TYPECHO_PLUGIN_URL__' :
             Common::url(__TYPECHO_PLUGIN_DIR__, $this->siteUrl);
     }
 
