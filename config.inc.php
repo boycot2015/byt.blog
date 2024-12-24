@@ -20,15 +20,15 @@ require_once __TYPECHO_ROOT_DIR__ . '/var/Typecho/Common.php';
 // config db
 $db = new \Typecho\Db('Pdo_Mysql', 'typecho_');
 $db->addServer(array (
-  'host' => 'mysql.sqlpub.com',
+  'host' => 'sql.freedb.tech',
   'port' => 3306,
-  'user' => 'boycot_blog',
-  'password' => 'KdIEhCKaGFDBn4LH',
-  'charset' => 'utf8mb4',
-  'database' => 'boycot_blog',
+  'user' => 'freedb_boycot_blog',
+  'password' => 'EPGDg%FYXZcP9s#',
+  'charset' => 'utf8mb4_unicode_ci',
+  'database' => 'freedb_boycot_blog',
 //   1134573460@qq.com
-  'engine' => 'MyISAM',
-//   'sslCa' => '',
+//   'engine' => 'MyISAM',
+  'sslCa' => '',
   'sslVerify' => true,
 ), \Typecho\Db::READ | \Typecho\Db::WRITE);
 \Typecho\Db::set($db);
