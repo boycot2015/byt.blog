@@ -24,10 +24,10 @@ $db->addServer(array (
   'port' => 3306,
   'user' => 'boycot_blog',
   'password' => 'KdIEhCKaGFDBn4LH',
-  'charset' => 'utf8mb4_unicode_ci',
+  'charset' => 'utf8mb4',
   'database' => 'boycot_blog',
-//   'engine' => 'MyISAM',
+  'engine' => 'MyISAM',
   // 'sslCa' => '',
-  'sslVerify' => true,
+  // 'sslVerify' => true,
 ), \Typecho\Db::READ | \Typecho\Db::WRITE);
 \Typecho\Db::set($db);
