@@ -14,11 +14,11 @@ define('__TYPECHO_ADMIN_DIR__', '/admin/');
 // register autoload
 require_once __TYPECHO_ROOT_DIR__ . '/var/Typecho/Common.php';
 
-// inita
+// init
 \Typecho\Common::init();
 
 // config db
-$db = new \Typecho\Db('Pdo_Mysql', 'typecho_');
+$db = new \Typecho\Db('Pdo_Mysql', 'boycot_');
 $db->addServer(array (
   'host' => 'mysql.sqlpub.com',
   'port' => 3306,
@@ -26,8 +26,8 @@ $db->addServer(array (
   'password' => 'KdIEhCKaGFDBn4LH',
   'charset' => 'utf8mb4',
   'database' => 'boycot_blog',
-  // 'engine' => 'MyISAM',
-  // 'sslCa' => '',
-  // 'sslVerify' => true,
+  'engine' => 'InnoDB',
+  'sslCa' => NULL,
+  'sslVerify' => true,
 ), \Typecho\Db::READ | \Typecho\Db::WRITE);
 \Typecho\Db::set($db);
