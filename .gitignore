@@ -1,25 +1,38 @@
-# build output
-dist/
-
-# generated types
-.astro/
-
-# dependencies
-node_modules/
-
-# logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# environment variables
-.env
-.env.production
-
-# macOS-specific files
+.*.swp
+.*.swo
+._*
 .DS_Store
-
-# jetbrains setting folder
-.idea/
+/ImgCache/
+/Backup_rar/
+/Debug/
+/debug/
+/upload/
+/avatar/
+/.idea/
 .vercel
+.svn/
+*.orig
+*.aps
+*.APS
+*.chm
+*.exp
+*.pdb
+*.rar
+*.mo
+*.po
+*.pot
+.smbdelete*
+*.sublime*
+.sass-cache
+config.rb
+prepros.config
+config.inc.*
+usr/uploads/
+usr/*.db
+usr/plugins/
+!usr/plugins/HelloWorld
+usr/themes/*
+!usr/themes/default
+!usr/themes/classic-22
+node_modules/
+tools/tmp/
