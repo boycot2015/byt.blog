@@ -82,13 +82,13 @@
       <nav class="joe_header__above-nav">
         <a class="item <?php echo $this->is('index') ? 'active' : '' ?>" href="<?php $this->options->siteUrl(); ?>" title="首页">首页</a>
         <?php $this->widget('Widget_Contents_Page_List')->to($pages); ?>
-        <?php if (count($pages->stack) <= ($this->options->JNavMaxNum)||10) : ?>
-          <?php while ($pages->next()): ?>
-            <a class="item <?php echo $this->is('page', $pages->slug) ? 'active' : '' ?>" href="<?php $pages->permalink(); ?>" title="<?php $pages->title(); ?>"><?php $pages->title(); ?></a>
-          <?php endwhile; ?>
+        <?php if (count($pages->stack) <= $this->options->JNavMaxNum) : ?>
+          <?php foreach ($pages->stack as $item) : ?>
+            <a class="item <?php echo $this->is('page', $item['slug']) ? 'active' : '' ?>" href="<?php echo $item['permalink'] ?>" title="<?php echo $item['title'] ?>"><?php echo $item['title'] ?></a>
+          <?php endforeach; ?>
         <?php else : ?>
           <?php foreach (array_slice($pages->stack, 0, $this->options->JNavMaxNum) as $item) : ?>
-            <a class="item <?php echo $this->is('page', $item['slug']) ? 'active' : '' ?>" href="<?php echo $item['permalink']??('/' + ($item['slug']||'')) ?>" title="<?php echo $item['title'] ?>"><?php echo $item['title'] ?></a>
+            <a class="item <?php echo $this->is('page', $item['slug']) ? 'active' : '' ?>" href="<?php echo $item['permalink'] ?>" title="<?php echo $item['title'] ?>"><?php echo $item['title'] ?></a>
           <?php endforeach; ?>
           <div class="joe_dropdown" trigger="hover" placement="60px" style="margin-right: 15px;">
             <div class="joe_dropdown__link">

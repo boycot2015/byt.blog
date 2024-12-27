@@ -275,7 +275,7 @@ function _getAsideAuthorNav()
       foreach ($result as $item) {
         $item = Typecho_Widget::widget('Widget_Abstract_Contents')->push($item);
         $title = htmlspecialchars($item['title']);
-        $permalink = $item['permalink']??('/' + ($item['slug']||''));
+        $permalink = $item['permalink'];
         echo "
 						<li class='item'>
 							<a class='link' href='{$permalink}' title='{$title}'>{$title}</a>
