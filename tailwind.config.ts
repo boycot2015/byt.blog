@@ -16,12 +16,39 @@ export default {
 								},
 							},
 						},
+						'h1,h2,h3,h4': {
+							"&:before": {
+								'content': "''!important",
+							}
+						},
+						// h2: {
+						// 	"&:before": {
+						// 		content: "''!important",
+						// 	}
+						// },
+						// h3: {
+						// 	"&:before": {
+						// 		content: "''!important",
+						// 	}
+						// },
+						// h4: {
+						// 	"&:before": {
+						// 		content: "''!important",
+						// 	}
+						// },
 						blockquote: {
 							borderLeftWidth: "0",
 						},
 						code: {
-							border: "1px dotted #666",
-							borderRadius: "2px",
+							// border: "1px dotted #666",
+							color: "var(--color-accent)",
+							"&:after": {
+								content: "''!important",
+							},
+							"&:before": {
+								content: "''!important",
+							},
+							// borderRadius: "2px",
 						},
 						kbd: {
 							"&:where([data-theme='dark'], [data-theme='dark'] *)": {
