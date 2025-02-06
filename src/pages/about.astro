@@ -1,20 +1,19 @@
 ---
 import PageLayout from "@/layouts/Base.astro";
-
+import { siteConfig } from "@/site.config";
 const meta = {
-	description: "I'm a starter theme for Astro.build",
-	title: "About",
+	description: "I'm boycot，An Front end developer",
+	title: "关于",
 };
 ---
 
 <PageLayout meta={meta}>
-	<h1 class="title mb-6">About</h1>
+	<h1 class="title mb-6">关于</h1>
 	<div class="prose prose-sm prose-cactus max-w-none">
 		<p>
-			Hi, I’m a starter Astro. I’m particularly great for getting you started with your own blogging
-			website.
+			Hi, I’m boycot，An Front end developer
 		</p>
-		<p>Here are my some of my awesome built in features:</p>
+		<p>Here are my some of features:</p>
 		<ul class="list-inside list-disc" role="list">
 			<li>I'm ultra fast as I'm a static site</li>
 			<li>I'm fully responsive</li>
@@ -27,7 +26,7 @@ const meta = {
 		<p>
 			Clone or fork my <a
 				class="cactus-link inline-block"
-				href="https://github.com/chrismwilliams/astro-cactus"
+				href={siteConfig.social.github}
 				rel="noreferrer"
 				target="_blank">repo</a
 			> if you like me!

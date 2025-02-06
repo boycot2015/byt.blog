@@ -87,6 +87,8 @@ export default defineConfig({
 				className: [""],
 			},
 		},
+		syntaxHighlight: 'prism',
+		tabs: true
 	},
 	// https://docs.astro.build/en/guides/prefetch/
 	prefetch: true,

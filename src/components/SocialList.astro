@@ -1,6 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
-
+import { siteConfig } from "@/site.config";
 /** 
 	Uses https://www.astroicon.dev/getting-started/
 	Find icons via guide: https://www.astroicon.dev/guides/customization/#open-source-icon-sets
@@ -14,14 +14,14 @@ const socialLinks: {
 }[] = [
 	{
 		friendlyName: "Github",
-		link: "https://github.com/chrismwilliams/astro-cactus",
+		link: siteConfig.social.github,
 		name: "mdi:github",
-	},
+	}
 ];
+const { className } = Astro.props
 ---
 
-<div class="flex flex-wrap items-end gap-x-2">
-	<p>Find me on</p>
+<div class={`flex flex-wrap items-end sm:ml-6 ml-4 ${className}`}>
 	<ul class="flex flex-1 items-center gap-x-2 sm:flex-initial">
 		{
 			socialLinks.map(({ friendlyName, isWebmention, link, name }) => (

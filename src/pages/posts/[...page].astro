@@ -2,7 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 import Pagination from "@/components/Paginator.astro";
 import PostPreview from "@/components/blog/PostPreview.astro";
-import { getAllPosts, getUniqueTags, groupPostsByYear } from "@/data/post";
+import { getAllPosts, groupPostsByYear, getUniqueTagsWithCount } from "@/data/post";
 import PageLayout from "@/layouts/Base.astro";
 import { collectionDateSort } from "@/utils/date";
 import type { GetStaticPaths, Page } from "astro";
@@ -12,7 +12,8 @@ export const getStaticPaths = (async ({ paginate }) => {
 	const MAX_POSTS_PER_PAGE = 10;
 	const MAX_TAGS = 7;
 	const allPosts = await getAllPosts();
-	const uniqueTags = getUniqueTags(allPosts).slice(0, MAX_TAGS);
+	const allTags = getUniqueTagsWithCount(allPosts);
+	const uniqueTags = allTags.slice(0, MAX_TAGS);
 	return paginate(allPosts.sort(collectionDateSort), {
 		pageSize: MAX_POSTS_PER_PAGE,
 		props: { uniqueTags },
@@ -27,20 +28,20 @@ interface Props {
 const { page, uniqueTags } = Astro.props;
 
 const meta = {
-	description: "Read my collection of posts and the things that interest me",
-	title: "Posts",
+	description: "阅读我的帖子集和我感兴趣的东西",
+	title: "文章",
 };
 
 const paginationProps = {
 	...(page.url.prev && {
 		prevUrl: {
-			text: "← Previous Page",
+			text: "← 上一页",
 			url: page.url.prev,
 		},
 	}),
 	...(page.url.next && {
 		nextUrl: {
-			text: "Next Page →",
+			text: "下一页 →",
 			url: page.url.next,
 		},
 	}),
@@ -52,9 +53,9 @@ const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 
 <PageLayout meta={meta}>
 	<div class="mb-6 flex items-center gap-3">
-		<h1 class="title">Posts</h1>
+		<h1 class="title">文章</h1>
 		<a class="text-accent" href="/rss.xml" target="_blank">
-			<span class="sr-only">RSS feed</span>
+			<span class="sr-only">RSS 源</span>
 			<Icon aria-hidden="true" class="h-6 w-6" focusable="false" name="mdi:rss" />
 		</a>
 	</div>
@@ -83,7 +84,7 @@ const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 			!!uniqueTags.length && (
 				<aside>
 					<h2 class="title mb-4 flex items-center gap-2 text-lg">
-						Tags
+						标签
 						<svg
 							aria-hidden="true"
 							class="h-6 w-6"
@@ -102,20 +103,23 @@ const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 						</svg>
 					</h2>
 					<ul class="flex flex-wrap gap-2">
-						{uniqueTags.map((tag) => (
-							<li>
-								<a class="cactus-link flex items-center justify-center" href={`/tags/${tag}/`}>
-									<span aria-hidden="true">#</span>
-									<span class="sr-only">View all posts with the tag</span>
+						{uniqueTags.map(([tag, val]) => (
+							<li class="inline-block flex items-center justify-center">
+								<a class="cactus-link" href={`/tags/${tag}/`}>
+									<span aria-hidden="true"></span>
+									<span class="sr-only">查看所有文章关联的标签</span>
 									{tag}
 								</a>
+								<sup class="inline-block">
+									{val}
+								</sup>
 							</li>
 						))}
 					</ul>
 					<span class="mt-4 block sm:text-end">
 						<a class="hover:text-link" href="/tags/">
-							View all <span aria-hidden="true">→</span>
-							<span class="sr-only">blog tags</span>
+							查看全部 <span aria-hidden="true">→</span>
+							<span class="sr-only">文章标签</span>
 						</a>
 					</span>
 				</aside>

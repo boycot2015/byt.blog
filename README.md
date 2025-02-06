@@ -1,8 +1,6 @@
-<div align="center">
-  <img alt="Astro Cactus logo" src="https://github.com/chrismwilliams/astro-theme-cactus/assets/12715988/85aa0d3c-ef6a-44e2-954d-ef035b4f4315" width="70" />
-</div>
+
 <h1 align="center">
-  Astro Cactus
+  Astro theme
 </h1>
 
 Astro Cactus is a simple opinionated starter built with [Astro](https://astro.build). Use it to create an easy-to-use blog or website.
@@ -64,9 +62,9 @@ pnpm dlx create-astro --template chrismwilliams/astro-theme-cactus
 
 ## Preview
 
-![Astro Theme Cactus in a light theme mode](https://github.com/chrismwilliams/astro-theme-cactus/assets/12715988/84c89d42-4525-4674-b10c-6d6ebdc06382)
+![Astro Theme Cactus in a light theme mode](./public/preview.png)
 
-![Astro Theme Cactus in a dark theme mode](https://github.com/chrismwilliams/astro-theme-cactus/assets/12715988/e0e575e2-445f-4c2d-a812-b5b53d2d9031)
+![Astro Theme Cactus in a dark theme mode](./public/preview-dark.png)
 
 ## Commands
 

@@ -4,24 +4,28 @@ import { menuLinks, siteConfig } from "@/site.config";
 const year = new Date().getFullYear();
 ---
 
-<footer
-	class="mt-auto flex w-full flex-col items-center justify-center gap-y-2 pt-20 pb-4 text-center align-top font-semibold text-gray-600 sm:flex-row sm:justify-between sm:text-xs dark:text-gray-400"
->
-	<div class="me-0 sm:me-4">
-		&copy; {siteConfig.author}
-		{year}.<span class="inline-block">&nbsp;🚀&nbsp;{siteConfig.title}</span>
+<footer>
+	<div class="mt-auto flex w-full flex-col items-center justify-center gap-y-2 pt-20 pb-4 text-center align-top font-semibold text-gray-600 sm:flex-row sm:justify-between sm:text-xs dark:text-gray-400">
+		<div class="me-0 sm:me-4">
+			&copy; {siteConfig.author}
+			{year}.<span class="inline-block">&nbsp;🚀&nbsp;{siteConfig.title}</span>
+		</div>
+		<nav
+			aria-labelledby="footer_links"
+			class="flex gap-x-2 sm:gap-x-0 sm:divide-x sm:divide-gray-500"
+		>
+			<p id="footer_links" class="sr-only">More on this site</p>
+			{
+				menuLinks.map((link) => (
+					<a class="hover:text-global-text px-4 py-2 hover:underline sm:py-0" href={link.path}>
+						{link.title}
+					</a>
+				))
+			}
+		</nav>
 	</div>
-	<nav
-		aria-labelledby="footer_links"
-		class="flex gap-x-2 sm:gap-x-0 sm:divide-x sm:divide-gray-500"
-	>
-		<p id="footer_links" class="sr-only">More on this site</p>
-		{
-			menuLinks.map((link) => (
-				<a class="hover:text-global-text px-4 py-2 hover:underline sm:py-0" href={link.path}>
-					{link.title}
-				</a>
-			))
-		}
-	</nav>
+	<div class="flex text-center items-center justify-center flex-wrap gap-y-1 pb-3">
+		<a href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank"><img style="margin-right:5px;" title="粤ICP备18002072号" src="https://img.shields.io/badge/%E7%B2%A4ICP%E5%A4%87-18002072%E5%8F%B7-red" /></a>
+		<img style="margin-right:5px;" src="https://img.shields.io/badge/framework-astro-blue" /><img style="margin-right:5px;" src="https://img.shields.io/badge/platform-vercel-black" /><img style="margin-right:5px;" src="https://img.shields.io/badge/node-%3E%3D18.x-darkgreen" />
+	</div>
 </footer>

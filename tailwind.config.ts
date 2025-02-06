@@ -21,32 +21,27 @@ export default {
 								'content': "''!important",
 							}
 						},
-						// h2: {
-						// 	"&:before": {
-						// 		content: "''!important",
-						// 	}
-						// },
-						// h3: {
-						// 	"&:before": {
-						// 		content: "''!important",
-						// 	}
-						// },
-						// h4: {
-						// 	"&:before": {
-						// 		content: "''!important",
-						// 	}
-						// },
 						blockquote: {
 							borderLeftWidth: "0",
 						},
+						pre: {
+							borderRadius: "10px",
+							"&:after": {
+								position: 'absolute',
+								right: "10px",
+								top: '6px',
+								'z-index': '1',
+								content: "attr(data-language)!important",
+							},
+						},
 						code: {
-							// border: "1px dotted #666",
+							// background: "#ccc",
 							color: "var(--color-accent)",
 							"&:after": {
 								content: "''!important",
 							},
 							"&:before": {
-								content: "''!important",
+								content:  "''!important",
 							},
 							// borderRadius: "2px",
 						},

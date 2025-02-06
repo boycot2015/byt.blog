@@ -9,6 +9,10 @@ export interface SiteConfig {
 	ogLocale: string;
 	title: string;
 	url: string;
+	social: {
+		github: string;
+		rss: string;
+	};
 }
 
 export interface PaginationLink {

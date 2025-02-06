@@ -3,7 +3,7 @@ import type { AstroExpressiveCodeOptions } from "astro-expressive-code";
 
 export const siteConfig: SiteConfig = {
 	// Used as both a meta property (src/components/BaseHead.astro L:31 + L:49) & the generated satori png (src/pages/og-image/[slug].png.ts)
-	author: "Designed by Boycot",
+	author: "Powered by Boycot",
 	// Date.prototype.toLocaleDateString() parameters, found in src/utils/date.ts.
 	date: {
 		locale: "zh-CN",
@@ -23,6 +23,10 @@ export const siteConfig: SiteConfig = {
 	title: "每日手记 | Boycot",
 	// ! Please remember to replace the following site property with your own domain, used in astro.config.ts
 	url: "https://astro-blog.boycot.top/",
+	social: {
+		github: "https://github.com/boycot2015/astro-blog.git",
+		rss: "/rss.xml",
+	},
 };
 
 // Used to generate links in both the Header & Footer.
@@ -43,12 +47,16 @@ export const menuLinks: { path: string; title: string }[] = [
 		path: "/about/",
 		title: "关于",
 	},
+	{
+		path: "/links/",
+		title: "友链",
+	},
 ];
 
 // https://expressive-code.com/reference/configuration/
 export const expressiveCodeOptions: AstroExpressiveCodeOptions = {
 	styleOverrides: {
-		borderRadius: "4px",
+		borderRadius: "8px",
 		codeFontFamily:
 			'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;',
 		codeFontSize: "0.875rem",
