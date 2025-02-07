@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer.astro";
 import Header from "@/components/layout/Header.astro";
 import { siteConfig } from "@/site.config";
 import type { SiteMeta } from "@/types";
+import BackTotop from "@/components/BackTotop.astro";
 
 interface Props {
 	meta: SiteMeta;
@@ -30,5 +31,6 @@ const {
 			<slot />
 		</main>
 		<Footer />
+		<BackTotop />
 	</body>
 </html>

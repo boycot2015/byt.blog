@@ -62,7 +62,8 @@
 			// set aria role value
 			button.setAttribute("role", "switch");
 			button.setAttribute("aria-checked", String(rootInDarkMode()));
-
+			let linkEl = document.querySelector('link[rel="icon"]') as HTMLLinkElement
+			linkEl.href = !rootInDarkMode() ? '/favicon.svg' : '/favicon-dark.svg'
 			// button event
 			button.addEventListener("click", () => {
 				// invert theme
@@ -76,10 +77,7 @@
 
 				// set the aria-checked attribute
 				button.setAttribute("aria-checked", String(rootInDarkMode()));
-				let linkEl: HTMLLinkElement = document.querySelector('link[rel="icon"]') as any
-				if (rootInDarkMode()) {
-					linkEl.href = '/favicon-dark.svg'
-				}
+				linkEl.href = !rootInDarkMode() ? '/favicon.svg' : '/favicon-dark.svg'
 			});
 		}
 	}

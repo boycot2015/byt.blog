@@ -7,6 +7,6 @@ export function remarkReadingTime() {
 		const textOnPage = mdastToString(tree);
 		const readingTime = getReadingTime(textOnPage);
 		// data.astro.frontmatter.readingTime = readingTime.text;
-		data.astro.frontmatter.readingTime = "总字数" + readingTime.words + "，阅读预计耗时 " + parseInt(readingTime.minutes+1+'') + " 分钟";
+		data.astro.frontmatter.readingTime = "总字数<span style='color: var(--color-accent)'>" + readingTime.words + "</span>，阅读预计耗时<span style='color: var(--color-accent)'>" + parseInt(readingTime.minutes+1+'') + "</span>分钟";
 	};
 }
