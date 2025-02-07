@@ -1,3 +1,9 @@
+---
+title: Typecho Blogging Platform
+description: Typecho is a PHP-based blog software and is designed to be the most powerful blog engine in the world
+publishDate: "2025-02-07T11:04:00Z"
+tags: ['Typecho']
+---
 Typecho Blogging Platform
 =========================
 

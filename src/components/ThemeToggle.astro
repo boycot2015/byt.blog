@@ -76,6 +76,10 @@
 
 				// set the aria-checked attribute
 				button.setAttribute("aria-checked", String(rootInDarkMode()));
+				let linkEl: HTMLLinkElement = document.querySelector('link[rel="icon"]') as any
+				if (rootInDarkMode()) {
+					linkEl.href = '/favicon-dark.svg'
+				}
 			});
 		}
 	}
