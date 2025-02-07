@@ -30,7 +30,8 @@
     </svg>
   </div>
 </div>
-
+<script src="https://s4.zstatic.net/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://s4.zstatic.net/jquery.pjax/1.9.6/jquery.pjax.min.js"></script>
 <script>
   <?php
   $cookie = Typecho_Cookie::getPrefix();
@@ -51,3 +52,40 @@
 <?php $this->options->JCustomBodyEnd() ?>
 
 <?php $this->footer(); ?>
+<script>
+//pjax 刷新
+function reload() {
+  // 初始化freewind题
+  window.freewind = new Freewind($("#is-page").data('page').trim() === 'page')
+  if (window.freewind.page) {
+    //如果是文章详情面
+    window.freewind.registerPage()
+  }
+  //自定义挂载点，部分插件可能需要初始化，可以写在这里
+  <?php Typecho_Plugin::factory('freewind')->pjaxload(); ?>
+    window.freewind.topInit()
+  window.freewind.registerHandler()
+}
+//第一次进行页面进行初始化
+reload();
+$(document).pjax('a[href^="<?php Helper::options()->siteUrl()?>"]:not(a[target="_blank"], a[no-pjax])', {
+    container: '.joe_container',
+    fragment: '.joe_container',
+    timeout: 3000
+}).on('pjax:send',
+function() {
+    NProgress.start();//加载动画效果开始
+
+}).on('pjax:complete',
+  function() {
+    reload();//pjax加载结束完重新初始化
+    NProgress.done();//加载动画效果结束
+    imageeffct();//灯箱函数重载
+    setupContents();//某个函数重载
+    lue();//lue函数重载
+    reHighlightCodeBlock();//代码高亮函数重载
+
+    if ($('.ds-thread').length > 0) {
+      if (typeof DUOSHUO !== 'undefined') DUOSHUO.EmbedThread('.ds-thread'); else $.getScript("https://www.ihewro.com/duoshuo/embedhw4.min.js");
+    }
+});//多说模块重载
