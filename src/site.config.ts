@@ -20,12 +20,19 @@ export const siteConfig: SiteConfig = {
 	// Meta property, found in src/components/BaseHead.astro L:42
 	ogLocale: "zh_CN",
 	// Used to construct the meta title property found in src/components/BaseHead.astro L:11, and webmanifest name found in astro.config.ts L:42
-	title: "每日手记 | Boycot",
+	title: "每日手记",
 	// ! Please remember to replace the following site property with your own domain, used in astro.config.ts
 	url: "https://astro-blog.boycot.top/",
 	social: {
 		github: "https://github.com/boycot2015/astro-blog.git",
 		rss: "/rss.xml",
+	},
+	// 播放器配置
+	aplyer: {
+		id: '',
+		autoPlay: true,
+		loop: false,
+		preload: true,
 	},
 };
 

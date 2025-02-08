@@ -3,9 +3,11 @@ import { getCollection } from "astro:content";
 
 import Note from "@/components/note/Note.astro";
 import PageLayout from "@/layouts/Base.astro";
+import Pagination from "@/components/Paginator.astro";
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 
 // if you're using an adaptor in SSR mode, getStaticPaths wont work -> https://docs.astro.build/en/guides/routing/#modifying-the-slug-example-for-ssr
+const allNotes = await getCollection("note");
 export const getStaticPaths = (async () => {
 	const allNotes = await getCollection("note");
 	return allNotes.map((note) => ({
@@ -24,8 +26,26 @@ const meta = {
 		`Read about my note posted on: ${note.data.publishDate.toLocaleDateString()}`,
 	title: note.data.title,
 };
+const currentIndex = allNotes.findIndex(el => el.id === note.id) ?? 0
+const prev = allNotes[currentIndex - 1] ?? 0
+const next = allNotes[currentIndex + 1] ?? 0
+const paginationProps = {
+	...(prev && {
+		prevUrl: {
+			text: '← ' + prev.data.title,
+			url: '/notes/' + prev.id,
+		},
+	}),
+	...(next && {
+		nextUrl: {
+			text: next.data.title + ' →',
+			url: '/notes/' + next.id,
+		},
+	}),
+};
 ---
 
 <PageLayout meta={meta}>
 	<Note as="h1" note={note} />
+	<Pagination {...paginationProps} />
 </PageLayout>

@@ -3,3 +3,7 @@ declare module "@pagefind/default-ui" {
 		constructor(arg: unknown);
 	}
 }
+declare module 'aplayer' {
+	const content: any;
+	export default content;
+}

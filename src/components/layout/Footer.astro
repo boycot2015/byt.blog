@@ -5,7 +5,7 @@ const year = new Date().getFullYear();
 ---
 
 <footer>
-	<div class="mt-auto flex w-full flex-col items-center justify-center gap-y-2 pt-20 pb-4 text-center align-top font-semibold text-gray-600 sm:flex-row sm:justify-between sm:text-xs dark:text-gray-400">
+	<div class="mt-auto flex w-full flex-col items-center justify-center gap-y-2 pt-10 sm:pt-20 pb-4 text-center align-top font-semibold text-gray-600 sm:flex-row sm:justify-between sm:text-xs dark:text-gray-400">
 		<div class="me-0 sm:me-4">
 			&copy; {siteConfig.author}
 			{year}.<span class="inline-block">&nbsp;🚀&nbsp;{siteConfig.title}</span>
@@ -28,4 +28,19 @@ const year = new Date().getFullYear();
 		<a href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank"><img style="margin-right:5px;" title="粤ICP备18002072号" src="https://img.shields.io/badge/%E7%B2%A4ICP%E5%A4%87-18002072%E5%8F%B7-red" /></a>
 		<img style="margin-right:5px;" src="https://img.shields.io/badge/framework-astro-blue" /><img style="margin-right:5px;" src="https://img.shields.io/badge/platform-vercel-black" /><img style="margin-right:5px;" src="https://img.shields.io/badge/node-%3E%3D18.x-darkgreen" />
 	</div>
+	<meting-js
+	id="60192"
+	fixed="true"
+	server="netease"
+	mini
+	autoplay
+	type="playlist" />
 </footer>
+<script>
+import { MetingJSElement } from "@/plugins/meting";
+
+if (window.customElements && !window.customElements.get('meting-js')) {
+  window.MetingJSElement = MetingJSElement
+  window.customElements.define('meting-js', MetingJSElement)
+}
+</script>

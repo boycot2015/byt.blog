@@ -18,7 +18,7 @@ const socialLinks: {
 		name: "mdi:github",
 	}
 ];
-const { className } = Astro.props
+const { className = '' } = Astro.props
 ---
 
 <div class={`flex flex-wrap items-end sm:ml-6 ml-4 ${className}`}>

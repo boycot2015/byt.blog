@@ -5,14 +5,14 @@ import { menuLinks, siteConfig } from "@/site.config";
 import SocialList from "@/components/SocialList.astro";
 ---
 
-<header class="group relative mb-28 flex items-center" id="main-header">
+<header class="group relative mb-14 sm:mb-22 flex items-center" id="main-header">
 	<div class="flex sm:flex-col">
 		<a
 			aria-current={Astro.url.pathname === "/" ? "page" : false}
 			class="inline-flex items-center grayscale hover:filter-none sm:relative sm:inline-block"
 			href="/"
 		>
-			<span class="text-xl font-bold sm:text-2xl">{siteConfig.title}</span>
+			<span class="text-xl font-bold sm:text-2xl"><span class="hidden sm:inline">Boycot&nbsp;|&nbsp;</span>{siteConfig.title}</span>
 		</a>
 		<nav
 			aria-label="Main menu"
@@ -35,7 +35,7 @@ import SocialList from "@/components/SocialList.astro";
 	</div>
 	<Search />
 	<ThemeToggle />
-	<SocialList />
+	<SocialList className="hidden sm:block" />
 	<mobile-button>
 		<button
 			aria-expanded="false"

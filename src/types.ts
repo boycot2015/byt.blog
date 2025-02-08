@@ -13,6 +13,12 @@ export interface SiteConfig {
 		github: string;
 		rss: string;
 	};
+	aplyer?: {
+		id: string;
+		autoPlay: true;
+		loop: false;
+		preload: true;
+	};
 }
 
 export interface PaginationLink {
