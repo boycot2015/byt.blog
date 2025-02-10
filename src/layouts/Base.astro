@@ -7,14 +7,32 @@ import Header from "@/components/layout/Header.astro";
 import { siteConfig } from "@/site.config";
 import type { SiteMeta } from "@/types";
 import BackTotop from "@/components/BackTotop.astro";
-
+import Aplayer from "@/components/Aplayer.astro";
 interface Props {
 	meta: SiteMeta;
 }
-
 const {
 	meta: { articleDate, description = siteConfig.description, ogImage, title },
 } = Astro.props;
+
+const anim = {
+  old: {
+    name: 'pageAnimate',
+    duration: '0.3s',
+    easing: 'ease-in',
+    direction: 'reverse',
+},
+new: {
+	name: 'pageAnimate',
+	delay: '0.2s',
+    duration: '0.3s',
+    easing: 'ease-in-out',
+  },
+};
+const customTransition = {
+  forwards: anim,
+  backwards: anim,
+};
 ---
 
 <html class="scroll-smooth" lang={siteConfig.lang}>
@@ -27,10 +45,23 @@ const {
 		<ThemeProvider />
 		<SkipLink />
 		<Header />
-		<main id="main" class="min-h-[calc(100vh-380px)]">
+		<main id="main" class="min-h-[calc(100vh-320px)] sm:min-h-[calc(100vh-380px)]" transition:animate={customTransition}>
 			<slot />
 		</main>
-		<Footer />
-		<BackTotop />
 	</body>
+	<Footer transition:persist />
+	<BackTotop />
+	<Aplayer />
 </html>
+<style is:global>
+	@keyframes pageAnimate {
+	  0% {
+		opacity: 0;
+		transform: scaleX(0.8) translateX(-30px);
+	  }
+	  100% {
+		opacity: 1;
+		transform: scaleX(1) translateX(0);
+	  }
+	}
+  </style>

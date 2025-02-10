@@ -21,6 +21,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeExternalLinks from "rehype-external-links";
 import rehypeUnwrapImages from "rehype-unwrap-images";
 
+// import MetingJS from "./src/plugins/meting";
 // https://astro.build/config
 export default defineConfig({
 	site: siteConfig.url,
@@ -67,6 +68,7 @@ export default defineConfig({
 				insertManifestLink: false,
 			},
 		}),
+		// MetingJS() as any,
 	],
 	markdown: {
 		rehypePlugins: [

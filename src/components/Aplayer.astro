@@ -1,0 +1,69 @@
+---
+import 'aplayer/dist/APlayer.min.css'; // 引入 APlayer 的样式文件
+---
+<div id="player-container" class="z-999" transition:persist>
+  <pre class="aplayer-lrc-content">
+  </pre>
+</div>
+<script>
+    /**
+   * {
+      "title": "给自己的信",
+      "author": "苏见信 (信)",
+      "url": "https://api.i-meto.com/meting/api?server=netease&type=url&id=22854031&auth=3f09ae2cfed515c1ff494bb67558c22f724f1bcc",
+      "pic": "https://api.i-meto.com/meting/api?server=netease&type=pic&id=109951164092166041&auth=3f008fc744fe34cee424d02ace9c1aa03a52c990",
+      "lrc": "https://api.i-meto.com/meting/api?server=netease&type=lrc&id=22854031&auth=8faf0360b5c4e8d24891bef58886f8b0e4a5ae50"
+  }
+   */
+    import APlayer from 'aplayer';
+    let player;
+    let playerContainer;
+    // 在组件加载时初始化播放器并恢复状态
+    document.addEventListener('DOMContentLoaded', async () => {
+      let params = {
+        server: 'netease',
+        type: 'playlist',
+        id: '60192',
+        r: Math.random()
+      }
+      let url = 'https://api.i-meto.com/meting/api'
+      // https://api.boycot.top/api/music?type=netease&offset=0&id=%E6%8E%92%E8%A1%8C%E6%A6%9C
+      let lsRes = await fetch('https://api.boycot.top/api/music?type=netease&offset=0&id=%E6%8E%92%E8%A1%8C%E6%A6%9C', {})
+      let list = await lsRes.json()
+      let ids = list.data?.result?.map(el => el.id.split('_')[1]).slice(0, 8) || []
+      params.id = ids[Math.floor(Math.random() * (ids.length - 1))]
+      playerContainer = document.getElementById('player-container');
+      //拼接参数  
+      let paramsArray = [];
+      Object.keys(params).forEach(key => paramsArray.push(key + '=' + params[key]))  
+      if (url.search(/\?/) === -1) {
+          url += '?' + paramsArray.join('&')  
+      } else {
+          url += '&' + paramsArray.join('&')
+      }
+      // ?server=netease&type=playlist&id=60192&r=0.49295886527008737
+      let res = await fetch(url, {})
+      let data = await res.json()
+      player = new APlayer({
+        container: playerContainer,
+        autoplay: false,
+        fixed: true,
+        lrcType: 3,
+        audio: [...data.map(el => ({
+          lrc: el.lrc,
+          name: el.title,
+          artist: el.author,
+          url: el.url,
+          cover: el.pic,
+        }))],
+      });
+      // 处理google浏览器内核自动播放问题
+      player.on('loadeddata', () => {
+        player.audio.muted = true
+        player.play()
+        new Promise(() => {
+          player.audio.muted = false
+        })
+      })
+    }, false);
+</script>

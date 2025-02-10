@@ -2,6 +2,7 @@
 import { WEBMENTION_PINGBACK, WEBMENTION_URL } from "astro:env/client";
 import { siteConfig } from "@/site.config";
 import type { SiteMeta } from "@/types";
+import { ClientRouter } from 'astro:transitions';
 import "@/styles/global.css";
 type Props = SiteMeta;
 
@@ -17,6 +18,7 @@ const socialImageURL = new URL(ogImage ? ogImage : "/social-card.png", Astro.url
 <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 <title>{siteTitle}</title>
 
+<ClientRouter />
 {/* Icons */}
 <link href="/icon.svg" type="image/svg+xml" />
 <link href="/favicon.svg" rel="icon" type="image/svg+xml" />

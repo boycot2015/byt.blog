@@ -12,7 +12,7 @@ class MetingJSElement extends HTMLElement {
 
   disconnectedCallback() {
     if (!this.lock) {
-      this.aplayer.destroy()
+      this.aplayer?.destroy()
     }
   }
 
