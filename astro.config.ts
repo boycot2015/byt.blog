@@ -40,7 +40,7 @@ export default defineConfig({
 			short_name: "Astro_Blog", // optional
 			description: siteConfig.description,
 			lang: siteConfig.lang,
-			icon: "public/icon.svg", // the source for generating favicon & icons
+			icon: "public/favicon.svg", // the source for generating favicon & icons
 			icons: [
 				{
 					src: "icons/apple-touch-icon.png", // used in src/components/BaseHead.astro L:26
