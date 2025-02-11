@@ -22,7 +22,9 @@ export default {
 							}
 						},
 						blockquote: {
-							borderLeftWidth: "0",
+							borderLeftWidth: "3px",
+							'font-style': 'initial',
+							'border-inline-start-color': 'var(--color-accent)'
 						},
 						pre: {
 							borderRadius: "10px",
