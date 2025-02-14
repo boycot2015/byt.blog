@@ -50,13 +50,17 @@ export const menuLinks: { path: string; title: string }[] = [
 		path: "/notes/",
 		title: "笔记",
 	},
-	{
-		path: "/about/",
-		title: "关于",
-	},
+	// {
+	// 	path: "/about/",
+	// 	title: "关于",
+	// },
 	{
 		path: "/links/",
 		title: "友链",
+	},
+	{
+		path: "/aichat/",
+		title: "AI",
 	},
 ];
 

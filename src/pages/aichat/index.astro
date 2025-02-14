@@ -1,0 +1,148 @@
+---
+const title = '我是 DeepSeek，很高兴见到你！'
+const subTitle = '我可以帮你写代码、读文件、写作各种创意内容，请把你的任务交给我吧~'
+import PageLayout from "@/layouts/Base.astro";
+const meta = {
+	description: "我是 DeepSeek，很高兴见到你！",
+	title: "ai chat",
+};
+---
+
+<PageLayout meta={meta}>
+    <main class="main pace-y-2 sm:space-y-8 mx-auto flex flex-col items-center justify-center overflow-y-auto">
+      <h1 class="text-center text-2xl">{title}</h1>
+      <h3>{subTitle}</h3>
+      <section class="flex flex-col min-h-[52vh] sm:min-h-[35vh] w-full">
+        <div class={`flex flex-1 flex-col rounded-xl w-full overflow-y-auto`} id="response-content"></div>
+        <div class="submit self-end flex flex-col sm:flex-row w-full space-y-2 sm:space-y-0 sm:space-x-2">
+            <input id="submit-text" class="border flex-1 p-2 rounded-xl border-[--color-border]" type="text" placeholder="给DeepSeek发消息">
+            <button id="submit-btn" class="cursor-pointer w-[30%] m-[auto] sm:w-[auto] border text-[--color-white] bg-[--color-accent] p-2 rounded-xl border-[--color-border]">提交</button>
+        </div>
+      </section>
+    </main>
+</PageLayout>
+<style is:global>
+  pre code.hljs {
+    margin: 10px 0;
+    overflow-x: auto;
+    max-width: 100%;
+    border-radius: 10px;
+  }
+</style>
+<script>
+import { marked } from 'marked'
+import { markedHighlight } from 'marked-highlight'
+import highlightJs from 'highlight.js'
+import { uuid, debounce } from '@/utils'
+import 'highlight.js/styles/tomorrow-night-bright.css'
+
+document.addEventListener('astro:page-load', () => {
+  // 高亮拓展
+  marked.use(markedHighlight({
+  langPrefix: 'hljs language-',
+      highlight(code, lang) {
+          const language = highlightJs.getLanguage(lang) ? lang : 'shell'
+          return highlightJs.highlight(code, { language }).value
+      }
+  }))
+  let isBottom: boolean = true
+  let isRuning: boolean = false
+  let timeCount: number = 0
+  let timeout: any
+  let timer: any
+  const btn = document.querySelector('#submit-btn') as HTMLButtonElement
+  const getChatData = async () => {
+      clearInterval(timeout)
+      clearInterval(timer)
+      let output = '<p>深度思考中...<p>'
+      const role = 'user'
+      let messages:{id: string;role: string;content:string}[] = []
+      let container = document.querySelector('#response-content') as HTMLDivElement
+      const input = document.querySelector('#submit-text') as HTMLInputElement
+      const message = input?.value || ''
+      if (!message) return
+      let responseId = 'response-ai'
+      responseId = 'response-' + uuid()
+      messages.push({ id: 'ask-' + uuid(), role, content: message })
+      messages.push({ id: responseId, role: 'deepseek', content: output })
+      let html = ''
+      messages.map((el, i) => {
+       html += `<div class="flex flex-col my-4">
+          <span class="h-10 leading-10 border-[--color-border] ${i %2!=0?'self-start':'self-end'}">${el.role}</span>
+              <div class="p-3 rounded-xl bg-[var(--color-bg)] text-[var(--color-global-text)] leading-6 response-${i %2==0?'user':'ai'}-content ${i %2!=0?'min-h-12':'self-end'}" id="${el.id}">${el.content}</div>
+          </div>`
+      })
+      let contentEl = document.createElement('div')
+      contentEl.innerHTML = html
+      container.appendChild(contentEl)
+      isRuning = true
+      const controller = new AbortController();
+      btn.innerHTML = 'loading...'
+        const response = await fetch(`https://ai.boycot.top/data`, {
+          method: "post",
+          signal: controller.signal,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ search: message, role })
+        });
+        if (!response.body) return;
+        timeout = setInterval(() => {
+          timeCount++
+        }, 1000)
+        const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
+        timer = setInterval(async () => {
+            let { value, done } = await reader.read()
+            if (done || !isRuning || value?.includes('finish_reason=stop')) {
+                clearInterval(timer)
+                btn.innerHTML = '提交'
+                try {
+                  controller.abort()
+                } catch (error) {
+                }
+                return
+            };
+            value = value?.replace('undefined', '')
+            output += value
+            let responseEl = document.querySelector(`#${responseId}`) as HTMLDivElement
+            if (output.includes('</think>')) {
+              clearInterval(timeout)
+              if (timeCount > 5) {
+                let reasoningEl = document.createElement('div')
+                let content = marked.parse(output.replace('finish_reason=stop', '').replace(/<\think> <\/think>/g, '')).replace('深度思考中...', `已思考(${timeCount}秒)`)
+                reasoningEl.setAttribute('class', `flex flex-col mb-2`)
+                reasoningEl.innerHTML = `<div class="p-3 rounded-xl bg-[var(--color-bg)] text-[var(--color-global-text)] leading-6 response-ai-content" id="response-ai-reasoning-${responseId}">${content}</div>`
+                content && responseEl.before(reasoningEl)
+              }
+              output = ''
+            } else if (!output.includes('<think>')) {
+              output = output.replace('深度思考中...', '')
+            }
+            responseEl = document.querySelector(`#${responseId}`) as HTMLDivElement
+            responseEl.innerHTML = marked.parse(output.replace('finish_reason=stop', '')) as string
+            isBottom && window.scrollTo(0, document.body.scrollHeight)
+        }, 50)
+      window.onscroll = debounce(() => {
+        isBottom = document.body.scrollHeight - window.innerHeight === window.scrollY
+      }, 10, false)
+  }
+  
+  const submit = () => {
+    if (btn.innerText == 'loading...') {
+      isRuning = false
+      timeCount = 0
+      btn.innerHTML = '提交'
+      return
+    }
+    let container = document.querySelector('#response-content') as HTMLDivElement
+    container.scrollTo(0, container.scrollHeight)
+    getChatData()
+  }
+  btn.onclick = submit
+  window.addEventListener('keypress', e => {
+    if (e.key == 'Enter') {
+      submit()
+    }
+  })
+})
+</script>
