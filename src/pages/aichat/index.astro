@@ -134,7 +134,7 @@ document.addEventListener('astro:page-load', () => {
           };
         } catch (error) {
         }
-      }, 200)
+      }, 80)
       window.onscroll = debounce(() => {
         isBottom = document.body.scrollHeight - window.innerHeight === window.scrollY
       }, 10, false)
