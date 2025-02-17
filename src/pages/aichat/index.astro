@@ -6,17 +6,21 @@ const meta = {
 	description: "我是 DeepSeek，很高兴见到你！",
 	title: "ai chat",
 };
+
 ---
 
 <PageLayout meta={meta}>
     <main class="main pace-y-2 sm:space-y-8 mx-auto flex flex-col items-center justify-center overflow-y-auto">
-      <h1 class="text-center text-2xl">{title}</h1>
+      <h1 class="text-center text-xl">{title}</h1>
       <h3>{subTitle}</h3>
       <section class="flex flex-col min-h-[52vh] sm:min-h-[35vh] w-full">
         <div class={`flex flex-1 flex-col rounded-xl w-full overflow-y-auto`} id="response-content"></div>
-        <div class="submit self-end flex flex-col sm:flex-row w-full space-y-2 sm:space-y-0 sm:space-x-2">
-            <input id="submit-text" class="border flex-1 p-2 rounded-xl border-[--color-border]" type="text" placeholder="给DeepSeek发消息">
-            <button id="submit-btn" class="cursor-pointer w-[30%] m-[auto] sm:w-[auto] border text-[--color-white] bg-[--color-accent] p-2 rounded-xl border-[--color-border]">提交</button>
+        <div class="action-btns mt-4 flex w-full flex-wrap sm:space-x-2">
+            <input id="submit-text" class="border mb-2 sm:mb-0 w-full sm:flex-1 p-2 rounded-xl border-[--color-border]" type="text" placeholder="给DeepSeek发消息">
+            <div class="flex w-full sm:w-[auto] justify-center">
+              <button id="submit-btn" class="cursor-pointer self-end sm:w-[30%] mr-2 sm:w-[auto] border text-[var(--color-accent)] p-2 rounded-xl border-[--color-border]">提交</button>
+              <button id="reset-btn" class="cursor-pointer sm:w-[30%] sm:m-[auto] sm:w-[auto] border text-[var(--color-global-text)] bg-[var(--color-bg)] p-2 rounded-xl border-[--color-border]">清除</button>
+            </div>
         </div>
       </section>
     </main>
@@ -36,6 +40,7 @@ import highlightJs from 'highlight.js'
 import { uuid, debounce } from '@/utils'
 import 'highlight.js/styles/tomorrow-night-bright.css'
 
+let baseUrl = import.meta.env.PROD ? 'https://ai.boycot.top' : 'http://localhost:8088'
 document.addEventListener('astro:page-load', () => {
   // 高亮拓展
   marked.use(markedHighlight({
@@ -51,26 +56,31 @@ document.addEventListener('astro:page-load', () => {
   let timeout: any
   let timer: any
   const btn = document.querySelector('#submit-btn') as HTMLButtonElement
+  const restBtn = document.querySelector('#reset-btn') as HTMLButtonElement
+  const input = document.querySelector('#submit-text') as HTMLInputElement
+  let container = document.querySelector('#response-content') as HTMLDivElement
+
   const getChatData = async () => {
       clearInterval(timeout)
       clearInterval(timer)
       let output = '<p>深度思考中...<p>'
       const role = 'user'
       let messages:{id: string;role: string;content:string}[] = []
-      let container = document.querySelector('#response-content') as HTMLDivElement
-      const input = document.querySelector('#submit-text') as HTMLInputElement
       const message = input?.value || ''
       if (!message) return
-      let responseId = 'response-ai'
-      responseId = 'response-' + uuid()
-      messages.push({ id: 'ask-' + uuid(), role, content: message })
+      let responseId = 'response-' + uuid()
+      let askId = 'ask-' + uuid()
+      messages.push({ id: askId, role, content: message })
       messages.push({ id: responseId, role: 'deepseek', content: output })
       let html = ''
       messages.map((el, i) => {
-       html += `<div class="flex flex-col my-4">
-          <span class="h-10 leading-10 border-[--color-border] ${i %2!=0?'self-start':'self-end'}">${el.role}</span>
-              <div class="p-3 rounded-xl bg-[var(--color-bg)] text-[var(--color-global-text)] leading-6 response-${i %2==0?'user':'ai'}-content ${i %2!=0?'min-h-12':'self-end'}" id="${el.id}">${el.content}</div>
-          </div>`
+        html += `<div class="flex flex-col my-4">
+            <span class="h-10 leading-10 border-[--color-border] ${i %2!=0?'self-start':'self-end'}">${el.role}</span>
+            <div class="p-3 flex rounded-xl bg-[rgb(240,240,240)] dark:bg-[rgb(33,35,38)] text-[var(--color-global-text)] leading-6 ${i %2!=0?'min-h-12':'self-end'}">
+              <div class="response-${i %2==0?'user':'ai'}-content max-w-[100vw] overflow-x-auto" id="${el.id}">${el.content}</div>
+              ${el.id === askId ?'<span class="text-[var(--color-accent)] ml-2 cursor-pointer" id="'+el.id+'-eidt-btn">[编辑]</span>':''}
+            </div>
+        </div>`
       })
       let contentEl = document.createElement('div')
       contentEl.innerHTML = html
@@ -78,53 +88,60 @@ document.addEventListener('astro:page-load', () => {
       isRuning = true
       const controller = new AbortController();
       btn.innerHTML = 'loading...'
-        const response = await fetch(`https://ai.boycot.top/data`, {
-          method: "post",
-          signal: controller.signal,
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ search: message, role })
-        });
-        if (!response.body) return;
-        timeout = setInterval(() => {
-          timeCount++
-        }, 1000)
-        const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
-        timer = setInterval(async () => {
-            let { value, done } = await reader.read()
-            if (done || !isRuning || value?.includes('finish_reason=stop')) {
-                clearInterval(timer)
-                btn.innerHTML = '提交'
-                try {
-                  controller.abort()
-                } catch (error) {
-                }
-                return
-            };
-            value = value?.replace('undefined', '')
-            output += value
-            let responseEl = document.querySelector(`#${responseId}`) as HTMLDivElement
-            if (output.includes('</think>')) {
-              clearInterval(timeout)
-              if (timeCount > 5) {
-                let reasoningEl = document.createElement('div')
-                let content = marked.parse(output.replace('finish_reason=stop', '').replace(/<\think> <\/think>/g, '')).replace('深度思考中...', `已思考(${timeCount}秒)`)
-                reasoningEl.setAttribute('class', `flex flex-col mb-2`)
-                reasoningEl.innerHTML = `<div class="p-3 rounded-xl bg-[var(--color-bg)] text-[var(--color-global-text)] leading-6 response-ai-content" id="response-ai-reasoning-${responseId}">${content}</div>`
-                content && responseEl.before(reasoningEl)
-              }
-              output = ''
-            } else if (!output.includes('<think>')) {
-              output = output.replace('深度思考中...', '')
+      restBtn.innerHTML = '暂停'
+      const response = await fetch(`${baseUrl}/data`, {
+        method: "post",
+        signal: controller.signal,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ search: message, role })
+      })
+      if (!response.body) return;
+      timeout = setInterval(() => {
+        timeCount++
+      }, 1000)
+      const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
+      timer = setInterval(async () => {
+        try {
+          let { value, done } = await reader.read()
+          value = value?.replace('undefined', '')
+          output += value?.replace('undefined', '')
+          let responseEl = document.querySelector(`#${responseId}`) as HTMLDivElement
+          if (output.includes('</think>')) {
+            clearInterval(timeout)
+            if (timeCount > 5) {
+              let reasoningEl = document.createElement('div')
+              let content = marked.parse(output.replace('finish_reason=true', '').replace(/<\think> <\/think>/g, '')).replace('深度思考中...', `已思考(${timeCount}秒)`)
+              reasoningEl.setAttribute('class', `flex flex-col mb-2`)
+              reasoningEl.innerHTML = `<div class="p-3 rounded-xl bg-[rgb(240,240,240)] dark:bg-[rgb(33,35,38)] text-[var(--color-global-text)] leading-6 response-ai-content max-w-[100vw] overflow-x-auto" id="response-ai-reasoning-${responseId}">${content}</div>`
+              content && responseEl.before(reasoningEl)
             }
-            responseEl = document.querySelector(`#${responseId}`) as HTMLDivElement
-            responseEl.innerHTML = marked.parse(output.replace('finish_reason=stop', '')) as string
-            isBottom && window.scrollTo(0, document.body.scrollHeight)
-        }, 50)
+            output = ''
+          } else if (!output.includes('<think>')) {
+            output = output.replace('深度思考中...', '')
+          }
+          responseEl = document.querySelector(`#${responseId}`) as HTMLDivElement
+          responseEl.innerHTML = marked.parse(output.replace('finish_reason=true', '').replace('undefined', '')) as string
+          isBottom && window.scrollTo(0, document.body.scrollHeight)
+          if (done || !isRuning || value?.includes('finish_reason=true')) {
+              clearInterval(timer)
+              btn.innerHTML = '提交'
+              restBtn.innerHTML = '清除'
+              isRuning = false
+              controller.abort()
+              return
+          };
+        } catch (error) {
+        }
+      }, 200)
       window.onscroll = debounce(() => {
         isBottom = document.body.scrollHeight - window.innerHeight === window.scrollY
       }, 10, false)
+      let askBtn = document.querySelector('#'+askId+'-eidt-btn') as HTMLDivElement
+      askBtn.onclick = () => {
+        input.value = document.querySelector('#'+askId)?.innerHTML || ''
+      }
   }
   
   const submit = () => {
@@ -132,13 +149,21 @@ document.addEventListener('astro:page-load', () => {
       isRuning = false
       timeCount = 0
       btn.innerHTML = '提交'
+      restBtn.innerHTML = '清除'
       return
     }
     let container = document.querySelector('#response-content') as HTMLDivElement
     container.scrollTo(0, container.scrollHeight)
     getChatData()
+    input.value = ''
+  }
+  const reset = () => {
+    restBtn.innerHTML = '清除'
+    if (!isRuning) container.innerHTML = ''
+    else submit()
   }
   btn.onclick = submit
+  restBtn.onclick = reset
   window.addEventListener('keypress', e => {
     if (e.key == 'Enter') {
       submit()
