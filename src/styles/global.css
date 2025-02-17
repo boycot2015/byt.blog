@@ -126,3 +126,18 @@
 	--tw-prose-quotes: var(--color-quote);
 	--tw-prose-th-borders: #666;
 }
+.p-3 {
+	padding: calc(var(--spacing)* 3);
+}
+.right-2 {
+	right: calc(var(--spacing)* 2);
+}
+pre {
+    width: 100%;
+}
+pre code.hljs {
+    margin: 10px 0;
+    overflow-x: auto;
+    max-width: 100%;
+    border-radius: 10px;
+}
