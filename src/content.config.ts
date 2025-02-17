@@ -21,6 +21,7 @@ const post = defineCollection({
 				})
 				.optional(),
 			draft: z.boolean().default(false),
+			ai: z.boolean().default(false),
 			page: z.boolean().default(false),
 			ogImage: z.string().optional(),
 			tags: z.array(z.string()).default([]).transform(removeDupsAndLowerCase),
@@ -46,6 +47,7 @@ const note = defineCollection({
 				})
 				.optional(),
 		draft: z.boolean().default(false),
+		ai: z.boolean().default(false),
 		page: z.boolean().default(false),
 		publishDate: z
 			.string()

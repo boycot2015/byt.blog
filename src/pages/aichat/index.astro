@@ -41,15 +41,15 @@ import { uuid, debounce } from '@/utils'
 import 'highlight.js/styles/tomorrow-night-bright.css'
 
 let baseUrl = import.meta.env.PROD ? 'https://ai.boycot.top' : 'http://localhost:8088'
+// 高亮拓展
+marked.use(markedHighlight({
+langPrefix: 'hljs language-',
+    highlight(code, lang) {
+        const language = highlightJs.getLanguage(lang) ? lang : 'shell'
+        return highlightJs.highlight(code, { language }).value
+    }
+}))
 document.addEventListener('astro:page-load', () => {
-  // 高亮拓展
-  marked.use(markedHighlight({
-  langPrefix: 'hljs language-',
-      highlight(code, lang) {
-          const language = highlightJs.getLanguage(lang) ? lang : 'shell'
-          return highlightJs.highlight(code, { language }).value
-      }
-  }))
   let isBottom: boolean = true
   let isRuning: boolean = false
   let timeCount: number = 0
@@ -59,26 +59,28 @@ document.addEventListener('astro:page-load', () => {
   const restBtn = document.querySelector('#reset-btn') as HTMLButtonElement
   const input = document.querySelector('#submit-text') as HTMLInputElement
   let container = document.querySelector('#response-content') as HTMLDivElement
-
+  if (!btn || !restBtn || !input) return
   const getChatData = async () => {
       clearInterval(timeout)
       clearInterval(timer)
+      const message = input?.value || ''
+      if (!message) return
       let output = '<p>深度思考中...<p>'
       const role = 'user'
       let messages:{id: string;role: string;content:string}[] = []
-      const message = input?.value || ''
-      if (!message) return
       let responseId = 'response-' + uuid()
       let askId = 'ask-' + uuid()
+      let html = ''
+      let responseEl = document.querySelector(`#${responseId}`) as HTMLDivElement
       messages.push({ id: askId, role, content: message })
       messages.push({ id: responseId, role: 'deepseek', content: output })
-      let html = ''
+
       messages.map((el, i) => {
         html += `<div class="flex flex-col my-4">
             <span class="h-10 leading-10 border-[--color-border] ${i %2!=0?'self-start':'self-end'}">${el.role}</span>
-            <div class="p-3 flex rounded-xl bg-[rgb(240,240,240)] dark:bg-[rgb(33,35,38)] text-[var(--color-global-text)] leading-6 ${i %2!=0?'min-h-12':'self-end'}">
+            <div class="relative p-3 flex rounded-xl bg-[rgb(240,240,240)] dark:bg-[rgb(33,35,38)] text-[var(--color-global-text)] leading-6 ${i %2!=0?'min-h-12':'self-end'}">
               <div class="response-${i %2==0?'user':'ai'}-content max-w-[100vw] overflow-x-auto" id="${el.id}">${el.content}</div>
-              ${el.id === askId ?'<span class="text-[var(--color-accent)] ml-2 cursor-pointer" id="'+el.id+'-eidt-btn">[编辑]</span>':''}
+              ${el.id === askId ?'<span class="text-[var(--color-accent)] ml-2 cursor-pointer" id="'+el.id+'-eidt-btn">【编辑】</span>':'<span class="absolute bg-[rgb(240,240,240)] dark:bg-[rgb(33,35,38)] right-2 top-2 text-[var(--color-accent)] ml-2 cursor-pointer" id="'+el.id+'-copy-btn">【复制】</span>'}
             </div>
         </div>`
       })
@@ -107,7 +109,7 @@ document.addEventListener('astro:page-load', () => {
           let { value, done } = await reader.read()
           value = value?.replace('undefined', '')
           output += value?.replace('undefined', '')
-          let responseEl = document.querySelector(`#${responseId}`) as HTMLDivElement
+          responseEl = document.querySelector(`#${responseId}`) as HTMLDivElement
           if (output.includes('</think>')) {
             clearInterval(timeout)
             if (timeCount > 5) {
@@ -121,8 +123,8 @@ document.addEventListener('astro:page-load', () => {
           } else if (!output.includes('<think>')) {
             output = output.replace('深度思考中...', '')
           }
-          responseEl = document.querySelector(`#${responseId}`) as HTMLDivElement
           responseEl.innerHTML = marked.parse(output.replace('finish_reason=true', '').replace('undefined', '')) as string
+          responseEl.setAttribute('data-text', output.replace('finish_reason=true', '').replace('undefined', ''))
           isBottom && window.scrollTo(0, document.body.scrollHeight)
           if (done || !isRuning || value?.includes('finish_reason=true')) {
               clearInterval(timer)
@@ -139,8 +141,23 @@ document.addEventListener('astro:page-load', () => {
         isBottom = document.body.scrollHeight - window.innerHeight === window.scrollY
       }, 10, false)
       let askBtn = document.querySelector('#'+askId+'-eidt-btn') as HTMLDivElement
+      let copyBtn = document.querySelector('#'+responseId+'-copy-btn') as HTMLDivElement
+      copyBtn.onclick = () => {
+        // document.execCommand('copy', false, responseEl.innerHTML)
+        navigator.clipboard.writeText(responseEl.getAttribute('data-text') as string).then(function() {
+        console.log('文本已复制到剪贴板!');
+        copyBtn.innerHTML = '【coped!】'
+        setTimeout(() => {
+          copyBtn.innerHTML = '【复制】'
+        }, 2000);
+        }).catch(function(err) {
+            console.error('复制失败:', err);
+        });
+      }
       askBtn.onclick = () => {
         input.value = document.querySelector('#'+askId)?.innerHTML || ''
+        window.scrollTo(0, document.body.scrollHeight)
+        input.focus()
       }
   }
   
