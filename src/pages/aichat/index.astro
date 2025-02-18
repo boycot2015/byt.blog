@@ -14,12 +14,12 @@ const meta = {
       <h1 class="text-center text-xl">{title}</h1>
       <h3>{subTitle}</h3>
       <section class="flex flex-col min-h-[52vh] sm:min-h-[35vh] w-full">
-        <div class={`flex flex-1 flex-col rounded-xl w-full overflow-y-auto`} id="response-content"></div>
+        <div class={`flex flex-1 flex-col rounded-md w-full overflow-y-auto`} id="response-content"></div>
         <div class="action-btns mt-4 flex w-full flex-wrap sm:space-x-2">
-            <input id="submit-text" class="border mb-2 sm:mb-0 w-full sm:flex-1 p-2 rounded-xl border-[--color-border]" type="text" placeholder="给DeepSeek发消息">
+            <input id="submit-text" class="border mb-2 sm:mb-0 w-full sm:flex-1 p-2 rounded-md border-[--color-border]" type="text" placeholder="给DeepSeek发消息">
             <div class="flex w-full sm:w-[auto] justify-center">
-              <button id="submit-btn" class="cursor-pointer self-end sm:w-[30%] mr-2 sm:w-[auto] border text-[var(--color-accent)] p-2 rounded-xl border-[--color-border]">提交</button>
-              <button id="reset-btn" class="cursor-pointer sm:w-[30%] sm:m-[auto] sm:w-[auto] border text-[var(--color-global-text)] bg-[var(--color-bg)] p-2 rounded-xl border-[--color-border]">清除</button>
+              <button id="submit-btn" class="cursor-pointer self-end sm:w-[30%] mr-2 sm:w-[auto] border text-[var(--color-accent)] p-2 rounded-md border-[--color-border]">提交</button>
+              <button id="reset-btn" class="cursor-pointer sm:w-[30%] sm:m-[auto] sm:w-[auto] border text-[var(--color-global-text)] bg-[var(--color-bg)] p-2 rounded-md border-[--color-border]">清除</button>
             </div>
         </div>
       </section>
@@ -28,19 +28,67 @@ const meta = {
 <script>
 import { marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
-import highlightJs from 'highlight.js'
+// import highlightJs from 'highlight.js'
 import { uuid, debounce } from '@/utils'
-import 'highlight.js/styles/tomorrow-night-bright.css'
+// import 'highlight.js/styles/tomorrow-night-bright.css'
+// import 'highlight.js/styles/vs2015.css'
+import prism from "prismjs";
+
+import "prismjs/plugins/line-numbers/prism-line-numbers.js";
+import "prismjs/plugins/line-numbers/prism-line-numbers.css";
+
+import "prismjs/plugins/toolbar/prism-toolbar.js"; // required for the following plugins
+import "prismjs/plugins/toolbar/prism-toolbar.css"; // required for the following plugins
+import "prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard.js"; // show copy button
+import "prismjs/plugins/show-language/prism-show-language.js"; // display the language of the code block
+import "prismjs/plugins/custom-class/prism-custom-class";
 
 let baseUrl = import.meta.env.PROD ? 'https://ai.boycot.top' : 'http://localhost:8088'
-// 高亮拓展
-marked.use(markedHighlight({
-langPrefix: 'hljs language-',
-    highlight(code, lang) {
-        const language = highlightJs.getLanguage(lang) ? lang : 'shell'
-        return highlightJs.highlight(code, { language }).value
+let renderer = new marked.Renderer();
+
+renderer.code = function(code, lang, escaped) {
+    if (this.options.highlight) {
+        var out = this.options.highlight(code, lang);
+        //if (out != null && out !== code) {  [*3]
+        if (out != null) {
+            escaped = true;
+            code = out;
+        }
     }
+
+    if (!lang) {
+        return `<pre class="${this.options.langPrefix}PLACEHOLDER"><code>`
+            // + (escaped ? code : escape(code, true)) [1]
+            + code
+            + '\n</code></pre>';
+    }
+
+    let langText = this.options.langPrefix + escape(lang);
+    return `<pre class="${langText}"><code class="${langText}">` // [2]
+        + (escaped ? code : escape(code))
+        + '\n</code></pre>\n';
+};
+marked.use(markedHighlight({
+  langPrefix: 'prism language-',
+  highlight: (code, lang = 'html') => {
+    if (prism.languages[lang]) {
+      return prism.highlight(code, prism.languages[lang], lang);
+    } else {
+      return code;
+    }
+  },
 }))
+// marked.setOptions({
+//   langPrefix: 'prism language-',
+//   renderer,
+//   highlight: (code, lang = 'html') => {
+//     if (prism.languages[lang]) {
+//       return prism.highlight(code, prism.languages[lang], lang);
+//     } else {
+//       return code;
+//     }
+//   },
+// });
 document.addEventListener('astro:page-load', () => {
   let isBottom: boolean = true
   let isRuning: boolean = false
@@ -70,9 +118,9 @@ document.addEventListener('astro:page-load', () => {
       messages.map((el, i) => {
         html += `<div class="flex flex-col my-4">
             <span class="h-10 leading-10 border-[--color-border] ${i %2!=0?'self-start':'self-end'}">${el.role}</span>
-            <div class="relative p-3 flex rounded-xl bg-[rgb(240,240,240)] dark:bg-[rgb(33,35,38)] text-[var(--color-global-text)] leading-6 ${i %2!=0?'min-h-12':'self-end'}">
+            <div class="relative p-3 flex rounded-md bg-[rgb(240,240,240)] dark:bg-[rgb(33,35,38)] text-[var(--color-global-text)] leading-6 ${i %2!=0?'min-h-12 flex-wrap':'self-end'}">
               <div class="response-${i %2==0?'user':'ai'}-content w-full overflow-x-auto" id="${el.id}">${el.content}</div>
-              ${el.id === askId ?'<span class="min-w-[50px] text-[var(--color-accent)] ml-2 cursor-pointer" id="'+el.id+'-eidt-btn">【编辑】</span>':'<span class="absolute bg-[rgb(240,240,240)] dark:bg-[rgb(33,35,38)] right-2 top-2 text-[var(--color-accent)] ml-2 cursor-pointer" id="'+el.id+'-copy-btn">【复制】</span>'}
+              ${el.id === askId ?'<span class="text-[var(--color-accent)] ml-2 cursor-pointer float-right" style="min-width:60px;" id="'+el.id+'-eidt-btn">【编辑】</span>':'<span class="absolute bg-[rgb(240,240,240)] dark:bg-[rgb(33,35,38)] right-2 top-2 text-[var(--color-accent)] ml-2 cursor-pointer" id="'+el.id+'-copy-btn">【复制】</span>'}
             </div>
         </div>`
       })
@@ -108,7 +156,7 @@ document.addEventListener('astro:page-load', () => {
               let reasoningEl = document.createElement('div')
               let content = marked.parse(output.replace('finish_reason=true', '').replace(/<\think> <\/think>/g, '')).replace('深度思考中...', `已思考(${timeCount}秒)`)
               reasoningEl.setAttribute('class', `flex flex-col mb-2`)
-              reasoningEl.innerHTML = `<div class="p-3 rounded-xl bg-[rgb(240,240,240)] dark:bg-[rgb(33,35,38)] text-[var(--color-global-text)] leading-6 response-ai-content w-full overflow-x-auto" id="response-ai-reasoning-${responseId}">${content}</div>`
+              reasoningEl.innerHTML = `<div class="p-3 w-full rounded-md bg-[rgb(240,240,240)] dark:bg-[rgb(33,35,38)] border mb-3 text-[var(--color-global-text)] leading-6 response-ai-content w-full overflow-x-auto" id="response-ai-reasoning-${responseId}">${content}</div>`
               content && responseEl.before(reasoningEl)
             }
             output = ''
@@ -117,6 +165,7 @@ document.addEventListener('astro:page-load', () => {
           }
           responseEl.innerHTML = marked.parse(output.replace('finish_reason=true', '').replace(/undefined/g, '')) as string
           responseEl.setAttribute('data-text', output.replace('finish_reason=true', '').replace(/undefined/g, ''))
+          prism.highlightAll()
           isBottom && window.scrollTo(0, document.body.scrollHeight)
           if (done || !isRuning || value?.includes('finish_reason=true')) {
               clearInterval(timer)
@@ -128,7 +177,7 @@ document.addEventListener('astro:page-load', () => {
           };
         } catch (error) {
         }
-      }, 80)
+      }, 50)
       window.onscroll = debounce(() => {
         isBottom = document.body.scrollHeight - window.innerHeight === window.scrollY
       }, 10, false)

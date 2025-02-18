@@ -21,7 +21,8 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeExternalLinks from "rehype-external-links";
 import rehypeUnwrapImages from "rehype-unwrap-images";
 
-// import MetingJS from "./src/plugins/meting";
+import { prismjsPlugin } from "vite-plugin-prismjs";
+
 // https://astro.build/config
 export default defineConfig({
 	site: siteConfig.url,
@@ -93,11 +94,48 @@ export default defineConfig({
 	},
 	// https://docs.astro.build/en/guides/prefetch/
 	prefetch: true,
+	build: {
+		// format: "file"
+	},
 	vite: {
 		optimizeDeps: {
 			exclude: ["@resvg/resvg-js"],
 		},
-		plugins: [tailwind(), rawFonts([".ttf", ".woff"])],
+		plugins: [tailwind(), rawFonts([".ttf", ".woff"]),
+		prismjsPlugin({
+			languages: 'all',
+			plugins: ['line-numbers', 'copy-to-clipboard', "show-language"], //官网有其他功能,这里开启行数和复制按钮功能
+			theme: 'tomorrow',
+			css: true,
+		  })
+		],
+		build: {
+			rollupOptions: {
+				output: {
+					// manualChunks: {
+					// 	highlight: ["highlight.js"],
+					// 	marked: ["marked", "marked-highlight"],
+					// 	astro: ["astro", "astro-icon"],
+					// 	aplayer: ["aplayer"],
+					// },
+					manualChunks (id) {
+						let chunks: { [key: string]: string[] } = {
+							highlight: ["highlight.js"],
+							marked: ["marked", "marked-highlight"],
+							aplayer: ["aplayer"],
+							prismjs: ["prismjs"],
+						}
+						for (const key in chunks) {
+							if (chunks[key]?.some((el:string) => id.includes(el))) {
+								return key;
+							}
+						}
+						return null
+					}
+				},
+			},
+			chunkSizeWarningLimit: 1024
+		},
 	},
 	env: {
 		schema: {

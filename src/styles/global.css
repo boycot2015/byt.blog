@@ -132,12 +132,55 @@
 .right-2 {
 	right: calc(var(--spacing)* 2);
 }
-pre {
+#main pre {
     width: 100%;
+	border-radius: 5px;
+	padding: 30px 10px 0px;
+	margin: 10px 0;
+	max-width: 100%;
+	overflow: hidden;
+	overflow-x: auto;
 }
-pre code.hljs {
-    margin: 10px 0;
-    overflow-x: auto;
-    max-width: 100%;
-    border-radius: 10px;
+.code-toolbar {
+	position: relative;
+    code{ 
+        display: inline-block;
+        padding-bottom: 20px;
+        top: 24px;
+    }
+    &::before {
+        content: "";
+        position: absolute;
+        background: red;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        top: 10px;
+        left: 28px;
+        transform: translate(-50%);
+    }
+    &::after {
+        content: "";
+        position: absolute;
+        background: sandybrown;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        top: 10px;
+        left: 44px;
+        transform: translate(-50%);
+    }
+    code:first-child{
+        &::after{
+            content: "";
+            position: absolute;
+            background: limegreen;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+			top: 9px;
+            left: 11px;
+            transform: translate(-50%);
+        }
+    }
 }
