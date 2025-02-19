@@ -16,11 +16,11 @@ import 'aplayer/dist/APlayer.min.css'; // 引入 APlayer 的样式文件
   }
    */
     import APlayer from 'aplayer';
-    let player;
+    let player: any;
     let playerContainer;
     // 在组件加载时初始化播放器并恢复状态
     document.addEventListener('DOMContentLoaded', async () => {
-      let params = {
+      let params: {[key:string]: string|number} = {
         server: 'netease',
         type: 'playlist',
         id: '60192',
@@ -30,11 +30,11 @@ import 'aplayer/dist/APlayer.min.css'; // 引入 APlayer 的样式文件
       // https://api.boycot.top/api/music?type=netease&offset=0&id=%E6%8E%92%E8%A1%8C%E6%A6%9C
       let lsRes = await fetch('https://api.boycot.top/api/music?type=netease&offset=0&id=%E6%8E%92%E8%A1%8C%E6%A6%9C', {})
       let list = await lsRes.json()
-      let ids = list.data?.result?.map(el => el.id.split('_')[1]).slice(0, 8) || []
+      let ids = list.data?.result?.map((el:any) => el.id.split('_')[1]).slice(0, 8) || []
       params.id = ids[Math.floor(Math.random() * (ids.length - 1))]
       playerContainer = document.getElementById('player-container');
       //拼接参数  
-      let paramsArray = [];
+      let paramsArray:string[] = [];
       Object.keys(params).forEach(key => paramsArray.push(key + '=' + params[key]))  
       if (url.search(/\?/) === -1) {
           url += '?' + paramsArray.join('&')  
@@ -49,7 +49,7 @@ import 'aplayer/dist/APlayer.min.css'; // 引入 APlayer 的样式文件
         autoplay: false,
         fixed: true,
         lrcType: 3,
-        audio: [...data.map(el => ({
+        audio: [...data.map((el:any) => ({
           lrc: el.lrc,
           name: el.title,
           artist: el.author,

@@ -22,20 +22,22 @@ id="to-top-btn"
 </button>
 
 <script>
-	const scrollBtn = document.getElementById("to-top-btn") as HTMLButtonElement;
-	const targetHeader = (document.getElementById("blog-hero") || document.getElementById("main-header")) as HTMLDivElement;
-
-	function callback(entries: IntersectionObserverEntry[]) {
-		entries.forEach((entry) => {
-			// only show the scroll to top button when the heading is out of view
-			scrollBtn.dataset.show = (!entry.isIntersecting).toString();
+	document.addEventListener('astro:page-load', () => {
+		const scrollBtn = document.getElementById("to-top-btn") as HTMLButtonElement;
+		const targetHeader = (document.getElementById("blog-hero") || document.getElementById("main-header")) as HTMLDivElement;
+	
+		function callback(entries: IntersectionObserverEntry[]) {
+			entries.forEach((entry) => {
+				// only show the scroll to top button when the heading is out of view
+				scrollBtn.dataset.show = (!entry.isIntersecting).toString();
+			});
+		}
+	
+		scrollBtn.addEventListener("click", () => {
+			document.documentElement.scrollTo({ behavior: "smooth", top: 0 });
 		});
-	}
-
-	scrollBtn.addEventListener("click", () => {
-		document.documentElement.scrollTo({ behavior: "smooth", top: 0 });
-	});
-
-	const observer = new IntersectionObserver(callback);
-	targetHeader && observer.observe(targetHeader);
+	
+		const observer = new IntersectionObserver(callback);
+		targetHeader && observer.observe(targetHeader);
+	})
 </script>

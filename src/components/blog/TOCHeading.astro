@@ -13,7 +13,7 @@ const {
 <li class={`${depth > 2 ? "ms-2" : ""}`}>
 	<a
 		class={`line-clamp-2 hover:text-accent ${depth <= 2 ? "mt-3" : "mt-2 text-xs"}`}
-		href={`#${slug}`}><span aria-hidden="true" class="me-0.5"></span>{text}</a
+		href={`#${slug}`} id={'a-' + slug}><span aria-hidden="true" class="me-0.5"></span>{text}</a
 	>
 	{
 		!!children.length && (
@@ -25,3 +25,22 @@ const {
 		)
 	}
 </li>
+<script>
+window.addEventListener('load', () => {
+  // 处理刷新浏览器锚点定位失效问题
+  const hash = window.location.hash;
+  if (hash) {
+    document.querySelector(decodeURI(hash))?.scrollIntoView({ behavior: 'smooth' });
+  }
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+  	anchor.addEventListener('click', (e) => {
+		e.preventDefault(); // 阻止默认行为
+		const targetId = anchor.getAttribute('href') as string;
+		const targetElement = document.querySelector(targetId);
+		if (targetElement) {
+		targetElement.scrollIntoView({ behavior: 'smooth' });
+		}
+	});
+	});
+});
+</script>

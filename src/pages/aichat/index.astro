@@ -95,6 +95,7 @@ document.addEventListener('astro:page-load', () => {
   let timeCount: number = 0
   let timeout: any
   let timer: any
+  let isExpand = true
   const btn = document.querySelector('#submit-btn') as HTMLButtonElement
   const restBtn = document.querySelector('#reset-btn') as HTMLButtonElement
   const input = document.querySelector('#submit-text') as HTMLInputElement
@@ -105,10 +106,10 @@ document.addEventListener('astro:page-load', () => {
       clearInterval(timer)
       const message = input?.value || ''
       if (!message) return
-      let output = '<p>深度思考中...<p>'
       const role = 'user'
       let messages:{id: string;role: string;content:string}[] = []
       let responseId = 'response-' + uuid()
+      let output = '<p>深度思考中...</p>'
       let askId = 'ask-' + uuid()
       let html = ''
       let responseEl = document.querySelector(`#${responseId}`) as HTMLDivElement
@@ -154,14 +155,24 @@ document.addEventListener('astro:page-load', () => {
             clearInterval(timeout)
             if (timeCount > 5) {
               let reasoningEl = document.createElement('div')
-              let content = marked.parse(output.replace('finish_reason=true', '').replace(/<\think> <\/think>/g, '')).replace('深度思考中...', `已思考(${timeCount}秒)`)
+              let toolbar = `<p id="toggle-${responseId}"><span>已思考(${timeCount}秒)</span><span class="ml-2 text-[var(--color-accent)] cursor-pointer toggle-text">收起</span><p>`
+              let content = marked.parse(output.replace('finish_reason=true', '').replace(/<\think> <\/think>/g, '')).replace('<p>深度思考中...</p>', '')
               reasoningEl.setAttribute('class', `flex flex-col mb-2`)
-              reasoningEl.innerHTML = `<div class="p-3 w-full rounded-md bg-[rgb(240,240,240)] dark:bg-[rgb(33,35,38)] border mb-3 text-[var(--color-global-text)] leading-6 response-ai-content w-full overflow-x-auto" id="response-ai-reasoning-${responseId}">${content}</div>`
+              reasoningEl.innerHTML = `${toolbar}<div class="px-2 w-full bg-[rgb(240,240,240)] dark:bg-[rgb(33,35,38)] border-l-4 border-[#ccc] dark:border-[#333] mb-3 text-[var(--color-global-text)] leading-6 response-ai-content w-full overflow-x-auto" id="response-ai-reasoning-${responseId}">${content}</div>`
               content && responseEl.before(reasoningEl)
             }
             output = ''
+            let toggleBtn = document.querySelector(`#toggle-${responseId}`) as HTMLSpanElement
+            toggleBtn.onclick = () => {
+              isExpand = !isExpand
+              let toggleText = toggleBtn.querySelector('.toggle-text') as HTMLSpanElement
+              toggleText.innerHTML = isExpand ? '收起' : '展开'
+              const reasoningEl = document.querySelector(`#response-ai-reasoning-${responseId}`) as HTMLDivElement
+              reasoningEl.style.display = isExpand ? 'block' : 'none'
+            }
+            isExpand && toggleBtn.click()
           } else if (!output.includes('<think>')) {
-            output = output.replace('深度思考中...', '')
+            output = output.replace('<p>深度思考中...</p>', '')
           }
           responseEl.innerHTML = marked.parse(output.replace('finish_reason=true', '').replace(/undefined/g, '')) as string
           responseEl.setAttribute('data-text', output.replace('finish_reason=true', '').replace(/undefined/g, ''))
@@ -187,7 +198,7 @@ document.addEventListener('astro:page-load', () => {
         // document.execCommand('copy', false, responseEl.innerHTML)
         navigator.clipboard.writeText(responseEl.getAttribute('data-text') as string).then(function() {
         console.log('文本已复制到剪贴板!');
-        copyBtn.innerHTML = '【coped!】'
+        copyBtn.innerHTML = '【copied!】'
         setTimeout(() => {
           copyBtn.innerHTML = '【复制】'
         }, 2000);
