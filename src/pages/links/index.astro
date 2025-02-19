@@ -2,11 +2,11 @@
 import { render, getCollection } from "astro:content";
 import PostLayout from "@/layouts/BlogPost.astro";
 
-const allLinks = await getCollection("link");
+const allLinks:any = await getCollection("link");
 const { Content } = await render(allLinks[0]);
 
 ---
 
-<PostLayout post={allLinks[0]} meta={{ title: "Links" }}>
+<PostLayout post={allLinks[0]} meta={{comment: true }}>
 	<Content />
 </PostLayout>

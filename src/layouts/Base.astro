@@ -8,11 +8,13 @@ import { siteConfig } from "@/site.config";
 import type { SiteMeta } from "@/types";
 import BackTotop from "@/components/BackTotop.astro";
 import Aplayer from "@/components/Aplayer.astro";
+import ValineComment from "@/components/ValineComment.astro";
+
 interface Props {
 	meta: SiteMeta;
 }
 const {
-	meta: { articleDate, description = siteConfig.description, ogImage, title },
+	meta: { articleDate, description = siteConfig.description, ogImage, title, comment },
 } = Astro.props;
 
 const anim = {
@@ -47,9 +49,12 @@ const customTransition = {
 		<Header />
 		<main id="main" class="min-h-[calc(100vh-320px)] sm:min-h-[calc(100vh-380px)]" transition:animate={customTransition}>
 			<slot />
+			{comment && <div class="comment mt-4">
+				<ValineComment />
+			</div>}
 		</main>
 	</body>
-	<Footer transition:persist />
+	<Footer />
 	<BackTotop />
 	<Aplayer />
 </html>

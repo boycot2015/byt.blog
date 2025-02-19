@@ -1,0 +1,26 @@
+---
+// ValineComment.astro
+---
+
+<div id="valine-comment"></div>
+
+<script>
+    import Valine from 'valine';
+    document.addEventListener('astro:page-load', () => {
+      const APP_ID = 'UFDAemKla2uvRCDNCBEGsVnA-gzGzoHsz';
+      const APP_KEY = 'mbNoKxkqSI3raGFUKAR1acV6';
+      new Valine({
+        appId: APP_ID,
+        appKey: APP_KEY,
+        path: window.location.pathname,
+        serverURLs: 'https://ufdaemkl.lc-cn-n1-shared.com',
+        el: '#valine-comment',
+        placeholder: '说点什么...',
+        // 添加任何其他你需要的配置项
+      });
+    })
+</script>
+
+<style>
+  /* 在这里添加你的样式 */
+</style>

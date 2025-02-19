@@ -15,3 +15,11 @@ page: true
 * [web-os](https://os.boycot.top/)
 * [![欢迎光临糖果屋](https://npm.elemecdn.com/akilar-friends@latest/avatar/akilar.top.jpg)Akilarの糖果屋](https://akilar.top/)
 * [![分享设计与科技生活](https://bu.dusays.com/2022/12/28/63ac2812183aa.png)张洪Heo](https://blog.zhheo.com/)
+
+## 友链申请
+--------------------------
+
+* 友链申请请直接在评论区留言，我会尽快审核通过的,格式如下：
+```md
+[友链](https://blog.boycot.top/)
+```

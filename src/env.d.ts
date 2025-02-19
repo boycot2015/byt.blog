@@ -7,3 +7,8 @@ declare module 'aplayer' {
 	const content: any;
 	export default content;
 }
+declare module 'valine' {
+	const content: any;
+	export default content;
+}
+
