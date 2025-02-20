@@ -1,6 +1,5 @@
 ---
 import PageLayout from "@/layouts/Base.astro";
-import { siteConfig } from "@/site.config";
 
 const title = '我是 DeepSeek，很高兴见到你！'
 const subTitle = '我可以帮你写代码、读文件、写作各种创意内容，请把你的任务交给我吧~'
@@ -18,10 +17,10 @@ const meta = {
       <section class="flex flex-col min-h-[52vh] sm:min-h-[35vh] w-full">
         <div class={`flex flex-1 flex-col rounded-md w-full overflow-y-auto`} id="response-content"></div>
         <div class="action-btns mt-4 flex w-full flex-wrap sm:space-x-2">
-            <input id="submit-text" class="border mb-2 sm:mb-0 w-full sm:flex-1 p-2 rounded-md border-[--color-border]" type="text" placeholder="给DeepSeek发消息">
+            <input id="submit-text" class="border mb-2 sm:mb-0 w-full sm:flex-1 p-2 rounded-md border-[var(--color-border)]" type="text" placeholder="给DeepSeek发消息">
             <div class="flex w-full sm:w-[auto] justify-center">
-              <button id="submit-btn" class="cursor-pointer self-end sm:w-[30%] mr-2 sm:w-[auto] border text-[var(--color-accent)] p-2 rounded-md border-[--color-border]">提交</button>
-              <button id="reset-btn" class="cursor-pointer sm:w-[30%] sm:m-[auto] sm:w-[auto] border text-[var(--color-global-text)] bg-[var(--color-bg)] p-2 rounded-md border-[--color-border]">清除</button>
+              <button id="submit-btn" class="cursor-pointer self-end sm:w-[30%] mr-2 sm:w-[auto] border text-[var(--color-accent)] p-2 rounded-md border-[var(--color-border)]">提交</button>
+              <button id="reset-btn" class="cursor-pointer sm:w-[30%] sm:m-[auto] sm:w-[auto] border text-[var(--color-global-text)] bg-[var(--color-bg)] p-2 rounded-md border-[var(--color-border)]">清除</button>
             </div>
         </div>
       </section>
@@ -35,6 +34,7 @@ import { uuid, debounce } from '@/utils'
 // import 'highlight.js/styles/tomorrow-night-bright.css'
 // import 'highlight.js/styles/vs2015.css'
 import prism from "prismjs";
+import { siteConfig } from "@/site.config";
 
 import "prismjs/plugins/line-numbers/prism-line-numbers.js";
 import "prismjs/plugins/line-numbers/prism-line-numbers.css";
@@ -120,7 +120,7 @@ document.addEventListener('astro:page-load', () => {
 
       messages.map((el, i) => {
         html += `<div class="flex flex-col my-4">
-            <span class="h-10 leading-10 border-[--color-border] ${i %2!=0?'self-start':'self-end'}">${el.role}</span>
+            <span class="h-10 leading-10 border-[var(--color-border)] ${i %2!=0?'self-start':'self-end'}">${el.role}</span>
             <div class="relative p-3 flex rounded-md bg-[rgb(240,240,240)] dark:bg-[rgb(33,35,38)] text-[var(--color-global-text)] leading-6 ${i %2!=0?'min-h-12 flex-wrap':'self-end'}">
               <div class="response-${i %2==0?'user':'ai'}-content w-full overflow-x-auto" id="${el.id}">${el.content}</div>
               ${el.id === askId ?'<span class="text-[var(--color-accent)] ml-2 cursor-pointer float-right" style="min-width:60px;" id="'+el.id+'-eidt-btn">【编辑】</span>':'<span class="absolute bg-[rgb(240,240,240)] dark:bg-[rgb(33,35,38)] right-2 top-2 text-[var(--color-accent)] ml-2 cursor-pointer" id="'+el.id+'-copy-btn">【复制】</span>'}
