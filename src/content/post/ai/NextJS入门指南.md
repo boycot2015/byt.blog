@@ -1,6 +1,8 @@
 ---
 title: NextJS入门指南
 publishDate: "2025-02-17"
+categories: ['前端', '框架', 'NextJS']
+tags: ['NextJS', 'javascript']
 ai: true
 ---
 > 本文由ai自动生成，仅供参考。

@@ -3,6 +3,7 @@ title: Node.js 简介
 description: Node.js 是一个开源的、跨平台的 JavaScript 运行时环境。
 publishDate: "2025-02-06T11:23:00Z"
 output: html_document
+categories: ['前端', 'Nodejs']
 tags: ['Node']
 ---
 `Node.js` 是一个开源和跨平台的 `JavaScript` 运行时环境。它是几乎所有类型项目的流行工具！

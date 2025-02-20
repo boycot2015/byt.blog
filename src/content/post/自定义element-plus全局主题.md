@@ -2,7 +2,7 @@
 title: "自定义element-plus全局主题"
 description: "自定义element-plus全局主题"
 publishDate: "2025-02-06T11:23:00Z"
-categories: ['ui', 'element-plus']
+categories: ['UI主题', 'element-plus']
 tags: ['element-plus', '主题']
 ---
 # 设置方法

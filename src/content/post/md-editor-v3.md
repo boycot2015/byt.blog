@@ -2,6 +2,7 @@
 title: "md-editor-v3,支持滚动，预览的markdown插件！"
 description: "md-editor-v3,支持滚动，预览的markdown插件！"
 publishDate: "2025-02-06T11:23:00Z"
+categories: ['前端', '工具', 'md-editor-v3']
 tags: ['vue3']
 ---
 
