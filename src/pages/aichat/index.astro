@@ -1,7 +1,9 @@
 ---
+import PageLayout from "@/layouts/Base.astro";
+import { siteConfig } from "@/site.config";
+
 const title = '我是 DeepSeek，很高兴见到你！'
 const subTitle = '我可以帮你写代码、读文件、写作各种创意内容，请把你的任务交给我吧~'
-import PageLayout from "@/layouts/Base.astro";
 const meta = {
 	description: "我是 DeepSeek，很高兴见到你！",
 	title: "ai chat",
@@ -43,7 +45,7 @@ import "prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard.js"; // show c
 import "prismjs/plugins/show-language/prism-show-language.js"; // display the language of the code block
 import "prismjs/plugins/custom-class/prism-custom-class";
 
-let baseUrl = import.meta.env.PROD ? 'https://ai.boycot.top' : 'http://localhost:8088'
+let apiUrl = siteConfig.apiUrl
 let renderer = new marked.Renderer();
 
 renderer.code = function(code, lang, escaped) {
@@ -132,7 +134,7 @@ document.addEventListener('astro:page-load', () => {
       const controller = new AbortController();
       btn.innerHTML = 'loading...'
       restBtn.innerHTML = '暂停'
-      const response = await fetch(`${baseUrl}/data`, {
+      const response = await fetch(`${apiUrl}/data`, {
         method: "post",
         signal: controller.signal,
         headers: {

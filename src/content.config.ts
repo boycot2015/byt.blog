@@ -24,6 +24,7 @@ const post = defineCollection({
 			ai: z.boolean().default(false),
 			page: z.boolean().default(false),
 			ogImage: z.string().optional(),
+			categories: z.array(z.string()).default([]).transform(removeDupsAndLowerCase),
 			tags: z.array(z.string()).default([]).transform(removeDupsAndLowerCase),
 			publishDate: z
 				.string()

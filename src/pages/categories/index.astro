@@ -1,0 +1,35 @@
+---
+import { getAllPosts, getUniqueCategoriesWithCount } from "@/data/post";
+import PageLayout from "@/layouts/Base.astro";
+
+const allPosts = await getAllPosts();
+const allCategories = getUniqueCategoriesWithCount(allPosts);
+
+const meta = {
+	description: "A list of all the topics I've written about in my posts",
+	title: "All Categories",
+};
+---
+
+<PageLayout meta={meta}>
+	<h1 class="title mb-6">分类</h1>
+	<ul class="flex flex-wrap space-y-2">
+		{
+			allCategories.map(([category, val]) => (
+				<li class="flex mx-2 items-center mb-2">
+					<a
+						class="cactus-link inline-block"
+						data-astro-prefetch
+						href={`/categories/${category}/`}
+						title={`View posts with the tag: ${category}`}
+					>
+						{category}
+					</a>
+					<sup class="inline-block">
+						{val}
+					</sup>
+				</li>
+			))
+		}
+	</ul>
+</PageLayout>

@@ -2,6 +2,8 @@
 title: astro集成aplayer播放器
 description: astro集成aplayer播放器
 publishDate: "2025-02-10"
+categories: ['前端', '框架']
+tags: ['astro', 'aplayer']
 ---
 > 本文详细阐述了在Astro框架中集成aplayer音乐播放器的完整流程。通过npm安装插件后创建动态播放器组件，引入APlayer并处理自动播放逻辑。针对Astro默认路由刷新问题，通过配置ClientRouter组件和transition:persist指令实现类SPA的页面导航效果。最后特别给出替换meeting-js为meting API的解决方案，包含自动获取播放列表数据、浏览器自动播放策略兼容处理等关键技术细节。
 

@@ -2,6 +2,8 @@
 title: js实现贪吃蛇游戏
 publishDate: "2025-02-17"
 ai: true
+categories: ['前端', '游戏']
+tags: ['游戏', 'javascript']
 ---
 > 本文由ai自动生成，仅供参考。
 

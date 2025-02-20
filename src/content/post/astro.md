@@ -5,6 +5,7 @@ description: Astro 是最适合构建像博客、营销网站、电子商务网�
 coverImage:
   src: "./cover-image/astro-logo-dark.png"
   alt: "Astro build wallpaper"
+categories: ['前端', '框架', 'astrojs']
 tags: ['astro']
 ---
 

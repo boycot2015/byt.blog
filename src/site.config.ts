@@ -1,9 +1,17 @@
 import type { SiteConfig } from "@/types";
 import type { AstroExpressiveCodeOptions } from "astro-expressive-code";
 
+let siteUrl = 'http://localhost:4321'
+let apiUrl = 'http://localhost:8088'
+// console.log(import.meta.env, 'import.meta.env');
+
+if (import.meta.env.PROD) {
+	apiUrl = 'https://ai.boycot.top'
+	siteUrl = 'https://astro-blog.boycot.top'
+}	
 export const siteConfig: SiteConfig = {
 	// Used as both a meta property (src/components/BaseHead.astro L:31 + L:49) & the generated satori png (src/pages/og-image/[slug].png.ts)
-	author: "Powered by Boycot",
+	author: "Boycot",
 	// Date.prototype.toLocaleDateString() parameters, found in src/utils/date.ts.
 	date: {
 		locale: "zh-CN",
@@ -22,13 +30,14 @@ export const siteConfig: SiteConfig = {
 	// Used to construct the meta title property found in src/components/BaseHead.astro L:11, and webmanifest name found in astro.config.ts L:42
 	title: "每日手记",
 	// ! Please remember to replace the following site property with your own domain, used in astro.config.ts
-	url: "https://astro-blog.boycot.top/",
+	url: siteUrl,
 	social: {
 		github: "https://github.com/boycot2015/astro-blog.git",
 		rss: "/rss.xml",
 	},
+	apiUrl,
 	// 播放器配置
-	aplyer: {
+	aplayer: {
 		id: '',
 		autoPlay: true,
 		loop: false,
@@ -37,7 +46,7 @@ export const siteConfig: SiteConfig = {
 };
 
 // Used to generate links in both the Header & Footer.
-export const menuLinks: { path: string; title: string }[] = [
+export const menuLinks: { path: string; title: string;hideInFooter?: boolean }[] = [
 	{
 		path: "/",
 		title: "首页",
@@ -50,10 +59,11 @@ export const menuLinks: { path: string; title: string }[] = [
 		path: "/notes/",
 		title: "笔记",
 	},
-	// {
-	// 	path: "/about/",
-	// 	title: "关于",
-	// },
+	{
+		path: "/about/",
+		title: "关于",
+		hideInFooter: true,
+	},
 	{
 		path: "/links/",
 		title: "友链",
@@ -61,7 +71,7 @@ export const menuLinks: { path: string; title: string }[] = [
 	{
 		path: "/aichat/",
 		title: "AI",
-	},
+	}
 ];
 
 // https://expressive-code.com/reference/configuration/

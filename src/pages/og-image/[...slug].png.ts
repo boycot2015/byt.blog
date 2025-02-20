@@ -1,5 +1,5 @@
-import RobotoMonoBold from "@/assets/roboto-mono-700.ttf";
-import RobotoMono from "@/assets/roboto-mono-regular.ttf";
+import OPPOSansRegular from '@/assets/font/OPPOSans-Regular.woff'
+import OPPOSansMedium from '@/assets/font/OPPOSans-Medium.woff'
 import { getAllPosts } from "@/data/post";
 import { siteConfig } from "@/site.config";
 import { getFormattedDate } from "@/utils/date";
@@ -7,26 +7,13 @@ import { Resvg } from "@resvg/resvg-js";
 import type { APIContext, InferGetStaticPropsType } from "astro";
 import satori, { type SatoriOptions } from "satori";
 import { html } from "satori-html";
+// import { promises } from 'fs'
+// import { join } from 'path'
+// import { fileURLToPath } from 'url';
+// import { dirname } from 'path';
 
-const ogOptions: SatoriOptions = {
-	// debug: true,
-	fonts: [
-		{
-			data: Buffer.from(RobotoMono),
-			name: "Roboto Mono",
-			style: "normal",
-			weight: 400,
-		},
-		{
-			data: Buffer.from(RobotoMonoBold),
-			name: "Roboto Mono",
-			style: "normal",
-			weight: 700,
-		},
-	],
-	height: 630,
-	width: 1200,
-};
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 
 const markup = (title: string, pubDate: string) =>
 	html`<div tw="flex flex-col w-full h-full bg-[#1d1f21] text-[#c9cacc]">
@@ -36,21 +23,7 @@ const markup = (title: string, pubDate: string) =>
 		</div>
 		<div tw="flex items-center justify-between w-full p-10 border-t border-[#2bbc89] text-xl">
 			<div tw="flex items-center">
-				<svg height="60" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 272 480">
-					<path
-						d="M181.334 93.333v-40L226.667 80v40l-45.333-26.667ZM136.001 53.333 90.667 26.667v426.666L136.001 480V53.333Z"
-						fill="#B04304"
-					></path>
-					<path
-						d="m136.001 119.944 45.333-26.667 45.333 26.667-45.333 26.667-45.333-26.667ZM90.667 26.667 136.001 0l45.333 26.667-45.333 26.666-45.334-26.666ZM181.334 53.277l45.333-26.666L272 53.277l-45.333 26.667-45.333-26.667ZM0 213.277l45.333-26.667 45.334 26.667-45.334 26.667L0 213.277ZM136 239.944l-45.333-26.667v53.333L136 239.944Z"
-						fill="#FF5D01"
-					></path>
-					<path
-						d="m136 53.333 45.333-26.666v120L226.667 120V80L272 53.333V160l-90.667 53.333v240L136 480V306.667L45.334 360V240l45.333-26.667v53.334L136 240V53.333Z"
-						fill="#53C68C"
-					></path>
-					<path d="M45.334 240 0 213.334v120L45.334 360V240Z" fill="#B04304"></path>
-				</svg>
+				<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24"><path fill="currentColor" d="M8.8 19q-.825 0-1.412-.587T6.8 17V7q0-.825.588-1.412T8.8 5h3.525q1.625 0 3 1T16.7 8.775q0 1.275-.575 1.963t-1.075.987q.625.275 1.388 1.025T17.2 15q0 2.225-1.625 3.113t-3.05.887zm1.025-2.8h2.6q1.2 0 1.463-.612t.262-.888t-.262-.887t-1.538-.613H9.825zm0-5.7h2.325q.825 0 1.2-.425t.375-.95q0-.6-.425-.975t-1.1-.375H9.825z"/></svg>
 				<p tw="ml-3 font-semibold">${siteConfig.title}</p>
 			</div>
 			<p>by ${siteConfig.author}</p>
@@ -61,13 +34,36 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 export async function GET(context: APIContext) {
 	const { pubDate, title } = context.props as Props;
-
 	const postDate = getFormattedDate(pubDate, {
 		month: "long",
 		weekday: "long",
 	});
+	const ogOptions: SatoriOptions = {
+		// debug: true,
+		fonts: [
+			{
+				// data: await fetch('https://dsfs.oppo.com/store/public/font/OPPOSans-Regular.woff').then(res => res.arrayBuffer()),
+				data: Buffer.from(OPPOSansRegular),
+				name: "OPPOSans-Regular",
+				style: "normal",
+				weight: 400,
+			},
+			{
+				// data: await fetch('https://dsfs.oppo.com/store/public/font/OPPOSans-Medium.woff').then(res => res.arrayBuffer()),
+				data: Buffer.from(OPPOSansMedium),
+				name: "OPPOSans-Medium",
+				style: "normal",
+				weight: 700,
+			}
+		],
+		height: 630,
+		width: 1200,
+		// embedFont: false
+	};
 	const svg = await satori(markup(title, postDate), ogOptions);
 	const png = new Resvg(svg).render().asPng();
+	// preview
+	// await promises.writeFile(join(__dirname, './_text-out.png'), png)
 	return new Response(png, {
 		headers: {
 			"Cache-Control": "public, max-age=31536000, immutable",

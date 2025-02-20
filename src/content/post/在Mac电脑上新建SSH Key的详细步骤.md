@@ -2,6 +2,7 @@
 title: "如何在Mac上新建SSH key"
 description: "如何在Mac上新建SSH key的方法，包括生成密钥对、设置密码和添加公钥到远程服务器或平台。通过SSH key进行身份验证可以更安全地进行远程连接和操作。"
 publishDate: "2025-02-06T11:23:00Z"
+categories: ['git', 'ssh key']
 tags: ['ssh']
 ---
 

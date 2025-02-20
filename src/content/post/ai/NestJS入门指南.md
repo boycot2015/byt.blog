@@ -2,6 +2,8 @@
 title: NestJS入门指南
 publishDate: "2025-02-17"
 ai: true
+categories: ['前端', '框架', 'NestJS']
+tags: ['NestJS', 'javascript']
 ---
 > 本文由ai自动生成，仅供参考。
 

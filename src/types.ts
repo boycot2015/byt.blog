@@ -9,11 +9,12 @@ export interface SiteConfig {
 	ogLocale: string;
 	title: string;
 	url: string;
+	apiUrl?: string;
 	social: {
 		github: string;
 		rss: string;
 	};
-	aplyer?: {
+	aplayer?: {
 		id: string;
 		autoPlay: true;
 		loop: false;
