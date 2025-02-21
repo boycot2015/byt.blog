@@ -7,7 +7,7 @@ let apiUrl = 'http://localhost:8088'
 
 if (import.meta.env.PROD) {
 	apiUrl = 'https://ai.boycot.top'
-	siteUrl = 'https://astro-blog.boycot.top'
+	siteUrl = 'https://boycot.top'
 }	
 export const siteConfig: SiteConfig = {
 	// Used as both a meta property (src/components/BaseHead.astro L:31 + L:49) & the generated satori png (src/pages/og-image/[slug].png.ts)
@@ -32,7 +32,7 @@ export const siteConfig: SiteConfig = {
 	// ! Please remember to replace the following site property with your own domain, used in astro.config.ts
 	url: siteUrl,
 	social: {
-		github: "https://github.com/boycot2015/astro-blog.git",
+		github: "https://github.com/boycot2015",
 		rss: "/rss.xml",
 	},
 	apiUrl,

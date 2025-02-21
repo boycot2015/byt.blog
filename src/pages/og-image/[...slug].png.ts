@@ -63,7 +63,7 @@ export async function GET(context: APIContext) {
 	const svg = await satori(markup(title, postDate), ogOptions);
 	const png = new Resvg(svg).render().asPng();
 	// preview
-	// await promises.writeFile(join(__dirname, './_text-out.png'), png)
+	// await promises.writeFile(join(__dirname, './_social-card.png'), png)
 	return new Response(png, {
 		headers: {
 			"Cache-Control": "public, max-age=31536000, immutable",
