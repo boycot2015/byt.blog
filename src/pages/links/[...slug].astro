@@ -1,0 +1,30 @@
+---
+import { render, getCollection } from "astro:content";
+import PageLayout from "@/layouts/Base.astro";
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+export const getStaticPaths = (async () => {
+	const allLinks = await getCollection("link");
+	return allLinks.map((link) => ({
+		params: { slug: link.id },
+		props: { link },
+	}));
+}) satisfies GetStaticPaths;
+
+export type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { link } = Astro.props;
+const { Content } = await render(link);
+
+const meta = {
+	description:
+	link.data.description ||
+		`Read about my note posted on: ${link.data.publishDate?.toLocaleDateString()}`,
+	title: link.data.title,
+};
+---
+
+<PageLayout meta={{comment: true, ...meta }}>
+	<div class="prose prose-sm prose-headings:font-semibold prose-headings:text-accent-2 prose-headings:before:absolute prose-headings:before:-ms-4 prose-headings:before:text-gray-600 prose-headings:hover:before:text-accent sm:prose-headings:before:content-['#'] sm:prose-th:before:content-none max-w-3xl">
+		<Content />
+	</div>
+</PageLayout>

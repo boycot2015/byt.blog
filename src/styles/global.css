@@ -132,14 +132,24 @@
 .right-2 {
 	right: calc(var(--spacing)* 2);
 }
-#main pre {
+.float-right {
+	float: right;
+}
+#main .code-toolbar {
     width: 100%;
-	border-radius: 5px;
-	padding: 0 10px 15px;
 	margin: 10px 0;
 	max-width: 100%;
 	overflow: hidden;
 	overflow-x: auto;
+	pre {
+		border-radius: 5px;
+		padding: 0 10px 15px;
+		overflow-y: hidden;
+	}
+	.toolbar {
+		top: .6em;
+		right: .6em;
+	}
 }
 .code-toolbar {
 	position: relative;
@@ -156,8 +166,8 @@
         width: 10px;
         height: 10px;
         border-radius: 50%;
-        top: 10px;
-        left: 30px;
+        top: 14px;
+        left: 14px;
 		z-index: 9;
         transform: translate(-50%);
     }
@@ -168,26 +178,28 @@
         width: 10px;
         height: 10px;
         border-radius: 50%;
-        top: 10px;
-        left: 45px;
+        top: 14px;
+        left: 30px;
         transform: translate(-50%);
     }
-    pre:first-child{
-        &::after{
-            content: "";
-            position: absolute;
-            background: limegreen;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-			top: 10px;
-            left: 14px;
-            transform: translate(-50%);
-        }
-    }
+	pre:first-child::before{
+		content: "";
+		position: absolute;
+		background: limegreen;
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		top: 14px;
+		left: 45px;
+		transform: translate(-50%);
+	}
 }
-.line-numbers .line-numbers-rows {
-	left: -1.45em !important;
+.line-numbers {
+	position: static !important;
+	.line-numbers-rows {
+		border-right: 0 !important;
+		left: -1.35em !important;
+	}
 }
 .vpower {
 	display: none;

@@ -2,11 +2,45 @@
 import { render, getCollection } from "astro:content";
 import PostLayout from "@/layouts/BlogPost.astro";
 
-const allLinks:any = await getCollection("link");
+const allLinks:any = await getCollection("link", ({ data }) => data.page);
 const { Content } = await render(allLinks[0]);
 
 ---
-
+<style>
+	:global(.link-content .links) {
+		ul {
+			overflow: hidden;
+			clear: both;
+			padding-inline-start: 0;
+			li {
+				margin-bottom: 10px;
+				list-style: none;
+				float: left;
+				padding: 0 10px;
+				padding-inline-start: 0;
+				a {
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-items: center;
+					&:hover {
+						color: var(--color-accent);
+						text-decoration-color: var(--color-accent);
+					}
+				}
+			}
+		}
+		ul img {
+			height: 90px;
+			width: 90px;
+			background-color: #ccc;
+			border-radius: 5px;
+			margin-bottom: 5px;
+		}
+	}
+</style>
 <PostLayout post={allLinks[0]} meta={{comment: true }}>
-	<Content />
+	<div class="link-content">
+		<Content />
+	</div>
 </PostLayout>
