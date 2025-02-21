@@ -29,12 +29,11 @@ const meta = {
 <script>
 import { marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
-// import highlightJs from 'highlight.js'
 import { uuid, debounce } from '@/utils'
-// import 'highlight.js/styles/tomorrow-night-bright.css'
-// import 'highlight.js/styles/vs2015.css'
 import prism from "prismjs";
 import { siteConfig } from "@/site.config";
+
+window.Prism = prism
 
 import "prismjs/plugins/line-numbers/prism-line-numbers.js";
 import "prismjs/plugins/line-numbers/prism-line-numbers.css";
@@ -71,7 +70,7 @@ renderer.code = function(code, lang, escaped) {
         + '\n</code></pre>\n';
 };
 marked.use(markedHighlight({
-  langPrefix: 'prism language-',
+  langPrefix: 'prism line-numbers language-',
   highlight: (code, lang = 'html') => {
     if (prism.languages[lang]) {
       return prism.highlight(code, prism.languages[lang], lang);
@@ -80,17 +79,6 @@ marked.use(markedHighlight({
     }
   },
 }))
-// marked.setOptions({
-//   langPrefix: 'prism language-',
-//   renderer,
-//   highlight: (code, lang = 'html') => {
-//     if (prism.languages[lang]) {
-//       return prism.highlight(code, prism.languages[lang], lang);
-//     } else {
-//       return code;
-//     }
-//   },
-// });
 document.addEventListener('astro:page-load', () => {
   let isBottom: boolean = true
   let isRuning: boolean = false

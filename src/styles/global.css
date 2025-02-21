@@ -135,7 +135,7 @@
 #main pre {
     width: 100%;
 	border-radius: 5px;
-	padding: 30px 10px 0px;
+	padding: 0 10px 15px;
 	margin: 10px 0;
 	max-width: 100%;
 	overflow: hidden;
@@ -144,9 +144,10 @@
 .code-toolbar {
 	position: relative;
     code{ 
+        top: 24px;
         display: inline-block;
         padding-bottom: 20px;
-        top: 24px;
+		padding-left: 34px;
     }
     &::before {
         content: "";
@@ -156,7 +157,8 @@
         height: 10px;
         border-radius: 50%;
         top: 10px;
-        left: 28px;
+        left: 30px;
+		z-index: 9;
         transform: translate(-50%);
     }
     &::after {
@@ -167,10 +169,10 @@
         height: 10px;
         border-radius: 50%;
         top: 10px;
-        left: 44px;
+        left: 45px;
         transform: translate(-50%);
     }
-    code:first-child{
+    pre:first-child{
         &::after{
             content: "";
             position: absolute;
@@ -178,11 +180,14 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-			top: 9px;
-            left: 11px;
+			top: 10px;
+            left: 14px;
             transform: translate(-50%);
         }
     }
+}
+.line-numbers .line-numbers-rows {
+	left: -1.45em !important;
 }
 .vpower {
 	display: none;

@@ -19,6 +19,7 @@ const { Content } = await render(note);
 	data-pagefind-body={isPreview ? false : true}
 >
 	<Tag class="title" class:list={{ "text-base": isPreview }}>
+		{note.data.draft && <span class="text-red-500">(草稿) </span>}
 		{
 			isPreview ? (
 				<a class="cactus-link" href={`/notes/${note.id}/`}>

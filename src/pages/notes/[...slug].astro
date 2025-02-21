@@ -7,9 +7,13 @@ import Pagination from "@/components/Paginator.astro";
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 
 // if you're using an adaptor in SSR mode, getStaticPaths wont work -> https://docs.astro.build/en/guides/routing/#modifying-the-slug-example-for-ssr
-const allNotes = await getCollection("note");
+const allNotes = await getCollection("note", ({ data }) => {
+	return import.meta.env.PROD ? !data.draft : true;
+});
 export const getStaticPaths = (async () => {
-	const allNotes = await getCollection("note");
+	const allNotes = await getCollection("note", ({ data }) => {
+		return import.meta.env.PROD ? !data.draft : true;
+	});
 	return allNotes.map((note) => ({
 		params: { slug: note.id },
 		props: { note },
