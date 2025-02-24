@@ -38,5 +38,5 @@ const paginationProps = {
 
 <PostLayout post={post} meta={{ comment: true }}>
 	<Content />
-	<Pagination {...paginationProps} />
+	<Pagination slot="footer" {...paginationProps} />
 </PostLayout>

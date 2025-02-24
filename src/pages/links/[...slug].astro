@@ -9,22 +9,58 @@ export const getStaticPaths = (async () => {
 		props: { link },
 	}));
 }) satisfies GetStaticPaths;
-
+// import FormattedDate from "@/components/FormattedDate.astro";
 export type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 const { link } = Astro.props;
 const { Content } = await render(link);
-
+// const data = link.data
 const meta = {
 	description:
 	link.data.description ||
 		`Read about my note posted on: ${link.data.publishDate?.toLocaleDateString()}`,
 	title: link.data.title,
 };
+
+// const dateTimeOptions: Intl.DateTimeFormatOptions = {
+// 	month: "long",
+// };
 ---
 
 <PageLayout meta={{comment: true, ...meta }}>
+	<!-- <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+		<p class="font-semibold">
+			<FormattedDate date={data.publishDate} dateTimeOptions={dateTimeOptions} /> /{" "}
+		</p>
+		{
+			data.updatedDate && (
+				<span class="bg-quote/5 text-quote rounded-lg px-2 py-1">
+					更新时间:
+					<FormattedDate class="ms-1" date={data.updatedDate} dateTimeOptions={dateTimeOptions} />
+				</span>
+			)
+		}
+	</div> -->
 	<div class="prose prose-sm prose-headings:font-semibold prose-headings:text-accent-2 prose-headings:before:absolute prose-headings:before:-ms-4 prose-headings:before:text-gray-600 prose-headings:hover:before:text-accent sm:prose-headings:before:content-['#'] sm:prose-th:before:content-none max-w-3xl">
 		<Content />
 	</div>
 </PageLayout>
+<script>
+window.addEventListener('load', () => {
+	// 处理刷新浏览器锚点定位失效问题
+	const hash = window.location.hash;
+	if (hash) {
+	document.querySelector(decodeURI(hash))?.scrollIntoView({ behavior: 'smooth' });
+	}
+	document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+		anchor.addEventListener('click', (e) => {
+		e.preventDefault(); // 阻止默认行为
+		const targetId = anchor.getAttribute('href') as string;
+		const targetElement = document.querySelector(targetId);
+		if (targetElement) {
+		targetElement.scrollIntoView({ behavior: 'smooth' });
+		}
+	});
+	});
+});
+</script>

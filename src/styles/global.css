@@ -140,11 +140,11 @@
 	margin: 10px 0;
 	max-width: 100%;
 	overflow: hidden;
-	overflow-x: auto;
 	pre {
 		border-radius: 5px;
-		padding: 0 10px 15px;
-		overflow-y: hidden;
+		padding: 0 10px;
+		overflow: hidden;
+		overflow-x: auto;
 	}
 	.toolbar {
 		top: .6em;
@@ -156,8 +156,7 @@
     code{ 
         top: 24px;
         display: inline-block;
-        padding-bottom: 20px;
-		padding-left: 34px;
+        padding: 20px 0 10px 34px;
     }
     &::before {
         content: "";
@@ -196,9 +195,14 @@
 }
 .line-numbers {
 	position: static !important;
+	code  {
+		position: static !important;
+	}
 	.line-numbers-rows {
+		top: 28px !important;
+		left: 0 !important;
+		background: #2d2d2d;
 		border-right: 0 !important;
-		left: -1.35em !important;
 	}
 }
 .vpower {

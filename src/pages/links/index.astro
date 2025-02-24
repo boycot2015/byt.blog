@@ -14,10 +14,11 @@ const { Content } = await render(allLinks[0]);
 			padding-inline-start: 0;
 			li {
 				margin-bottom: 10px;
+				margin-right: 10px;
 				list-style: none;
 				float: left;
-				padding: 0 10px;
 				padding-inline-start: 0;
+				max-width: 110px;
 				a {
 					display: flex;
 					flex-direction: column;
@@ -33,9 +34,9 @@ const { Content } = await render(allLinks[0]);
 		ul img {
 			height: 90px;
 			width: 90px;
-			background-color: #ccc;
+			/* background-color: #ccc; */
 			border-radius: 5px;
-			margin-bottom: 5px;
+			margin: 0 auto 5px;
 		}
 	}
 </style>
