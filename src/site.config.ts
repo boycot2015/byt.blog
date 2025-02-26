@@ -69,6 +69,11 @@ export const menuLinks: { path: string; title: string;hideInFooter?: boolean }[]
 		title: "友链",
 	},
 	{
+		path: "/eBook/",
+		title: "电子书",
+		hideInFooter: true,
+	},
+	{
 		path: "/aichat/",
 		title: "AI",
 	}

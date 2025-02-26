@@ -98,6 +98,7 @@ export default defineConfig({
 		// format: "file"
 	},
 	vite: {
+		assetsInclude: ["**/*.epub"],
 		optimizeDeps: {
 			exclude: ["@resvg/resvg-js"],
 		},
@@ -124,6 +125,7 @@ export default defineConfig({
 							marked: ["marked", "marked-highlight"],
 							aplayer: ["aplayer"],
 							prismjs: ["prismjs"],
+							epubjs: ["epubjs"]
 						}
 						for (const key in chunks) {
 							if (chunks[key]?.some((el:string) => id.includes(el))) {
@@ -161,3 +163,15 @@ function rawFonts(ext: string[]) {
 		},
 	};
 }
+
+// function epubPlugin() {
+// 	return {
+// 	  name: 'vite-plugin-epub',
+// 	  transform (code:string, id:string) {
+// 		if (id.endsWith('.epub')) {
+// 		  return `export default ${JSON.stringify(code)}`;
+// 		}
+// 		return null
+// 	  }
+// 	};
+//   }

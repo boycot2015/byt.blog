@@ -1,0 +1,70 @@
+---
+import { render, getCollection } from "astro:content";
+import PageLayout from "@/layouts/Base.astro";
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+export const getStaticPaths = (async () => {
+	const allbooks = await getCollection("ebook");
+	return allbooks.map((book) => ({
+		params: { slug: book.data.title },
+		props: { book },
+	}));
+}) satisfies GetStaticPaths;
+export type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { book } = Astro.props;
+const meta = {
+	description: book.data.description,
+	title: book.data.title,
+};
+
+---
+<PageLayout meta={{comment: false, ...meta }}>
+	<!-- 将消息存储为数据属性。 -->
+	<book-component data-book={JSON.stringify(book)} transition:persist>
+		<div class="flex flex-col">
+			<div class="page flex justify-between order-1 sm:order-0 mb-2">
+				<div class="btn-prev cursor-pointer hover:text-[var(--color-accent)]">← 上一页</div>
+				<div class="btn-next cursor-pointer hover:text-[var(--color-accent)]">下一页 →</div>
+			</div>
+			<div class="flex justify-center items-center">
+				<div class="w-[100%] !text-[var(--color-accent)] h-[65vh] sm:h-[100vh] overflow-auto" id="book">
+				</div>
+			</div>
+		</div>
+	</book-component>
+</PageLayout>
+<script>
+	import Epub from 'epubjs'
+	class BookComponent extends HTMLElement {
+	  async connectedCallback() {
+		// 从 data（数据）属性中读取消息。
+		const data = JSON.parse(this.dataset.book as string);
+		const bookContainer = document.getElementById('book') as HTMLDivElement;
+		let file = import.meta.resolve(import.meta.env.PROD ? data.data.file.replace('/src/assets', '') : data.data.file)
+		let book = Epub(file);
+		// 读取EPUB文件
+		await book.loaded;
+		// 创建一个 Rendition，并指定要渲染 EPUB 的 HTML 元素
+		const rendition = book.renderTo(bookContainer, {
+			flow: "paginated", // paginated、scrolled-doc
+			width: '100%',
+			height: '100%',
+			stylesheet: 'src/styles/global.css',
+			spread: true,
+			// minSpreadWidth: 600,
+			allowScriptedContent: true
+		});
+
+		// 加载第一页
+		rendition.display(2);
+		// console.log(rendition, book, 'book');
+		document.querySelector('.btn-prev').onclick = () => {
+			rendition.prev()
+		}
+		document.querySelector('.btn-next').onclick = () => {
+			rendition.next()
+		}
+	  }
+	}
+  
+	customElements.define('book-component', BookComponent)

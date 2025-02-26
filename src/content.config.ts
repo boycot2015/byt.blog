@@ -83,4 +83,13 @@ const link = defineCollection({
 			.transform((str) => (str ? new Date(str) : undefined)),
 	}),
 });
-export const collections = { post, note, link };
+
+const ebook = defineCollection({
+	type: 'data', // 使用 'data' 类型处理二进制文件
+	schema: z.object({
+	  title: z.string(),
+	  author: z.string(),
+	  file: z.string(), // EPUB文件路径
+	}),
+});
+export const collections = { post, note, link, ebook };

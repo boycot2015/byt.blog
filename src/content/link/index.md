@@ -18,6 +18,7 @@ page: true
 * [![欢迎光临糖果屋](https://npm.elemecdn.com/akilar-friends@latest/avatar/akilar.top.jpg)Akilarの糖果屋](https://akilar.top/)
 * [![分享设计与科技生活](https://bu.dusays.com/2022/12/28/63ac2812183aa.png)张洪Heo](https://blog.zhheo.com/)
 
+* [![](https://web.koodoreader.com/favicon.ico)web-reader](https://web.koodoreader.com/#/)
 </div>
 
 ## 友链申请
