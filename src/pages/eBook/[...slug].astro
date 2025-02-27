@@ -22,13 +22,14 @@ const meta = {
 	<!-- 将消息存储为数据属性。 -->
 	<book-component data-book={JSON.stringify(book)} transition:persist>
 		<div class="flex flex-col">
-			<div class="page flex justify-between order-1 sm:order-0 mb-2">
-				<div class="btn-prev cursor-pointer hover:text-[var(--color-accent)]">← 上一页</div>
-				<div class="btn-next cursor-pointer hover:text-[var(--color-accent)]">下一页 →</div>
-			</div>
 			<div class="flex justify-center items-center">
 				<div class="w-[100%] !text-[var(--color-accent)] h-[100vh] overflow-hidden" id="book">
 				</div>
+			</div>
+			<div class="page flex justify-between">
+				<div class="btn-prev cursor-pointer hover:text-[var(--color-accent)]">← 上一页</div>
+				<div>跳转第<input class="border pager rounded-md mx-2 text-center w-[80px]" type="text" />章</div>
+				<div class="btn-next cursor-pointer hover:text-[var(--color-accent)]">下一页 →</div>
 			</div>
 		</div>
 	</book-component>
@@ -59,9 +60,11 @@ const meta = {
 		bookContainer.innerHTML = ''
 		// 加载第一页
 		rendition.display(2);
-		// console.log(rendition, book, 'book');
+		console.log(rendition, book, 'book');
 		let prevBtn = document.querySelector('.btn-prev') as HTMLDivElement
 		let nextBtn = document.querySelector('.btn-next') as HTMLDivElement
+		let pager = document.querySelector('.pager') as HTMLInputElement
+		pager.value = book.spine.spineNodeIndex || ''
 		prevBtn.onclick = () => {
 			rendition.prev()
 			document.body.scrollIntoView({ behavior: 'smooth' })
@@ -69,6 +72,11 @@ const meta = {
 		nextBtn.onclick = () => {
 			rendition.next()
 			document.body.scrollIntoView({ behavior: 'smooth' })
+		}
+		pager.onblur = () => {
+			rendition.display(pager.value);
+			pager.value && document.body.scrollIntoView({ behavior: 'smooth' })
+			pager.value = ''
 		}
 	  }
 	}

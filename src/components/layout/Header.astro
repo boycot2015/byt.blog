@@ -26,7 +26,7 @@ const isCurrent = (url:string, target:string) => {
 				menuLinks.map((link) => (
 					<a
 						aria-current={isCurrent(Astro.url.pathname, link.path) ? "page" : false}
-						class={`mx-4 py-2 underline-offset-2 hover:underline ${isCurrent(Astro.url.pathname, link.path) ? "border-r-0 border-b-2 border-[var(--color-accent)]" : 'border-none'}`}
+						class={`mx-4 py-2 pb-0 underline-offset-2 hover:underline ${isCurrent(Astro.url.pathname, link.path) ? "border-r-0 border-b-2 border-[var(--color-accent)]" : 'border-none'}`}
 						data-astro-prefetch
 						href={link.path}
 					>

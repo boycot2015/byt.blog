@@ -127,11 +127,15 @@
 	--tw-prose-th-borders: #666;
 }
 @font-face {
-    font-family: 'OPPOSans';  /* Mi Lan Pro */
+    font-family: 'OPPOSans';
     src: url('../assets/font/OPPOSans-Regular.woff') format('woff');
 }
+@font-face {
+    font-family: 'Boycot';
+    src: url('../assets/font/black.ttf') format("truetype");
+}
 html,body {
-	font-family: OPPOSans, 'Courier New', Courier, monospace;
+	font-family: 'Boycot', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 .p-3 {
 	padding: calc(var(--spacing)* 3);
