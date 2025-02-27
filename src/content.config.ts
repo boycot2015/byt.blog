@@ -89,6 +89,7 @@ const ebook = defineCollection({
 	schema: z.object({
 	  title: z.string(),
 	  author: z.string(),
+	  img: z.string(),
 	  file: z.string(), // EPUB文件路径
 	}),
 });

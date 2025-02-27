@@ -27,7 +27,7 @@ const meta = {
 				<div class="btn-next cursor-pointer hover:text-[var(--color-accent)]">下一页 →</div>
 			</div>
 			<div class="flex justify-center items-center">
-				<div class="w-[100%] !text-[var(--color-accent)] h-[65vh] sm:h-[100vh] overflow-auto" id="book">
+				<div class="w-[100%] !text-[var(--color-accent)] h-[100vh] overflow-auto" id="book">
 				</div>
 			</div>
 		</div>
@@ -40,7 +40,7 @@ const meta = {
 		// 从 data（数据）属性中读取消息。
 		const data = JSON.parse(this.dataset.book as string);
 		const bookContainer = document.getElementById('book') as HTMLDivElement;
-		let file = import.meta.resolve(import.meta.env.PROD ? data.data.file.replace('/src/assets', '') : data.data.file)
+		let file = import.meta.resolve(data.data.file)
 		let book = Epub(file);
 		// 读取EPUB文件
 		await book.loaded;
@@ -51,6 +51,7 @@ const meta = {
 			height: '100%',
 			stylesheet: 'src/styles/global.css',
 			spread: true,
+			// defaultDirection: '',
 			// minSpreadWidth: 600,
 			allowScriptedContent: true
 		});
@@ -58,11 +59,15 @@ const meta = {
 		// 加载第一页
 		rendition.display(2);
 		// console.log(rendition, book, 'book');
-		document.querySelector('.btn-prev').onclick = () => {
+		let prevBtn = document.querySelector('.btn-prev') as HTMLDivElement
+		let nextBtn = document.querySelector('.btn-next') as HTMLDivElement
+		prevBtn.onclick = () => {
 			rendition.prev()
+			document.body.scrollIntoView({ behavior: 'smooth' })
 		}
-		document.querySelector('.btn-next').onclick = () => {
+		nextBtn.onclick = () => {
 			rendition.next()
+			document.body.scrollIntoView({ behavior: 'smooth' })
 		}
 	  }
 	}
