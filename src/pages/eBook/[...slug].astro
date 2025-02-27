@@ -42,8 +42,10 @@ const meta = {
 		const bookContainer = document.getElementById('book') as HTMLDivElement;
 		let file = import.meta.resolve(data.data.file)
 		let book = Epub(file);
+		bookContainer.innerHTML = '<div class="text-center my-40">正在加载资源，请稍后...</div>'
 		// 读取EPUB文件
 		await book.loaded;
+		bookContainer.innerHTML = ''
 		// 创建一个 Rendition，并指定要渲染 EPUB 的 HTML 元素
 		const rendition = book.renderTo(bookContainer, {
 			flow: "paginated", // paginated、scrolled-doc
