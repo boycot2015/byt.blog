@@ -24,6 +24,7 @@ const meta = {
 		<div class="flex flex-col">
 			<div class="flex justify-center items-center">
 				<div class="w-[100%] !text-[var(--color-accent)] h-[100vh] overflow-hidden" id="book">
+					<div class="text-center my-20">资源加载中，请稍后...</div>
 				</div>
 			</div>
 			<div class="page flex justify-between">
@@ -40,15 +41,13 @@ const meta = {
 	class BookComponent extends HTMLElement {
 	  async connectedCallback() {
 		document.addEventListener('astro:page-load', async () => {
-
+			const bookContainer = document.getElementById('book') as HTMLDivElement;
 			// 从 data（数据）属性中读取消息。
 			const data = JSON.parse(this.dataset.book as string);
-			const bookContainer = document.getElementById('book') as HTMLDivElement;
 			let bookdata = await localforage.getItem('book_' + data.data.title)
 			if (!bookdata) {
 				let file = await fetch(data.data.file).then((res) => res.arrayBuffer())
 				localforage.setItem('book_' + data.data.title, file)
-				bookContainer.innerHTML = '<div class="text-center my-20">资源加载中，请稍后...</div>'
 				bookdata = await localforage.getItem('book_' + data.data.title)
 			}
 			// console.log(file, bookdata, 'file');
