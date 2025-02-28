@@ -20,7 +20,7 @@ const meta = {
 ---
 <PageLayout meta={{comment: false, ...meta }}>
 	<!-- 将消息存储为数据属性。 -->
-	<book-component data-book={JSON.stringify(book)} transition:persist>
+	<book-component data-book={JSON.stringify(book)}>
 		<div class="flex flex-col">
 			<div class="flex justify-center items-center">
 				<div class="w-[100%] !text-[var(--color-accent)] h-[100vh] overflow-hidden" id="book">
@@ -40,53 +40,51 @@ const meta = {
 	import localforage from 'localforage'
 	class BookComponent extends HTMLElement {
 	  async connectedCallback() {
-		document.addEventListener('astro:page-load', async () => {
-			const bookContainer = document.getElementById('book') as HTMLDivElement;
-			// 从 data（数据）属性中读取消息。
-			const data = JSON.parse(this.dataset.book as string);
-			let bookdata = await localforage.getItem('book_' + data.data.title)
-			if (!bookdata) {
-				let file = await fetch(data.data.file).then((res) => res.arrayBuffer())
-				localforage.setItem('book_' + data.data.title, file)
-				bookdata = await localforage.getItem('book_' + data.data.title)
-			}
-			// console.log(file, bookdata, 'file');
-			let book = Epub(bookdata);
-			bookContainer.innerHTML = ''
-			// 读取EPUB文件
-			await book.loaded;
-			// 创建一个 Rendition，并指定要渲染 EPUB 的 HTML 元素
-			const rendition = book.renderTo(bookContainer, {
-				flow: "paginated", // paginated、scrolled-doc
-				width: '100%',
-				height: '100%',
-				stylesheet: 'src/styles/global.css',
-				spread: true,
-				// defaultDirection: '',
-				// minSpreadWidth: 600,
-				allowScriptedContent: true
-			});
-			// 加载第一页
-			rendition.display(2);
-			console.log(rendition, book, localforage, 'book');
-			let prevBtn = this.querySelector('.btn-prev') as HTMLDivElement
-			let nextBtn = this.querySelector('.btn-next') as HTMLDivElement
-			let pager = this.querySelector('.pager') as HTMLInputElement
-			pager.value = book.spine.spineNodeIndex || ''
-			prevBtn.onclick = () => {
-				rendition.prev()
-				document.body.scrollIntoView({ behavior: 'smooth' })
-			}
-			nextBtn.onclick = () => {
-				rendition.next()
-				document.body.scrollIntoView({ behavior: 'smooth' })
-			}
-			pager.onblur = () => {
-				rendition.display(pager.value);
-				pager.value && document.body.scrollIntoView({ behavior: 'smooth' })
-				pager.value = ''
-			}
-		})
+		const bookContainer = document.getElementById('book') as HTMLDivElement;
+		// 从 data（数据）属性中读取消息。
+		const data = JSON.parse(this.dataset.book as string);
+		let bookdata = await localforage.getItem('book_' + data.data.title)
+		if (!bookdata) {
+			let file = await fetch(data.data.file).then((res) => res.arrayBuffer())
+			localforage.setItem('book_' + data.data.title, file)
+			bookdata = await localforage.getItem('book_' + data.data.title)
+		}
+		// console.log(file, bookdata, 'file');
+		let book = Epub(bookdata);
+		bookContainer.innerHTML = ''
+		// 读取EPUB文件
+		await book.loaded;
+		// 创建一个 Rendition，并指定要渲染 EPUB 的 HTML 元素
+		const rendition = book.renderTo(bookContainer, {
+			flow: "paginated", // paginated、scrolled-doc
+			width: '100%',
+			height: '100%',
+			stylesheet: 'src/styles/global.css',
+			spread: true,
+			// defaultDirection: '',
+			// minSpreadWidth: 600,
+			allowScriptedContent: true
+		});
+		// 加载第一页
+		rendition.display(2);
+		console.log(rendition, book, localforage, 'book');
+		let prevBtn = this.querySelector('.btn-prev') as HTMLDivElement
+		let nextBtn = this.querySelector('.btn-next') as HTMLDivElement
+		let pager = this.querySelector('.pager') as HTMLInputElement
+		pager.value = book.spine.spineNodeIndex || ''
+		prevBtn.onclick = () => {
+			rendition.prev()
+			document.body.scrollIntoView({ behavior: 'smooth' })
+		}
+		nextBtn.onclick = () => {
+			rendition.next()
+			document.body.scrollIntoView({ behavior: 'smooth' })
+		}
+		pager.onblur = () => {
+			rendition.display(pager.value);
+			pager.value && document.body.scrollIntoView({ behavior: 'smooth' })
+			pager.value = ''
+		}
 	}
 }
 customElements.define('book-component', BookComponent)
