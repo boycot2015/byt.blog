@@ -36,13 +36,18 @@ const meta = {
 </PageLayout>
 <script>
 	import Epub from 'epubjs'
+	import localforage from 'localforage'
 	class BookComponent extends HTMLElement {
 	  async connectedCallback() {
 		// 从 data（数据）属性中读取消息。
 		const data = JSON.parse(this.dataset.book as string);
 		const bookContainer = document.getElementById('book') as HTMLDivElement;
 		let file = import.meta.resolve(data.data.file)
-		let book = Epub(file);
+		const reader = new FileReader();
+		let buffer = reader.readAsDataURL(file);
+		localforage.setItem('book_' + data.data.title, buffer)
+		let bookdata = await localforage.getItem('book_' + data.data.title)
+		let book = Epub(bookdata);
 		bookContainer.innerHTML = '<div class="text-center my-20">资源加载中，请稍后...</div>'
 		// 读取EPUB文件
 		await book.loaded;
@@ -60,10 +65,10 @@ const meta = {
 		bookContainer.innerHTML = ''
 		// 加载第一页
 		rendition.display(2);
-		console.log(rendition, book, 'book');
-		let prevBtn = document.querySelector('.btn-prev') as HTMLDivElement
-		let nextBtn = document.querySelector('.btn-next') as HTMLDivElement
-		let pager = document.querySelector('.pager') as HTMLInputElement
+		console.log(rendition, book, localforage, 'book');
+		let prevBtn = this.querySelector('.btn-prev') as HTMLDivElement
+		let nextBtn = this.querySelector('.btn-next') as HTMLDivElement
+		let pager = this.querySelector('.pager') as HTMLInputElement
 		pager.value = book.spine.spineNodeIndex || ''
 		prevBtn.onclick = () => {
 			rendition.prev()

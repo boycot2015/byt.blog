@@ -11,17 +11,23 @@ const data = allbooks.map(el => el.data)
 ---
 
 <PageLayout meta={meta}>
-    <div class="flex sm:justify-start gap-8 flex-wrap">
+    <!-- <div class="flex sm:justify-start gap-8 flex-wrap">
         {
             data.map((item, index) => <a href={'/eBook/'+item.title}><div class={`w-[155px] sm:w-[120px] overflow-hidden`} id={`book${index+1}`}>
             <img src={item.img} class="h-[200px] sm:h-[160px] w-full" alt={item.title} />
             <h3 class="text-center mt-2">{item.title}-{item.author}</h3></div>
             </a>)
         }
-    </div>
-    <div class="mt-6">
-        获取更佳体验，访问<a href="https://web.koodoreader.com/" class="hover:text-global-text px-2 underline sm:py-0" target="_blank" rel="noopener noreferrer">koodoreader</a>
+    </div> -->
+    <div class="w-full h-[100vh]">
+        <iframe class="w-full h-full" src="https://byt-reader.vercel.app" frameborder="0"></iframe>
+        <div class="mt-6">
+            获取更佳体验，访问<a href="https://web.koodoreader.com/" class="hover:text-global-text px-2 underline sm:py-0" target="_blank" rel="noopener noreferrer">koodoreader</a>
+        </div>
     </div>
 </PageLayout>
-<script>
-</script>
+<style>
+    :global(iframe .setting-icon-parrent {
+        display: none;
+    })
+</style>

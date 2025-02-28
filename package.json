@@ -29,6 +29,7 @@
 		"cssnano": "^7.0.6",
 		"epubjs": "^0.3.93",
 		"hastscript": "^9.0.0",
+		"localforage": "^1.10.0",
 		"marked": "^7.0.5",
 		"marked-highlight": "^2.2.1",
 		"mdast-util-directive": "^3.0.0",

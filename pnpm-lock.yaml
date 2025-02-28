@@ -50,6 +50,9 @@ importers:
       hastscript:
         specifier: ^9.0.0
         version: 9.0.0
+      localforage:
+        specifier: ^1.10.0
+        version: 1.10.0
       marked:
         specifier: ^7.0.5
         version: 7.0.5
