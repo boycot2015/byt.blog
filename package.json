@@ -45,7 +45,7 @@
 		"sharp": "^0.33.5",
 		"unified": "^11.0.5",
 		"unist-util-visit": "^5.0.0",
-		"valine": "^1.5.2"
+		"valine": "^1.5.3"
 	},
 	"devDependencies": {
 		"@astrojs/check": "^0.9.4",
