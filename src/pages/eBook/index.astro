@@ -11,13 +11,18 @@ const data = allbooks.map(el => el.data)
 ---
 
 <PageLayout meta={meta}>
-    <div class="flex sm:justify-start gap-8 flex-wrap">
+    <div id="books" class="books flex sm:justify-start gap-8 flex-wrap">
         {
             data.map((item, index) => <a href={'/eBook/'+item.title}><div class={`w-[155px] sm:w-[120px] overflow-hidden`} id={`book${index+1}`}>
             <img src={item.img} class="h-[200px] sm:h-[160px] w-full" alt={item.title} />
             <h3 class="text-center mt-2">{item.title}-{item.author}</h3></div>
             </a>)
         }
+        <!-- <div class="add-btn cursor-pointer text-[40px] w-[auto] justify-center items-center flex flex-col leading-[80px]">
+            +
+            <span class="text-xl">上传</span>
+            <input type="file" accept=".epub" hidden>
+        </div> -->
     </div>
     <div class="w-full h-[100vh]">
         <!-- <iframe class="w-full h-full" src="https://byt-reader.vercel.app" frameborder="0"></iframe> -->
@@ -26,3 +31,24 @@ const data = allbooks.map(el => el.data)
         </div>
     </div>
 </PageLayout>
+<script>
+    import localforage from 'localforage'
+    let targetEl = document.querySelector('.add-btn') as HTMLDivElement
+    let fileEl = document.querySelector('input') as HTMLInputElement
+    let bookEl = document.querySelector('#books') as HTMLDivElement
+    targetEl.onclick = () => {
+        fileEl.click()
+    }
+    fileEl.onchange = (e: Event) => {
+        let target = e.target as any
+        let files = [...target.files]
+        // console.log(files, 'files');
+        files.map(el => {
+            localforage.setItem('book_' + el.name, el.arrayBuffer())
+            let alink = document.createElement('a') as HTMLAnchorElement
+            alink.href = '/eBook/' + el.name
+            alink.setAttribute('class', 'w-[155px] sm:w-[120px] overflow-hidden')
+            bookEl.prepend(alink)
+        })
+    }
+</script>
