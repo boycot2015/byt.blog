@@ -88,12 +88,12 @@ const meta = {
 				// minSpreadWidth: 600,
 				allowScriptedContent: true
 			});
-			this.data = data
-			this.book = book
-			this.rendition = rendition
-			this.bookmarks = bookmarks
 			// console.log(this.rendition, this.book, 'book');
 			book.ready.then(() => {
+				this.data = data
+				this.book = book
+				this.rendition = rendition
+				this.bookmarks = bookmarks
 				// 加载目录
 				this.loadColumns()
 
@@ -155,7 +155,7 @@ const meta = {
 			})
 			columnsEl.value = this.bookmarks[0]?.start.index || ''
 			this.columns = columns
-			console.log("locations:", columns, this.book.navigation)
+			// console.log("locations:", columns, this.book.navigation)
 			this.columnsEl = columnsEl
 		}
 		loadMarks () {
@@ -172,7 +172,7 @@ const meta = {
 		addMark () {
 			let mark = {
 				...this.rendition.location,
-				label: this.columns.find(el => el.href.split('#')[0] === this.rendition.location.start?.href)?.label + '_' + rendition.location.start?.displayed.page
+				label: this.columns.find(el => el.href.split('#')[0] === this.rendition.location.start?.href)?.label + '_' + this.rendition.location.start?.displayed.page
 			}
 			// console.log(this.columns, this.rendition.location.start, mark, 'rendition.location.start');
 			let has = this.bookmarks.find(el => el.label === mark.label)
@@ -181,7 +181,8 @@ const meta = {
 			optionEl.label = mark.label
 			optionEl.value = mark.start.cfi
 			this.marksEl.appendChild(optionEl)
-			localforage.setItem('book_marks_' + this.data.title, this.bookmarks)
+			// console.log(this.data, 'data');
+			localforage.setItem('book_marks_' + this.data.data.title, this.bookmarks)
 			alert(has ? '书签已存在': '添加成功')
 		}
 		changeMark (e) {
@@ -193,7 +194,7 @@ const meta = {
 			if (has) {
 				this.bookmarks.splice(0, 1, has)
 				this.bookmarks.splice(hasIndex, 1, old)
-				localforage.setItem('book_marks_' + this.data.title, this.bookmarks)
+				localforage.setItem('book_marks_' + this.data.data.title, this.bookmarks)
 				this.columnsEl.value = has.start.index || ''
 				this.toTop()
 			}
