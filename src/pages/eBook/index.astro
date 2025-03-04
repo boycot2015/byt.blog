@@ -13,8 +13,8 @@ const data = allbooks.map(el => el.data)
 <PageLayout meta={meta}>
     <div id="books" class="books flex sm:justify-start gap-8 flex-wrap">
         {
-            data.map((item, index) => <a href={'/eBook/'+item.title}><div class={`w-[155px] sm:w-[120px] overflow-hidden`} id={`book${index+1}`}>
-            <img src={item.img} class="h-[200px] sm:h-[160px] w-full" alt={item.title} />
+            data.map((item, index) => <a href={'/eBook/'+item.title}><div class={`w-[155px] sm:w-[110px] overflow-hidden`} id={`book${index+1}`}>
+            <img src={item.img} class="h-[200px] sm:h-[150px] w-full" alt={item.title} />
             <h3 class="text-center mt-2">{item.title}-{item.author}</h3></div>
             </a>)
         }

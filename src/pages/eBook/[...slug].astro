@@ -31,7 +31,7 @@ const meta = {
 					<option label="请选择"></option>
 				</select>
 				<div>跳转第
-					<input class="border pager rounded-md mx-2 text-center w-[60px]" type="text" />章
+					<input class="border pager rounded-md mx-2 text-center w-[60px]" type="text" />页
 				</div>
 			</div>
 			<div class="flex justify-center items-center my-4">
@@ -80,26 +80,26 @@ const meta = {
 			let book = Epub(bookdata);
 			bookContainer.innerHTML = ''
 			// 读取EPUB文件
-			await book.loaded;
-			// 创建一个 Rendition，并指定要渲染 EPUB 的 HTML 元素
-			const rendition = book.renderTo(bookContainer, {
-				flow: "paginated", // paginated、scrolled-doc
-				width: '100%',
-				height: '100%',
-				stylesheet: 'src/styles/global.css',
-				spread: true,
-				// defaultDirection: '',
-				// minSpreadWidth: 600,
-				allowScriptedContent: true
-			});
-			console.log(rendition, book.ready, 'book');
+			// await book.loaded;
 			book.ready.then(() => {
+				// 创建一个 Rendition，并指定要渲染 EPUB 的 HTML 元素
+				const rendition = book.renderTo(bookContainer, {
+					flow: "paginated", // paginated、scrolled-doc
+					width: '100%',
+					height: '100%',
+					stylesheet: 'src/styles/global.css',
+					spread: true,
+					// defaultDirection: '',
+					// minSpreadWidth: 600,
+					allowScriptedContent: true
+				});
 				this.data = data
 				this.book = book
 				this.rendition = rendition
 				this.bookmarks = bookmarks
 				this.themes = rendition.themes
-
+				// console.log(book, rendition, 'rendition')
+				
 				// 配置主题
 				this.registerTheme()
 
@@ -138,10 +138,13 @@ const meta = {
 					name: "default", // 主题名字
 					style: { // 主题样式
 						body: {
-						// color: "var(--color-global-text)", // 文字颜色
+						// color: "var(--color-global-text) !important", // 文字颜色
 						// background: "var(--color-global-bg)", // 背景颜色
 						lineColor: "#E4E3DF", // 主题中并无该属性，该属性为自定义目录下划线颜色
 						},
+						'.logo': {
+							display: 'none'
+						}
 					},
 				},
 				{
@@ -191,44 +194,28 @@ const meta = {
 			let columns = this.book.navigation.toc
 			const covert = (item) => {
 				let index = +this.book.navigation.tocByHref[item.href] + 2
-				if (item.id !== item.href) {
-					if (item.id.split('_')[1]) {
-						index = +item.id.split('_')[1] + +this.book.navigation.tocById[item.id] + 2
-						if (item.parent) {
-							index = +item.parent.split('_')[1] + +this.book.navigation.tocById[item.id] + 2
-						}
-					} else {
-						index = +this.book.navigation.tocById[item.id]
-						if (item.parent) {
-							index = (+this.book.navigation.tocById[item.id] + 2)
-						}
-					}
+				if (item.id !== item.href || item.parent) {
+					index = item.href.replace(/(?!^)#.*/, '')
+				}
+				if (item.parent) {
 				}
 				return {
 					...item,
-					label: item.label?.replace(/\n/g, '').split(' ').filter(el => el).slice(-2).join(' '),
-					index
+					href: item.href.replace(/(?!^)#.*/, ''),
+					index,
+					label: item.label?.replace(/\n/g, '').split(' ').filter(el => el).slice(-2).join(' ')
 				}
 			}
 			columns = columns.reduce((curr, next) => next.subitems?.length ? curr.concat([covert(next), ...next.subitems.map(covert)]) : curr.concat(covert(next)), [])
-			let pIndex = 0
-			columns = columns.map(el => {
-				if (el.href.includes('_split_')) {
-					pIndex = this.book.navigation.tocByHref[el.href]
-				}
-				if (!el.id.includes('num')) pIndex = 0
-				el.index += pIndex
-				return el
-			})
 			columns.filter(el => el.index).map(el => {
 				let optionEl = document.createElement('option') as HTMLOptionElement
 				optionEl.label = el.label
-				optionEl.value = el.index
+				optionEl.value = el.href
 				columnsEl.appendChild(optionEl)
 			})
-			columnsEl.value = this.bookmarks[0]?.start.index || ''
+			columnsEl.value = this.bookmarks[0]?.start.href || ''
 			this.columns = columns
-			console.log("locations:", columns, this.book.navigation)
+			// console.log("locations:", columns, this.book.navigation)
 			this.columnsEl = columnsEl
 		}
 		loadMarks () {
@@ -281,7 +268,7 @@ const meta = {
 				this.bookmarks.splice(0, 1, has)
 				this.bookmarks.splice(hasIndex, 1, old)
 				localforage.setItem('book_marks_' + this.data.data.title, this.bookmarks)
-				this.columnsEl.value = has.start.index || ''
+				this.columnsEl.value = has.start.href || ''
 				this.toTop()
 			}
 		}
@@ -290,7 +277,8 @@ const meta = {
 			if (type === 'pager') {
 				if (pager.value) {
 					this.jumpTo(pager.value)
-					this.columnsEl.value = pager.value
+					let target = this.columns.find((el, index) => +pager.value === index)
+					this.columnsEl.value = target?.href || pager.value
 					this.toTop()
 				}
 				pager.value = ''
@@ -301,7 +289,7 @@ const meta = {
 		}
 		columnsChange (e) {
 			let target = e.target as any
-			this.jumpTo(+target.value || '')
+			this.jumpTo(target.value || '')
 			this.toTop()
 		}
 		toTop () {
