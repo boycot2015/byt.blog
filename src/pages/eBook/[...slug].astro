@@ -54,7 +54,6 @@ const meta = {
 <script>
 	import Epub from 'epubjs'
 	import localforage from 'localforage'
-	import { rootInDarkMode } from "@/utils/domElement";
 	class BookComponent extends HTMLElement {
 		super () {
 		}
@@ -76,7 +75,7 @@ const meta = {
 			if (!bookdata) {
 				let file = await fetch(data.data.file).then((res) => res.arrayBuffer())
 				localforage.setItem('book_' + data.data.title, file)
-				bookdata = await localforage.getItem('book_' + data.data.title)
+				bookdata = file
 			}
 			let book = Epub(bookdata);
 			bookContainer.innerHTML = ''
@@ -93,13 +92,13 @@ const meta = {
 				// minSpreadWidth: 600,
 				allowScriptedContent: true
 			});
+			console.log(rendition, book.ready, 'book');
 			book.ready.then(() => {
 				this.data = data
 				this.book = book
 				this.rendition = rendition
 				this.bookmarks = bookmarks
 				this.themes = rendition.themes
-				console.log(this.rendition, this.book, 'book');
 
 				// 配置主题
 				this.registerTheme()

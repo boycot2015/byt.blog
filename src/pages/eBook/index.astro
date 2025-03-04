@@ -33,22 +33,25 @@ const data = allbooks.map(el => el.data)
 </PageLayout>
 <script>
     import localforage from 'localforage'
-    let targetEl = document.querySelector('.add-btn') as HTMLDivElement
-    let fileEl = document.querySelector('input') as HTMLInputElement
-    let bookEl = document.querySelector('#books') as HTMLDivElement
-    targetEl.onclick = () => {
-        fileEl.click()
-    }
-    fileEl.onchange = (e: Event) => {
-        let target = e.target as any
-        let files = [...target.files]
-        // console.log(files, 'files');
-        files.map(el => {
-            localforage.setItem('book_' + el.name, el.arrayBuffer())
-            let alink = document.createElement('a') as HTMLAnchorElement
-            alink.href = '/eBook/' + el.name
-            alink.setAttribute('class', 'w-[155px] sm:w-[120px] overflow-hidden')
-            bookEl.prepend(alink)
-        })
-    }
+    window.addEventListener('astro:page-load', () => {
+
+        let targetEl = document.querySelector('.add-btn') as HTMLDivElement
+        let fileEl = document.querySelector('input') as HTMLInputElement
+        let bookEl = document.querySelector('#books') as HTMLDivElement
+        targetEl.onclick = () => {
+            fileEl.click()
+        }
+        fileEl.onchange = (e: Event) => {
+            let target = e.target as any
+            let files = [...target.files]
+            // console.log(files, 'files');
+            files.map(el => {
+                localforage.setItem('book_' + el.name, el.arrayBuffer())
+                let alink = document.createElement('a') as HTMLAnchorElement
+                alink.href = '/eBook/' + el.name
+                alink.setAttribute('class', 'w-[155px] sm:w-[120px] overflow-hidden')
+                bookEl.prepend(alink)
+            })
+        }
+    })
 </script>
