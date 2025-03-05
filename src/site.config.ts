@@ -1,6 +1,6 @@
 import type { SiteConfig } from "@/types";
 import type { AstroExpressiveCodeOptions } from "astro-expressive-code";
-
+import api from './api'
 let siteUrl = 'http://localhost:4321'
 let apiUrl = 'http://localhost:8088'
 // console.log(import.meta.env, 'import.meta.env');
@@ -43,6 +43,7 @@ export const siteConfig: SiteConfig = {
 		loop: false,
 		preload: true,
 	},
+	$api: api
 };
 
 // Used to generate links in both the Header & Footer.

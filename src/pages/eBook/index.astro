@@ -1,28 +1,33 @@
 ---
 import PageLayout from "@/layouts/Base.astro";
-import { getCollection } from "astro:content";
-const allbooks = await getCollection("ebook");
+import { getAllbooks } from "@/data/book";
+const books = await getAllbooks()
+
 const meta = {
 	description: "电子书、阅读",
 	title: "电子书",
 };
 // console.log(allbooks, 'allbooks');
-const data = allbooks.map(el => el.data)
+const data = books.map(el => el.data)
+const isPro = import.meta.env.PROD
 ---
 
 <PageLayout meta={meta}>
     <div id="books" class="books flex sm:justify-start gap-8 flex-wrap">
         {
-            data.map((item, index) => <a href={'/eBook/'+item.title}><div class={`w-[155px] sm:w-[110px] overflow-hidden`} id={`book${index+1}`}>
+            data.map((item, index) => <div id={`book${index+1}`}><a href={'/eBook/'+item.title}><div class={`w-[155px] sm:w-[110px] overflow-hidden`}  title={`${item.title}-${item.author}`}>
             <img src={item.img} class="h-[200px] sm:h-[150px] w-full" alt={item.title} />
-            <h3 class="text-center mt-2">{item.title}-{item.author}</h3></div>
-            </a>)
+            <h3 class="text-center line-clamp-1 mt-2">{item.title}-{item.author}</h3></div></a>
+            {!isPro ? <div class="flex justify-center my-1"><button class="remove-btn border px-1 rounded-md text-[var(--color-accent)] border-[var(--color-accent)] cursor-pointer" data-object-id={item.objectId} data-id={`book${index+1}`}>删除</button></div> : null}
+            </div>)
         }
-        <!-- <div class="add-btn cursor-pointer text-[40px] w-[auto] justify-center items-center flex flex-col leading-[80px]">
-            +
-            <span class="text-xl">上传</span>
-            <input type="file" accept=".epub" hidden>
-        </div> -->
+        {
+            !isPro ? <div class="add-btn cursor-pointer border border-[var(--color-accent)] px-10 text-[40px] w-[auto] justify-center items-center flex flex-col h-[200px] text-[var(--color-accent)]">
+                +
+                <span class="text-xl">上传</span>
+                <input type="file" accept=".epub" hidden>
+            </div> : null
+        }
     </div>
     <div class="w-full">
         <!-- <iframe class="w-full h-full" src="https://byt-reader.vercel.app" frameborder="0"></iframe> -->
@@ -31,27 +36,75 @@ const data = allbooks.map(el => el.data)
         </div>
     </div>
 </PageLayout>
-<script>
-    import localforage from 'localforage'
-    window.addEventListener('astro:page-load', () => {
 
-        let targetEl = document.querySelector('.add-btn') as HTMLDivElement
-        let fileEl = document.querySelector('input') as HTMLInputElement
-        let bookEl = document.querySelector('#books') as HTMLDivElement
-        targetEl.onclick = () => {
-            fileEl.click()
-        }
-        fileEl.onchange = (e: Event) => {
-            let target = e.target as any
-            let files = [...target.files]
-            // console.log(files, 'files');
-            files.map(el => {
-                localforage.setItem('book_' + el.name, el.arrayBuffer())
-                let alink = document.createElement('a') as HTMLAnchorElement
-                alink.href = '/eBook/' + el.name
-                alink.setAttribute('class', 'w-[155px] sm:w-[120px] overflow-hidden')
-                bookEl.prepend(alink)
-            })
+<script>
+    import { siteConfig } from '@/site.config'
+    import localforage from 'localforage'
+    import Epub from 'epubjs'
+    const $api = siteConfig.$api;
+    let targetEl = document.querySelector('.add-btn') as HTMLDivElement
+    let fileEl = document.querySelector('input') as HTMLInputElement
+    let bookEl = document.querySelector('#books') as HTMLDivElement
+    let removeBtnEl = document.querySelectorAll('.remove-btn') as unknown as HTMLButtonElement[]
+    
+    targetEl.onclick = () => {
+        fileEl.click()
+    }
+    removeBtnEl.forEach(el => {
+        el.onclick = async (e) => {
+            e.stopPropagation()
+            let id = el.getAttribute('data-id')
+            let objectId = el.getAttribute('data-object-id')
+            console.log(e, id, 'eeeeeee');
+            document.querySelector(`#${id}`)?.remove()
+            if (objectId) await $api.book.handleDelete(objectId)
+            alert('删除成功！')
         }
     })
+    fileEl.onchange = (e: Event) => {
+        let target = e.target as any
+        let files = [...target.files]
+        // console.log(files, 'files');
+        files.map(async el => {
+            let book:any = Epub(el);
+            localforage.setItem('book_' + el.name, el.arrayBuffer())
+            let alink = document.createElement('a') as HTMLAnchorElement
+            alink.href = '/eBook/' + el.name.split('_')[0]
+            alink.innerHTML = `<div class="book w-full h-[150px]"></div>
+            <h3 class="text-center mt-2">${el.name.split('_')[0] + '-' + el.name.split('_')[1]}</h3></div>`
+            alink.setAttribute('class', 'w-[155px] sm:w-[120px] overflow-hidden')
+            bookEl.prepend(alink)
+            book.ready.then(async () => {
+				// 创建一个 Rendition，并指定要渲染 EPUB 的 HTML 元素
+                const bookContainer = alink.querySelector('.book')
+				const rendition = book.renderTo(bookContainer, {
+					flow: "paginated", // paginated、scrolled-doc
+					width: '100%',
+					height: '100%',
+					spread: true,
+					// defaultDirection: '',
+					// minSpreadWidth: 600,
+					allowScriptedContent: true
+				});
+                rendition.themes.register('default', {
+                    body: {
+                        padding: '0 !important',
+                        // height: '120px !important'
+                    },
+                    'svg': {
+                        'max-height': '200px !important'
+                    }
+                })
+                rendition.display()
+                let coverUrl = await book.coverUrl()
+                let result = await fetch(coverUrl).then(res => res.blob())
+                let reader = new FileReader()
+                reader.readAsDataURL(result)
+                reader.onload = async () => {
+                    await $api.book.upload(el.name, el, { base64: reader.result })
+                    alert('上传成功！')
+                }
+            })
+        })
+    }
 </script>

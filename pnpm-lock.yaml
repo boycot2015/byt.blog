@@ -50,6 +50,9 @@ importers:
       hastscript:
         specifier: ^9.0.0
         version: 9.0.0
+      leancloud-storage:
+        specifier: ^4.15.2
+        version: 4.15.2
       localforage:
         specifier: ^1.10.0
         version: 1.10.0
@@ -280,6 +283,10 @@ packages:
     resolution: {integrity: sha512-81NWa1njQblgZbQHxWHpxxCzNsa3ZwvFqpUg7P+NNUU6f3UU2jBEg4OlF/J6rl8+PQGh1q6/zWScd001YwcA5A==}
     engines: {node: '>=6.0.0'}
     hasBin: true
+
+  '@babel/runtime-corejs3@7.26.9':
+    resolution: {integrity: sha512-5EVjbTegqN7RSJle6hMWYxO4voo4rI+9krITk+DWR+diJgGrjZjrIBnJhjrHYYQsFgI7j1w1QnrvV7YSKBfYGg==}
+    engines: {node: '>=6.9.0'}
 
   '@babel/runtime@7.26.9':
     resolution: {integrity: sha512-aA63XwOkcl4xxQa3HjPMqOP6LiK0ZDv3mUPYEFXkpHbaFjtGggE1A61FjFzJnB+p7/oy2gA8E+rcBNl/zC1tMg==}
@@ -1814,6 +1821,9 @@ packages:
   cookiejar@2.1.4:
     resolution: {integrity: sha512-LDx6oHrK+PhzLKJU9j5S7/Y3jM/mUHvD/DeI1WQmJn652iPC5Y4TBzC9l+5OMOXlyTTA+SmVUPm0HQUwpD5Jqw==}
 
+  core-js-pure@3.41.0:
+    resolution: {integrity: sha512-71Gzp96T9YPk63aUvE5Q5qP+DryB4ZloUZPSOebGM88VNw8VNfvdA7z6kGA8iGOTEzAomsRidp4jXSmUIJsL+Q==}
+
   core-js@3.40.0:
     resolution: {integrity: sha512-7vsMc/Lty6AGnn7uFpYT56QesI5D2Y/UkgKounk87OP9Z2H9Z8kj6jzcSGAxFmUtDOS0ntK6lbQz+Nsa0Jj6mQ==}
 
@@ -2589,6 +2599,9 @@ packages:
 
   leancloud-storage@3.15.0:
     resolution: {integrity: sha512-UbR6pLA0tVYPcY7AND0pey45iFsB2PkIo8Wz0DZ9BabKyqndA1ey2LKzYpFDGNh3ODrmT3fValVn9yY4bgf9Uw==}
+
+  leancloud-storage@4.15.2:
+    resolution: {integrity: sha512-zvlfeG2aq25lFZ+2pvo0KoMf3jDuR0ThzLivCj5Yv3yhZf2i/BL5fypW+0IqRh6YSFkJ731iHHfq7FIPhxdHpw==}
 
   lie@3.1.1:
     resolution: {integrity: sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw==}
@@ -4637,6 +4650,11 @@ snapshots:
     dependencies:
       '@babel/types': 7.26.9
 
+  '@babel/runtime-corejs3@7.26.9':
+    dependencies:
+      core-js-pure: 3.41.0
+      regenerator-runtime: 0.14.1
+
   '@babel/runtime@7.26.9':
     dependencies:
       regenerator-runtime: 0.14.1
@@ -6067,6 +6085,8 @@ snapshots:
 
   cookiejar@2.1.4: {}
 
+  core-js-pure@3.41.0: {}
+
   core-js@3.40.0: {}
 
   core-util-is@1.0.3: {}
@@ -7009,6 +7029,26 @@ snapshots:
       localstorage-memory: 1.0.3
       md5: 2.3.0
       superagent: 3.8.3
+      underscore: 1.13.7
+      uuid: 3.4.0
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  leancloud-storage@4.15.2:
+    dependencies:
+      '@babel/runtime-corejs3': 7.26.9
+      '@leancloud/adapter-types': 5.0.0
+      '@leancloud/platform-adapters-browser': 1.5.3
+      '@leancloud/platform-adapters-node': 1.6.0
+      '@leancloud/platform-adapters-weapp': 1.6.3
+      debug: 3.2.7
+      eventemitter3: 2.0.3
+      leancloud-realtime: 5.0.0-rc.8
+      leancloud-realtime-plugin-live-query: 1.2.0(leancloud-realtime@5.0.0-rc.8)
+      md5: 2.3.0
+      promise-timeout: 1.3.0
       underscore: 1.13.7
       uuid: 3.4.0
     transitivePeerDependencies:

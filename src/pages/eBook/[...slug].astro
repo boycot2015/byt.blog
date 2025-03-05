@@ -1,9 +1,9 @@
 ---
-import { render, getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import { getAllbooks } from "@/data/book";
 export const getStaticPaths = (async () => {
-	const allbooks = await getCollection("ebook");
+	const allbooks = await getAllbooks()
 	return allbooks.map((book) => ({
 		params: { slug: book.data.title },
 		props: { book },
@@ -54,30 +54,40 @@ const meta = {
 <script>
 	import Epub from 'epubjs'
 	import localforage from 'localforage'
+	import { siteConfig } from '@/site.config'
+
+    const $api = siteConfig.$api;
+	interface TreeObj  {
+		href: string
+		id: string
+		parent: string
+		label: string
+	}
+	interface Tree extends TreeObj {
+		subitems: Tree[]
+	}
 	class BookComponent extends HTMLElement {
-		super () {
-		}
 		data: any
 		book: any
 		themes: any
-		fontSize: number
+		fontSize: number = 12
 		rendition: any
-		bookmarks: any[]
-		columns: any[]
-		columnsEl: HTMLSelectElement
-		marksEl: HTMLSelectElement
+		bookmarks: any[] = []
+		columns: any[] = []
+		columnsEl!: HTMLSelectElement
+		marksEl!: HTMLSelectElement
 		async connectedCallback() {
 			const bookContainer = document.getElementById('book') as HTMLDivElement;
 			// 从 data（数据）属性中读取消息。
 			const data = JSON.parse(this.dataset.book as string);
-			let bookdata = await localforage.getItem('book_' + data.data.title)
+			let bookdata:any = await localforage.getItem('book_' + data.data.title)
 			let bookmarks = await localforage.getItem('book_marks_' + data.data.title) as any || []
 			if (!bookdata) {
 				let file = await fetch(data.data.file).then((res) => res.arrayBuffer())
 				localforage.setItem('book_' + data.data.title, file)
 				bookdata = file
 			}
-			let book = Epub(bookdata);
+			let book:any = Epub(bookdata);
 			bookContainer.innerHTML = ''
 			// 读取EPUB文件
 			// await book.loaded;
@@ -98,7 +108,7 @@ const meta = {
 				this.rendition = rendition
 				this.bookmarks = bookmarks
 				this.themes = rendition.themes
-				// console.log(book, rendition, 'rendition')
+				console.log(book, rendition, 'rendition')
 				
 				// 配置主题
 				this.registerTheme()
@@ -192,22 +202,22 @@ const meta = {
 		loadColumns () {
 			let columnsEl = this.querySelector('#columns') as HTMLSelectElement
 			let columns = this.book.navigation.toc
-			const covert = (item) => {
-				let index = +this.book.navigation.tocByHref[item.href] + 2
-				if (item.id !== item.href || item.parent) {
-					index = item.href.replace(/(?!^)#.*/, '')
-				}
-				if (item.parent) {
-				}
+			const covert = (item: { href: string | number; id: any; parent: string; label: string }) => {
 				return {
 					...item,
-					href: item.href.replace(/(?!^)#.*/, ''),
-					index,
-					label: item.label?.replace(/\n/g, '').split(' ').filter(el => el).slice(-2).join(' ')
+					href: ('' + item.href).replace(/(?!^)#.*/, ''),
+					label: item.label?.replace(/\n/g, '').split(' ').filter((el: any) => el).slice(-2).join(' ')
 				}
 			}
-			columns = columns.reduce((curr, next) => next.subitems?.length ? curr.concat([covert(next), ...next.subitems.map(covert)]) : curr.concat(covert(next)), [])
-			columns.filter(el => el.index).map(el => {
+			const travel = (arr:Tree[], temp: TreeObj[]) => {
+				arr.map(({ subitems, ...el }) => {
+					temp.push(covert({ ...el }))
+					subitems?.length && temp.concat(travel(subitems, temp))
+				})
+				return temp
+			}
+			columns = travel(columns, [])
+			columns.filter((el: { href: string }) => el.href).map((el: { label: string; href: string }) => {
 				let optionEl = document.createElement('option') as HTMLOptionElement
 				optionEl.label = el.label
 				optionEl.value = el.href
@@ -238,9 +248,9 @@ const meta = {
 			});
 		}
 		// 触发改变电子书背景主题时调用
-		setTheme(index) {
+		setTheme(index: number) {
 			this.themes.fontSize(this.fontSize + "px")
-			this.themes.select(this.getThemeList()[index].name);
+			this.themes.select(this.getThemeList()[index]?.name);
 		}
 		addMark () {
 			let mark = {
@@ -256,9 +266,10 @@ const meta = {
 			this.marksEl.appendChild(optionEl)
 			// console.log(this.data, 'data');
 			localforage.setItem('book_marks_' + this.data.data.title, this.bookmarks)
+			this.data.objectId && $api.book.saveMark(this.data.objectId, this.bookmarks)
 			alert(has ? '书签已存在': '添加成功')
 		}
-		changeMark (e) {
+		changeMark (e: Event) {
 			let target = e.target as any
 			this.jumpTo(target.value || '')
 			let has = this.bookmarks.find(el => el.start.cfi === target.value)
@@ -277,17 +288,15 @@ const meta = {
 			if (type === 'pager') {
 				if (pager.value) {
 					this.jumpTo(pager.value)
-					let target = this.columns.find((el, index) => +pager.value === index)
-					this.columnsEl.value = target?.href || pager.value
 					this.toTop()
 				}
 				pager.value = ''
 				return
 			}
-			this.rendition[type]()
+			this.jumpTo('', type)
 			this.toTop()
 		}
-		columnsChange (e) {
+		columnsChange (e: Event) {
 			let target = e.target as any
 			this.jumpTo(target.value || '')
 			this.toTop()
@@ -295,8 +304,11 @@ const meta = {
 		toTop () {
 			document.body.scrollIntoView({ behavior: 'smooth' })
 		}
-		jumpTo (value) {
-			this.rendition.display(value || '')
+		jumpTo (value: string, type = 'display') {
+			this.rendition[type](value || '').then((section: { href: string }) => {
+				let location = this.rendition.currentLocation()
+				this.columnsEl.value = section?.href || location.start?.href
+			})
 		}
 	}
 	customElements.define('book-component', BookComponent)

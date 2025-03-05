@@ -20,6 +20,7 @@ export interface SiteConfig {
 		loop: false;
 		preload: true;
 	};
+	$api?: any
 }
 
 export interface PaginationLink {
