@@ -7,7 +7,7 @@ const meta = {
 	description: "电子书、阅读",
 	title: "电子书",
 };
-console.log(allbooks, 'allbooks');
+// console.log(allbooks, 'allbooks');
 const data = allbooks.map(el => el.data)
 const isPro = import.meta.env.PROD
 ---
@@ -41,71 +41,72 @@ const isPro = import.meta.env.PROD
     import { siteConfig } from '@/site.config'
     import localforage from 'localforage'
     import Epub from 'epubjs'
+    import Loading from '@/utils/Loading'
+    import Message from '@/utils/Message'
+
     const $api = siteConfig.$api;
-    let targetEl = document.querySelector('.add-btn') as HTMLDivElement
-    let fileEl = document.querySelector('input') as HTMLInputElement
-    let bookEl = document.querySelector('#books') as HTMLDivElement
-    let removeBtnEl = document.querySelectorAll('.remove-btn') as unknown as HTMLButtonElement[]
-    
-    targetEl.onclick = () => {
-        fileEl.click()
-    }
-    removeBtnEl.forEach(el => {
-        el.onclick = (e) => {
-            e.stopPropagation()
-            let id = el.getAttribute('data-id')
-            let objectId = el.getAttribute('data-object-id')
-            document.querySelector(`#${id}`)?.remove()
-            if (objectId) $api.book.handleDelete(objectId).then(() => {
-                alert('删除成功！')
-            })
-        }
-    })
-    fileEl.onchange = (e: Event) => {
-        let target = e.target as any
-        let files = [...target.files]
-        // console.log(files, 'files');
-        files.map(async el => {
-            let book:any = Epub(el);
-            localforage.setItem('book_' + el.name, el.arrayBuffer())
-            let alink = document.createElement('a') as HTMLAnchorElement
-            alink.href = '/eBook/' + el.name.split('_')[0]
-            alink.innerHTML = `<div class="book h-[230px] sm:h-[260px] lg:h-[160px]"></div>
-            <h3 class="text-center mt-2">${el.name.split('_')[0] + '-' + el.name.split('_')[1]}</h3></div>`
-            alink.setAttribute('class', 'w-full overflow-hidden')
-            bookEl.prepend(alink)
-            book.ready.then(async () => {
-				// 创建一个 Rendition，并指定要渲染 EPUB 的 HTML 元素
-                const bookContainer = alink.querySelector('.book')
-				const rendition = book.renderTo(bookContainer, {
-					flow: "paginated", // paginated、scrolled-doc
-					width: '100%',
-					height: '100%',
-					spread: true,
-					// defaultDirection: '',
-					// minSpreadWidth: 600,
-					allowScriptedContent: true
-				});
-                rendition.themes.register('default', {
-                    body: {
-                        padding: '0 !important',
-                        // height: '120px !important'
-                    },
-                    'svg': {
-                        width: '100% !important',
-                        'max-height': '200px !important'
+    const loading = new Loading()
+    const message = new Message()
+    document.addEventListener('astro:page-load', () => {
+        let targetEl = document.querySelector('.add-btn') as HTMLDivElement
+        let fileEl = document.querySelector('input') as HTMLInputElement
+        let bookEl = document.querySelector('#books') as HTMLDivElement
+        targetEl && (targetEl.onclick = () => {
+            fileEl.click()
+        })
+        bookEl && bookEl.addEventListener('click', (e:any) => {
+            // console.log(e.target.tagName, 'e.target.tagName');
+            if (e.target.tagName === 'BUTTON') {
+                let target = e.target
+                let id = target.getAttribute('data-id')
+                let objectId = target.getAttribute('data-object-id')
+                loading.show({text: '正在删除，请稍后...', fullscreen: true })
+                if (objectId) $api.book.handleDelete(objectId).then(() => {
+                    loading.hide()
+                    message.show({
+                        text: '删除成功！',
+                        type: 'success'
+                    })
+                    document.querySelector(`#${id}`)?.remove()
+                })
+            }
+        })
+        fileEl && (fileEl.onchange = (e: Event) => {
+            let target = e.target as any
+            let files = [...target.files]
+            // console.log(files, 'files');
+            files.map(async el => {
+                let book:any = Epub(el);
+                book.ready.then(async () => {
+                    loading.show()
+                    let coverUrl = await book.coverUrl()
+                    let result = await fetch(coverUrl).then(res => res.blob())
+                    let reader = new FileReader()
+                    reader.readAsDataURL(result)
+                    reader.onload = () => {
+                        $api.book.upload(el.name, el, {cover: { base64: reader.result }, onprogress: (data:any) => {
+                            loading.onprogress(data)
+                        }}).then((data:any) => {
+                            const { attributes, id } = data
+                            // console.log(attributes, 'data');
+                            localforage.setItem('book_' + el.name, el.arrayBuffer())
+                            let alink = document.createElement('div') as HTMLDivElement
+                            let removeBtnEl = bookEl.querySelectorAll('.remove-btn')
+                            alink.id = `book${removeBtnEl.length+1}`
+                            alink.setAttribute('class', 'w-full overflow-hidden')
+                            alink.innerHTML = `<a href='/eBook/${el.name.split('_')[0]}'><div class='w-full  overflow-hidden'  title='${attributes.title}'>
+                            <img src='${attributes.img}' class="h-[230px] sm:h-[260px] lg:h-[160px] w-full" alt={item.title} />
+                            <h3 class="text-center line-clamp-1 mt-2">${el.name.split('_')[0]}-${el.name.split('_')[1]}</h3></div></a><div class="flex justify-center my-1"><button class="remove-btn border px-1 rounded-md text-[var(--color-accent)] border-[var(--color-accent)] cursor-pointer" data-object-id=${id} data-id="book${removeBtnEl.length+1}">删除</button></div>`
+                            bookEl.prepend(alink)
+                            message.show({
+                                text: '上传成功！',
+                                type: 'success'
+                            })
+                            loading.hide()
+                        })
                     }
                 })
-                rendition.display()
-                let coverUrl = await book.coverUrl()
-                let result = await fetch(coverUrl).then(res => res.blob())
-                let reader = new FileReader()
-                reader.readAsDataURL(result)
-                reader.onload = async () => {
-                    await $api.book.upload(el.name, el, { base64: reader.result })
-                    alert('上传成功！')
-                }
             })
         })
-    }
+    })
 </script>

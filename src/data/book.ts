@@ -10,6 +10,6 @@ export async function getAllbooks(): Promise<CollectionEntry<"ebook">[]> {
             id: el.attributes.title,
             data: { objectId: el.id, ...el.attributes, file: el.attributes.url },
             collection: 'ebook'
-        })) || [], ...books]
+        })) || [], ...books.filter(el => el.data.title)]
     });
 }

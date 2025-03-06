@@ -16,9 +16,10 @@ const get = () => {
         console.error("操作失败", err);
     });
 };
-const upload = async (filename:string, data:string|Blob|Buffer, cover?:any) => {
+const upload = async (filename:string, data:string|Blob|Buffer, options: { cover?:any, onprogress?:any }) => {
     const file = new File(filename, data);
     const book = new Book();
+    const { cover, onprogress } = options;
     book.set("title", filename.split('_')[0]);
     book.set("author", filename.split('_')[1] || '');
     book.set("marks", []);
@@ -30,13 +31,16 @@ const upload = async (filename:string, data:string|Blob|Buffer, cover?:any) => {
         
         coverUrl && book.set("imgId", coverUrl.id || '');
     }
-    return file.save({ keepFileName: true }).then((file) => {
+    return file.save({ keepFileName: true, onprogress: (progress) => {
+        console.log('上传进度', progress);
+        onprogress && onprogress(progress)
+    } }).then((file) => {
         book.set("url", file.url() || '');
         book.set("fileId", file.id || '');
-        book.save().then((res) => {
+        return book.save().then((res) => {
             console.log("上传成功", file.url(), res);
+            return res
         })
-        return file
     }, function (err) {
         console.error("上传失败", err);
     });
@@ -44,7 +48,7 @@ const upload = async (filename:string, data:string|Blob|Buffer, cover?:any) => {
 const  handleDelete = async (id: string) => {
     const query:any = new Query("Book");
     let object = await query.equalTo('objectId', id).first();
-    console.log(object.attributes, 'book');
+    // console.log(object.attributes, 'book');
     const data = AV.Object.createWithoutData('Book', id);
     const file = AV.File.createWithoutData(object?.attributes?.fileId);
     const coverFile = AV.File.createWithoutData(object?.attributes?.imgId);
