@@ -90,7 +90,7 @@ const ebook = defineCollection({
 	  title: z.string(),
 	  author: z.string(),
 	  img: z.string(),
-	  objectId: z.string().optional(),
+	  objectId: z.string().optional(), // 书籍id
 	  file: z.string(), // EPUB文件路径
 	  description: z.string().optional(),
 	}),

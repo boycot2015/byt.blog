@@ -10,7 +10,7 @@ const get = () => {
     const query = new Query("Book");
     query.descending("createdAt");
     return query.find().then(function (data) {
-        console.log("操作成功", data);
+        // console.log("操作成功", data);
         return data
     }, function (err) {
         console.error("操作失败", err);
@@ -32,6 +32,7 @@ const upload = async (filename:string, data:string|Blob|Buffer, cover?:any) => {
     }
     return file.save({ keepFileName: true }).then((file) => {
         book.set("url", file.url() || '');
+        book.set("fileId", file.id || '');
         book.save().then((res) => {
             console.log("上传成功", file.url(), res);
         })
@@ -40,11 +41,16 @@ const upload = async (filename:string, data:string|Blob|Buffer, cover?:any) => {
         console.error("上传失败", err);
     });
 };
-const handleDelete = (id: string) => {
-    const book = AV.Object.createWithoutData('Book', id);
-    const file = AV.File.createWithoutData(book.attributes?.imgId);
-    book.attributes?.imgId && file.destroy();
-    return book.destroy();
+const  handleDelete = async (id: string) => {
+    const query:any = new Query("Book");
+    let object = await query.equalTo('objectId', id).first();
+    console.log(object.attributes, 'book');
+    const data = AV.Object.createWithoutData('Book', id);
+    const file = AV.File.createWithoutData(object?.attributes?.fileId);
+    const coverFile = AV.File.createWithoutData(object?.attributes?.imgId);
+    object?.attributes?.imgId && coverFile.destroy();
+    object?.attributes?.fileId && file.destroy();
+    return data.destroy();
 };
 const saveMark = (id:string, data:any) => {
     const book = AV.Object.createWithoutData('Book', id);
@@ -69,7 +75,7 @@ const updateMark = (id:string, data:any) => {
 const getById = (id:string) => {
     const query = new Query("Book");
     return query.equalTo('objectId', id).first().then(function (data) {
-        console.log("操作成功", data);
+        // console.log("操作成功", data);
         return data
     }, function (err) {
         console.error("操作失败", err);

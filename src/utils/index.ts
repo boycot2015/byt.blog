@@ -4,8 +4,8 @@
  * @param  wait 延迟执行时间（毫秒）
  * @param  immediate---true 表立即执行，false 表非立即执行
  **/
-export const debounce = (func, wait, immediate) => {
-    let timer;
+export const debounce = (func:()=> void, wait:number, immediate?:boolean) => {
+    let timer:any;
     return function () {
         let args = arguments;
         if (timer) clearTimeout(timer);
@@ -14,10 +14,10 @@ export const debounce = (func, wait, immediate) => {
             timer = setTimeout(() => {
                 timer = null;
             }, wait)
-            if (callNow) func.apply(this, args)
+            if (callNow) func.apply(this, args as any)
         } else {
             timer = setTimeout(function() {
-                func.apply(this, args)
+                func.apply(this, args as any)
             }, wait);
         }
     }

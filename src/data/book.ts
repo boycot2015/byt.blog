@@ -8,8 +8,7 @@ export async function getAllbooks(): Promise<CollectionEntry<"ebook">[]> {
 	return await getCollection("ebook").then((books) => {
         return [...res?.map((el:any) => ({
             id: el.attributes.title,
-            objectId: el.id,
-            data: { ...el.attributes, file: el.attributes.url },
+            data: { objectId: el.id, ...el.attributes, file: el.attributes.url },
             collection: 'ebook'
         })) || [], ...books]
     });

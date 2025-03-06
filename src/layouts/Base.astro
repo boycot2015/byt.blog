@@ -70,3 +70,13 @@ const customTransition = {
 	  }
 	}
   </style>
+  <script>
+	import { debounce } from '@/utils'
+	const _ResizeObserver = window.ResizeObserver;
+	window.ResizeObserver = class ResizeObserver extends _ResizeObserver {
+		constructor(callback: any) {
+			callback = debounce(callback, 200) as any;
+			super(callback);
+		}
+	}
+  </script>
