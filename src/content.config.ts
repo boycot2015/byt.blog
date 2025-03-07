@@ -85,7 +85,7 @@ const link = defineCollection({
 });
 
 const ebook = defineCollection({
-	type: 'data', // 使用 'data' 类型处理二进制文件
+	loader: glob({ base: "./src/content/ebook", pattern: "**/*.{md,mdx}" }),
 	schema: z.object({
 	  title: z.string(),
 	  author: z.string(),

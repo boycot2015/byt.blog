@@ -74,7 +74,6 @@ const isPro = import.meta.env.PROD
         fileEl && (fileEl.onchange = (e: Event) => {
             let target = e.target as any
             let files = [...target.files]
-            // console.log(files, 'files');
             files.map(async el => {
                 let book:any = Epub(el);
                 book.ready.then(async () => {
@@ -88,7 +87,7 @@ const isPro = import.meta.env.PROD
                             loading.onprogress(data)
                         }}).then((data:any) => {
                             const { attributes, id } = data
-                            // console.log(attributes, 'data');
+                            console.log(attributes, 'data');
                             localforage.setItem('book_' + el.name, el.arrayBuffer())
                             let alink = document.createElement('div') as HTMLDivElement
                             let removeBtnEl = bookEl.querySelectorAll('.remove-btn')
@@ -103,6 +102,7 @@ const isPro = import.meta.env.PROD
                                 type: 'success'
                             })
                             loading.hide()
+                            fileEl.value = ''
                         })
                     }
                 })

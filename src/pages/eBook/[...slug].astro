@@ -6,12 +6,12 @@ export const getStaticPaths = (async () => {
 	const allbooks = await getAllbooks()
 	return allbooks.map((book) => ({
 		params: { slug: book.data.title },
-		props: { book },
+		props: { book, allbooks },
 	}));
 }) satisfies GetStaticPaths;
 export type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
-const { book } = Astro.props;
+const { book, allbooks } = Astro.props;
 const meta = {
 	description: book.data.description,
 	title: book.data.title,
@@ -23,6 +23,9 @@ const meta = {
 	<book-component data-book={JSON.stringify(book)}>
 		<div class="flex flex-col">
 			<div class="flex justify-between items-center pb-2 border-b mb-4 border-b-[var(--color-accent)]">
+				<select class="w-[20%]" id="books">
+					{allbooks.map(item => <option label={item.data.title} value={item.id}></option>)}
+				</select>
 				<h3 class="text-center flex-1 text-xl">{book.data.title}</h3>
 				<div class="cursor-pointer add-label-btn">+加入书签</div>
 			</div>
@@ -36,13 +39,13 @@ const meta = {
 			</div>
 			<div class="flex justify-center items-center my-4">
 				<div class="w-full !text-[var(--color-accent)] h-[100vh] overflow-hidden" id="book">
-					<div class="text-center my-20">资源加载中，请稍后...</div>
+					<!-- <div class="text-center my-20">资源加载中，请稍后...</div> -->
 				</div>
 			</div>
 			<div class="page flex justify-between">
 				<div class="btn-prev cursor-pointer hover:text-[var(--color-accent)]">← 上一页</div>
 				<div class="flex w-[60%]">
-					书签：<select id="marks">
+					书签：<select id="marks" class="max-w-[75%]">
 						<option label="请选择"></option>
 					</select>
 				</div>
@@ -52,9 +55,11 @@ const meta = {
 	</book-component>
 </PageLayout>
 <script>
+	import { debounce } from '@/utils'
 	import Epub from 'epubjs'
 	import localforage from 'localforage'
 	import { siteConfig } from '@/site.config'
+	import Loading from '@/utils/Loading'
     const $api = siteConfig.$api;
 	interface TreeObj  {
 		href: string
@@ -69,78 +74,89 @@ const meta = {
 		data: any
 		book: any
 		themes: any
-		fontSize: number = 12
+		fontSize: number = 16
 		rendition: any
 		bookmarks: any[] = []
 		columns: any[] = []
 		columnsEl!: HTMLSelectElement
 		marksEl!: HTMLSelectElement
 		connectedCallback() {
+			document.addEventListener('astro:page-load', () => {
+				this.init()
+			})
+		}
+		async init () {
+			// 从 data（数据）属性中读取消息。
+			const loading = new Loading()
 			const bookContainer = document.getElementById('book') as HTMLDivElement;
-			document.addEventListener('astro:page-load', async () => {
-				// 从 data（数据）属性中读取消息。
-				const data = JSON.parse(this.dataset.book as string);
-				let bookdata:any = await localforage.getItem('book_' + data.data.title)
-				let bookmarks = await localforage.getItem('book_marks_' + data.data.title) as any || []
-				if (!bookdata) {
-					let file = await fetch(data.data.file).then((res) => res.arrayBuffer())
-					localforage.setItem('book_' + data.data.title, file)
-					bookdata = file
-				}
-				let book:any = Epub(bookdata);
-				// 读取EPUB文件
-				// await book.loaded;
-				book.ready.then(() => {
-					bookContainer.innerHTML = ''
-					// 创建一个 Rendition，并指定要渲染 EPUB 的 HTML 元素
-					const rendition = book.renderTo(bookContainer, {
-						flow: "paginated", // paginated、scrolled-doc
-						width: '100%',
-						height: '100%',
-						stylesheet: 'src/styles/global.css',
-						spread: true,
-						// defaultDirection: '',
-						// minSpreadWidth: 600,
-						allowScriptedContent: true
-					});
-					this.data = data
-					this.book = book
-					this.rendition = rendition
-					this.bookmarks = bookmarks
-					this.themes = rendition.themes
-					// console.log(book, rendition, 'rendition')
-					
-					// 配置主题
-					this.registerTheme()
-	
-					// 加载目录
-					this.loadColumns()
-	
-					// 加载书签
-					this.loadMarks()
-	
-					// 加载页面
-					this.jumpTo((bookmarks[0]?.start?.cfi)|| 2)
-	
-					// 事件处理
-					let prevBtn = this.querySelector('.btn-prev') as HTMLDivElement
-					let nextBtn = this.querySelector('.btn-next') as HTMLDivElement
-					let pager = this.querySelector('.pager') as HTMLInputElement
-					let addLabel = this.querySelector('.add-label-btn') as HTMLInputElement
-	
-					prevBtn.onclick = () => this.pageChange()
-					nextBtn.onclick = () => this.pageChange('next')
-					pager.onblur = () => this.pageChange('pager')
-	
-					// 加入书签
-					addLabel.onclick = () => this.addMark()
-	
-					// 切换目录
-					this.columnsEl.onchange = (e) => this.columnsChange(e)
-	
-					// 切换书签
-					this.marksEl.onchange = (e) => this.changeMark(e)
-				})
+			const booksSelect = document.getElementById('books') as HTMLSelectElement;
+			bookContainer && loading.show({container: bookContainer, text: '正在载入资源，请稍后...', fullscreen: false})
+			const data = JSON.parse(this.dataset.book as string);
+			booksSelect && (booksSelect.value = data.id)
+			let bookdata:any = await localforage.getItem('book_' + data.data.title)
+			let bookmarks = await localforage.getItem('book_marks_' + data.data.title) as any || []
+			if (!bookdata) {
+				let file = await fetch(data.data.file).then((res) => res.arrayBuffer())
+				localforage.setItem('book_' + data.data.title, file)
+				bookdata = file
+			}
+			let book:any = Epub(bookdata);
+			// 读取EPUB文件
+			// await book.loaded;
+			book.ready.then(() => {
+				// bookContainer.innerHTML = ''
+				bookContainer && loading.hide()
+				// 创建一个 Rendition，并指定要渲染 EPUB 的 HTML 元素
+				const rendition = book.renderTo(bookContainer, {
+					flow: "paginated", // paginated、scrolled-doc
+					width: '100%',
+					height: '100%',
+					stylesheet: 'src/styles/global.css',
+					spread: true,
+					// defaultDirection: '',
+					// minSpreadWidth: 600,
+					allowScriptedContent: true
+				});
+				this.data = data
+				this.book = book
+				this.rendition = rendition
+				this.bookmarks = bookmarks
+				this.themes = rendition.themes
+				// console.log(book, rendition, 'rendition')
+				
+				// 配置主题
+				this.registerTheme()
+
+				// 加载目录
+				this.loadColumns()
+
+				// 加载书签
+				this.loadMarks()
+
+				// 加载页面
+				this.jumpTo((bookmarks[0]?.start?.cfi)|| 2)
+
+				// 事件处理
+				let prevBtn = this.querySelector('.btn-prev') as HTMLDivElement
+				let nextBtn = this.querySelector('.btn-next') as HTMLDivElement
+				let pager = this.querySelector('.pager') as HTMLInputElement
+				let addLabel = this.querySelector('.add-label-btn') as HTMLInputElement
+
+				prevBtn.onclick = () => this.pageChange()
+				nextBtn.onclick = () => this.pageChange('next')
+				pager.onblur = () => this.pageChange('pager')
+
+				// 加入书签
+				addLabel.onclick = () => this.addMark()
+
+				// 切换目录
+				this.columnsEl.onchange = (e) => this.columnsChange(e)
+
+				// 切换书签
+				this.marksEl.onchange = (e) => this.changeMark(e)
+			})
+			booksSelect && (booksSelect.onchange = (e:any) => {
+				window.location.href = '/eBook/' + e.target.value
 			})
 		}
 		getThemeList () {
@@ -314,9 +330,6 @@ const meta = {
 		}
 	}
 	customElements.define('book-component', BookComponent)
-</script>
-<script>
-	import { debounce } from '@/utils'
 	document.addEventListener('astro:before-swap', () => {
 		const _ResizeObserver = window.ResizeObserver;
 		window.ResizeObserver = class ResizeObserver extends _ResizeObserver {
@@ -325,5 +338,7 @@ const meta = {
 				super(callback);
 			}
 		}
+		let iframe = document.querySelector('iframe') as HTMLIFrameElement
+		iframe.contentWindow && (iframe.contentWindow.document.body.innerHTML = '')
 	})
-  </script>
+</script>
