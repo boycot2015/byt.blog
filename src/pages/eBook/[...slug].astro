@@ -108,7 +108,7 @@ const meta = {
 					flow: "paginated", // paginated、scrolled-doc
 					width: '100%',
 					height: '100%',
-					stylesheet: 'src/styles/global.css',
+					stylesheet: '../../../css/global.css',
 					spread: true,
 					// defaultDirection: '',
 					// minSpreadWidth: 600,
@@ -163,8 +163,9 @@ const meta = {
 					style: { // 主题样式
 						body: {
 							padding: '0 !important',
-							// color: "var(--color-global-text) !important", // 文字颜色
-							// background: "var(--color-global-bg)", // 背景颜色
+							background: 'transparent !important',
+							// color: rootInDarkMode()?"var(--color-global-text) !important":"var(--color-global-text) !important", // 文字颜色
+							// background: rootInDarkMode()?"var(--color-global-bg)":"var(--color-global-bg)", // 背景颜色
 							lineColor: "#E4E3DF", // 主题中并无该属性，该属性为自定义目录下划线颜色
 						},
 						'.logo': {
@@ -257,7 +258,6 @@ const meta = {
 		// 渲染电子书后调用
 		registerTheme () {
 			// console.dir(this, 'this.themeList');
-			this.fontSize = 12
 			this.getThemeList().map((item) => {
 				this.themes.register(item.name, item.style);
 			});

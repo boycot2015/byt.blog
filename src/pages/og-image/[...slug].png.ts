@@ -1,5 +1,5 @@
-import OPPOSansRegular from '@/assets/font/OPPOSans-Regular.woff'
-import OPPOSansMedium from '@/assets/font/OPPOSans-Medium.woff'
+import OPPOSansRegular from 'public/font/OPPOSans-Regular.woff'
+import OPPOSansMedium from 'public/font/OPPOSans-Medium.woff'
 import { getAllPosts } from "@/data/post";
 import { siteConfig } from "@/site.config";
 import { getFormattedDate } from "@/utils/date";
