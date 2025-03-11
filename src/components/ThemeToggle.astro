@@ -77,27 +77,29 @@
 				Math.max(x, innerWidth - x),
 				Math.max(y, innerHeight - y),
 			)
-			// 兼容性处理
-			if (!document.startViewTransition) {
-				return
-			}
 			// invert theme
 			let themeChangeEvent = new CustomEvent("theme-change", {
 				detail: {
 					theme: rootInDarkMode() ? "light" : "dark",
 				},
 			});
-			const transition = document.startViewTransition(async () => {
+			const toogle = () => {
 				// dispatch event -> ThemeProvider.astro
 				document.dispatchEvent(themeChangeEvent);
 				
 				// set the aria-checked attribute
 				this.button.setAttribute("aria-checked", String(rootInDarkMode()));
 				this.linkEl.href = !rootInDarkMode() ? '/favicon.svg' : '/favicon-dark.svg'
+			}
+			// 兼容性处理
+			if (!document.startViewTransition) {
+				toogle()
+				return
+			}
+			const transition = document.startViewTransition(async () => {
+				toogle()
 				return endRadius
 			})
-			let root = document.querySelector('#main') as HTMLDivElement
-			root.style.animation = 'none'
 			transition.ready.then(() => {
 				const clipPath = [
 				`circle(0px at ${x}px ${y}px)`,
@@ -116,7 +118,7 @@
 				},
 				)
 			})
-			}
+		}
 	}
 
 	customElements.define("theme-toggle", ThemeToggle);
