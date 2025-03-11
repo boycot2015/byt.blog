@@ -11,14 +11,14 @@ import SocialList from "@/components/SocialList.astro";
 
 // import { siteConfig } from "@/site.config";
 // Posts
-const MAX_POSTS = 10;
+const MAX_POSTS = 8;
 const allPosts = await getAllPosts();
 const allPostsByDate = allPosts
 	.sort(collectionDateSort)
 	.slice(0, MAX_POSTS) as CollectionEntry<"post">[];
 
 // Notes
-const MAX_NOTES = 5;
+const MAX_NOTES = 3;
 const allNotes = await getAllNotes();
 const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES) as CollectionEntry<"note">[];
 ---

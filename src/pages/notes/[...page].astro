@@ -8,7 +8,7 @@ import type { GetStaticPaths, Page } from "astro";
 import { Icon } from "astro-icon/components";
 import { getAllNotes } from "@/data/note";
 export const getStaticPaths = (async ({ paginate }) => {
-	const MAX_NOTES_PER_PAGE = 10;
+	const MAX_NOTES_PER_PAGE = 3;
 	const allNotes = await getAllNotes();
 	return paginate(allNotes.sort(collectionDateSort), { pageSize: MAX_NOTES_PER_PAGE });
 }) satisfies GetStaticPaths;

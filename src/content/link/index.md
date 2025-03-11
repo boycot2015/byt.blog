@@ -8,17 +8,17 @@ page: true
 # 友情链接
 <div class="links">
 
-* [![](https://blog.boycot.top/favicon.ico)个人博客](https://blog.boycot.top)
+* [![](https://blog.boycot.top/favicon.svg)个人博客](https://blog.boycot.top)
 * [![](https://hexo-blog.boycot.top/favicon.ico)typecho博客](https://byt.boycot.top)
 * [![](https://hexo-blog.boycot.top/favicon.ico)hexo博客](https://hexo-blog.boycot.top)
-* [![](https://music.boycot.top/favicon.ico)网易云音乐](https://music.boycot.top)
-* [![](https://api-docs.boycot.top/favicon.ico)API文档](https://api-docs.boycot.top)
+* [![](https://music.boycot.top/favicon.ico)<span class="ellipsis">网易云音乐(旧版)</span>](https://music.boycot.top)
+* [![](https://api-docs.boycot.top/favicon.svg)API文档](https://api-docs.boycot.top)
 * [![](https://web-group.boycot.top/favicon.ico)web-group](https://web-group.boycot.top/)
-* [![](https://os.boycot.top/favicon.svg)web-os](https://os.boycot.top/)
+* [![](https://os.boycot.top/favicon.png)web-os](https://os.boycot.top/)
 * [![欢迎光临糖果屋](https://npm.elemecdn.com/akilar-friends@latest/avatar/akilar.top.jpg)Akilarの糖果屋](https://akilar.top/)
 * [![分享设计与科技生活](https://bu.dusays.com/2022/12/28/63ac2812183aa.png)张洪Heo](https://blog.zhheo.com/)
 
-* [![](https://web.koodoreader.com/favicon.ico)web-reader](https://web.koodoreader.com/#/)
+* [![](https://web.koodoreader.com/favicon.png)web-reader](https://web.koodoreader.com/#/)
 </div>
 
 ## 友链申请

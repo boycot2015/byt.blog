@@ -23,7 +23,7 @@ const meta = {
 	<book-component data-book={JSON.stringify(book)}>
 		<div class="flex flex-col">
 			<div class="flex justify-between items-center pb-2 border-b mb-4 border-b-[var(--color-accent)]">
-				<select class="w-[20%]" id="books">
+				<select id="books">
 					{allbooks.map(item => <option label={item.data.title} value={item.id}></option>)}
 				</select>
 				<h3 class="text-center flex-1 text-xl">{book.data.title}</h3>
@@ -55,11 +55,11 @@ const meta = {
 	</book-component>
 </PageLayout>
 <script>
-	import { debounce } from '@/utils'
 	import Epub from 'epubjs'
 	import localforage from 'localforage'
 	import { siteConfig } from '@/site.config'
 	import Loading from '@/utils/Loading'
+	const loading = new Loading()
     const $api = siteConfig.$api;
 	interface TreeObj  {
 		href: string
@@ -81,13 +81,10 @@ const meta = {
 		columnsEl!: HTMLSelectElement
 		marksEl!: HTMLSelectElement
 		connectedCallback() {
-			document.addEventListener('astro:page-load', () => {
-				this.init()
-			})
+			this.init()
 		}
 		async init () {
 			// 从 data（数据）属性中读取消息。
-			const loading = new Loading()
 			const bookContainer = document.getElementById('book') as HTMLDivElement;
 			const booksSelect = document.getElementById('books') as HTMLSelectElement;
 			bookContainer && loading.show({container: bookContainer, text: '正在载入资源，请稍后...', fullscreen: false})
@@ -104,7 +101,7 @@ const meta = {
 			// 读取EPUB文件
 			// await book.loaded;
 			book.ready.then(() => {
-				// bookContainer.innerHTML = ''
+				bookContainer.innerHTML = ''
 				bookContainer && loading.hide()
 				// 创建一个 Rendition，并指定要渲染 EPUB 的 HTML 元素
 				const rendition = book.renderTo(bookContainer, {
@@ -330,15 +327,4 @@ const meta = {
 		}
 	}
 	customElements.define('book-component', BookComponent)
-	document.addEventListener('astro:before-swap', () => {
-		const _ResizeObserver = window.ResizeObserver;
-		window.ResizeObserver = class ResizeObserver extends _ResizeObserver {
-			constructor(callback: any) {
-				callback = debounce(callback, 200) as any;
-				super(callback);
-			}
-		}
-		let iframe = document.querySelector('iframe') as HTMLIFrameElement
-		iframe.contentWindow && (iframe.contentWindow.document.body.innerHTML = '')
-	})
 </script>
