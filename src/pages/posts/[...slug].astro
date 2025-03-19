@@ -9,7 +9,7 @@ export const getStaticPaths = (async () => {
 	const blogEntries = await getAllPosts();
 	return blogEntries.map((post) => ({
 		params: { slug: post.id },
-		props: { post, page: { data: blogEntries } },
+		props: { post, page: { data: blogEntries.reverse() } },
 	}));
 }) satisfies GetStaticPaths;
 
@@ -20,6 +20,7 @@ const { Content } = await render(post);
 const currentIndex = page.data.findIndex(el => el.id === post.id) ?? 0
 const prev = page.data[currentIndex - 1] ?? 0
 const next = page.data[currentIndex + 1] ?? 0
+
 const paginationProps = {
 	...(prev && {
 		prevUrl: {
