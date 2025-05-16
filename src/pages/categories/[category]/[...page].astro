@@ -12,7 +12,7 @@ export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
 	const sortedPosts = allPosts.sort(collectionDateSort);
 	const uniqueCategories = getUniqueCategories(sortedPosts);
 
-	return uniqueCategories.flatMap((category) => {
+	return  uniqueCategories.flatMap((category) => {
 		const filterPosts = sortedPosts.filter((post) => post.data.categories.slice(-1).includes(category));
 		return paginate(filterPosts, {
 			pageSize: 10,

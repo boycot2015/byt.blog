@@ -2,13 +2,16 @@ import type { SiteConfig } from "@/types";
 import type { AstroExpressiveCodeOptions } from "astro-expressive-code";
 import api from './api'
 let siteUrl = 'http://localhost:4321'
-let apiUrl = 'http://localhost:8088'
+// let apiUrl = 'http://localhost:8088'
+let apiUrl = 'https://ai.boycot.top'
+let blogApiUrl = 'http://localhost:3009'
 // console.log(import.meta.env, 'import.meta.env');
 
 if (import.meta.env.PROD) {
 	apiUrl = 'https://ai.boycot.top'
 	siteUrl = 'https://boycot.top'
-}	
+	blogApiUrl = 'https://blog-api.boycot.top'
+}
 export const siteConfig: SiteConfig = {
 	// Used as both a meta property (src/components/BaseHead.astro L:31 + L:49) & the generated satori png (src/pages/og-image/[slug].png.ts)
 	author: "Boycot",
@@ -43,6 +46,7 @@ export const siteConfig: SiteConfig = {
 		loop: false,
 		preload: true,
 	},
+	blogApiUrl,
 	$api: api
 };
 

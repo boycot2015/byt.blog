@@ -10,6 +10,7 @@ export interface SiteConfig {
 	title: string;
 	url: string;
 	apiUrl?: string;
+	blogApiUrl?: string;
 	social: {
 		github: string;
 		rss: string;

@@ -16,6 +16,7 @@ export const getStaticPaths = (async () => {
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 const { post, page } = Astro.props;
+// console.log(post, 'post');
 const { Content } = await render(post);
 const currentIndex = page.data.findIndex(el => el.id === post.id) ?? 0
 const prev = page.data[currentIndex - 1] ?? 0
@@ -38,6 +39,24 @@ const paginationProps = {
 ---
 
 <PostLayout post={post} meta={{ comment: true }}>
-	<Content />
+	{post.filePath?<Content />:<div data-content={post.body} id="post-content" set:html={post.body||''}></div>}
 	<Pagination slot="footer" {...paginationProps} />
 </PostLayout>
+<style>
+	#post-content {
+		img {
+			max-width: 100%;
+			margin: 0 auto;
+		}
+	}
+</style>
+<script>
+	import { marked, prism } from '@/plugins/markdown'
+	document.addEventListener('astro:page-load', () => {
+		let contentEl = document.querySelector('#post-content')
+		if (contentEl) {
+			contentEl.innerHTML = marked.parse(contentEl.getAttribute('data-content')||'')
+		}
+		prism.highlightAll()
+	})
+</script>
