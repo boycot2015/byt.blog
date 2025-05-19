@@ -30,14 +30,14 @@ import 'aplayer/dist/APlayer.min.css'; // 引入 APlayer 的样式文件
       // https://api.boycot.top/api/music?type=netease&offset=0&id=%E6%8E%92%E8%A1%8C%E6%A6%9C
       let lsRes = await fetch('https://api.boycot.top/api/music?type=netease&offset=0&id=%E6%8E%92%E8%A1%8C%E6%A6%9C', {})
       let list = await lsRes.json()
-      let ids = list.data?.result?.map((el:any) => el.id.split('_')[1]).slice(0, 8) || []
+      let ids = list.data?.result?.slice(0, 4).map((el:any) => el.id.split('_')[1]) || []
       params.id = ids[Math.floor(Math.random() * (ids.length - 1))]
-      playerContainer = document.getElementById('player-container');
-      //拼接参数  
+      playerContainer = document.getElementById('player-container')
+      //拼接参数
       let paramsArray:string[] = [];
       Object.keys(params).forEach(key => paramsArray.push(key + '=' + params[key]))  
       if (url.search(/\?/) === -1) {
-          url += '?' + paramsArray.join('&')  
+          url += '?' + paramsArray.join('&')
       } else {
           url += '&' + paramsArray.join('&')
       }

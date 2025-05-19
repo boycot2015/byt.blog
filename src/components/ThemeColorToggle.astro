@@ -1,0 +1,116 @@
+---
+interface Props {
+  className?: string;
+}
+
+const { className } = Astro.props;
+const colors = [
+  { name: 'red', value: '#ef4444' },
+  { name: 'orange', value: '#f97316' },
+  // { name: 'yellow', value: 'yellow' },
+  { name: 'green', value: '#10b981' },
+  { name: 'blue', value: '#3b82f6' },
+  { name: 'purple', value: '#8b5cf6' },
+];
+
+const getCurrentColor = () => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('theme-color') || '#3b82f6';
+  }
+  return '#3b82f6';
+};
+getCurrentColor()
+---
+
+<theme-color-toggle class={`theme-color-toggle ${className || ''}`}>
+  <button
+    class="relative h-8 w-8 cursor-pointer pt-1 hover:text-accent"
+    type="button"
+    aria-label="Change theme color"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      class="h-8 w-8"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+      />
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+      />
+    </svg>
+  </button>
+  
+  <div class="theme-colors flex hidden absolute right-0 top-full w-40 rounded-md bg-white p-2 shadow-lg dark:bg-gray-800">
+    {colors.map((color) => (
+      <button
+        class="h-8 w-8 cursor-pointer mx-0"
+        style={`background-color: ${color.value}`}
+        data-color={color.value}
+        aria-label={`Set theme color to ${color.name}`}
+      />
+    ))}
+  </div>
+</theme-color-toggle>
+
+<script>
+  import { rootInDarkMode } from "@/utils/domElement";
+  class ThemeColorToggle extends HTMLElement {
+    connectedCallback() {
+      const toggleBtn = this.querySelector('button');
+      const colorsPanel = this.querySelector('.theme-colors');
+      const colorButtons = this.querySelectorAll('.theme-colors button');
+      
+      // Set initial color from localStorage
+      const savedColor = localStorage.getItem('theme-color');
+      if (savedColor) {
+        document.documentElement.style.setProperty('--color-accent', savedColor);
+      }
+      
+      // Add event listeners
+      toggleBtn?.addEventListener('click', () => {
+        if (rootInDarkMode()) return
+        colorsPanel?.classList.toggle('hidden');
+      });
+      
+      colorButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const colorValue = button.getAttribute('data-color');
+          document.documentElement.style.setProperty('--color-accent', colorValue);
+          localStorage.setItem('theme-color', colorValue || '');
+          document.dispatchEvent(new CustomEvent('theme-color-change', {
+            detail: { color: colorValue }
+          }));
+          colorsPanel?.classList.add('hidden');
+        });
+      });
+      
+      // Close panel when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!this.contains(e.target as Node)) {
+          colorsPanel?.classList.add('hidden');
+        }
+      });
+    }
+
+    disconnectedCallback() {
+      // Clean up event listeners if needed 
+    }
+  }
+  
+  customElements.define("theme-color-toggle", ThemeColorToggle);
+</script>
+
+<style is:global>
+  :root {
+    --color-accent: #ef4444;
+  }
+</style>
