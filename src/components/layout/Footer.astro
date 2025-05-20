@@ -6,9 +6,23 @@ const year = new Date().getFullYear();
 
 <footer>
 	<div class="mt-auto flex w-full flex-col items-center justify-center gap-y-2 pt-16 sm:pt-20 pb-4 text-center align-top font-semibold text-gray-600 sm:flex-row sm:justify-between sm:text-xs dark:text-gray-400">
-		<div class="me-0 sm:me-4">
-			Powered by {siteConfig.author}
-			&copy; {year}.<span class="inline-block">&nbsp;🚀&nbsp;{siteConfig.title}</span>
+		<div class="me-0 sm:me-4 flex items-center">
+			<span class="flex mr-2 items-center justify-between text-global-text"><svg 
+				xmlns="http://www.w3.org/2000/svg" 
+				viewBox="0 0 24 24" 
+				fill="none"
+				stroke="currentColor" 
+				stroke-width="2.2"
+				class="inline-block h-5 w-5 mr-1"
+			>
+				<path 
+					stroke-linecap="round" 
+					stroke-linejoin="round" 
+					d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" 
+				/>
+			</svg>{siteConfig.title}</span>
+			<span class="flex-2">Powered by {siteConfig.author}
+				&copy; {year}.</span>
 		</div>
 		<nav
 			aria-labelledby="footer_links"
