@@ -2,6 +2,7 @@
 import BaseHead from "@/components/BaseHead.astro";
 import SkipLink from "@/components/SkipLink.astro";
 import ThemeProvider from "@/components/ThemeProvider.astro";
+import { ViewTransitions } from "astro:transitions";
 import Footer from "@/components/layout/Footer.astro";
 import Header from "@/components/layout/Header.astro";
 import { siteConfig } from "@/site.config";
@@ -17,29 +18,30 @@ const {
 	meta: { articleDate, description = siteConfig.description, ogImage, title, comment },
 } = Astro.props;
 
-const anim = {
-  old: {
-    name: 'pageAnimate',
-    duration: '0.3s',
-    easing: 'ease-in',
-    direction: 'reverse',
-},
-new: {
-	name: 'pageAnimate',
-	delay: '0.2s',
-    duration: '0.3s',
-    easing: 'ease-in-out',
-  },
-};
-const customTransition = {
-  forwards: anim,
-  backwards: anim,
-};
+// const anim = {
+//   old: {
+//     name: 'pageAnimate',
+//     duration: '0.3s',
+//     easing: 'ease-in',
+//     direction: 'reverse',
+// },
+// new: {
+// 	name: 'pageAnimate',
+// 	delay: '0.2s',
+//     duration: '0.3s',
+//     easing: 'ease-in-out',
+//   },
+// };
+// const customTransition = {
+//   forwards: anim,
+//   backwards: anim,
+// };
 ---
 
 <html class="scroll-smooth" lang={siteConfig.lang}>
 	<head>
 		<BaseHead articleDate={articleDate} description={description} ogImage={ogImage} title={title} />
+		<ViewTransitions fallback="none"/>
 	</head>
 	<body
 		class="bg-global-bg text-global-text mx-auto flex min-h-screen max-w-3xl flex-col px-4 pt-4 sm:pt-16 font-mono text-sm font-normal antialiased sm:px-8"
@@ -47,7 +49,8 @@ const customTransition = {
 		<ThemeProvider />
 		<SkipLink />
 		<Header />
-		<main id="main" class="min-h-[calc(100vh-320px)] sm:min-h-[calc(100vh-380px)]" transition:animate={customTransition}>
+		<!-- transition:animate={customTransition} -->
+		<main id="main" class="min-h-[calc(100vh-320px)] sm:min-h-[calc(100vh-380px)]">
 			<slot />
 			{comment && <div class="comment mt-4">
 				<ValineComment />

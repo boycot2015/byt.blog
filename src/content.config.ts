@@ -13,10 +13,11 @@ const post = defineCollection({
 	loader: glob({ base: "./src/content/post", pattern: "**/*.{md,mdx}" }),
 	schema: ({ image }) =>
 		baseSchema.extend({
+			desc: z.string().optional(),
 			description: z.string().optional(),
 			coverImage: z
 				.object({
-					alt: z.string(),
+					alt: z.string().optional(),
 					src: image(),
 				})
 				.optional(),
@@ -26,10 +27,16 @@ const post = defineCollection({
 			ogImage: z.string().optional(),
 			categories: z.array(z.string()).default([]).transform(removeDupsAndLowerCase),
 			tags: z.array(z.string()).default([]).transform(removeDupsAndLowerCase),
+			date: z
+				.string()
+				.or(z.date())
+				.transform((val) => new Date(val)).optional(),
 			publishDate: z
 				.string()
 				.or(z.date())
-				.transform((val) => new Date(val)),
+				.transform((val) => new Date(val)).optional(),
+			img: z.string().optional(),
+			thumbImg: z.string().optional(),
 			updatedDate: z
 				.string()
 				.optional()
@@ -50,6 +57,10 @@ const note = defineCollection({
 		draft: z.boolean().default(false),
 		ai: z.boolean().default(false),
 		page: z.boolean().default(false),
+		date: z
+			.string()
+			.or(z.date())
+			.transform((val) => new Date(val)).optional(),
 		publishDate: z
 			.string()
 			.datetime({ offset: true }) // Ensures ISO 8601 format with offsets allowed (e.g. "2024-01-01T00:00:00Z" and "2024-01-01T00:00:00+02:00")

@@ -19,5 +19,9 @@ export function collectionDateSort(
 	a: CollectionEntry<"post" | "note">,
 	b: CollectionEntry<"post" | "note">,
 ) {
-	return b.data.publishDate.getTime() - a.data.publishDate.getTime();
+	if (b.data.publishDate && a.data.publishDate)
+	return  b.data.publishDate.getTime() - a.data.publishDate.getTime();
+	if (b.data.date && a.data.date)
+		return  b.data.date.getTime() - a.data.date.getTime();
+	return 0
 }

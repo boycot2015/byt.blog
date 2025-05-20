@@ -2,6 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 import FormattedDate from "@/components/FormattedDate.astro";
 import type { HTMLTag, Polymorphic } from "astro/types";
+import { siteConfig } from "@/site.config";
 
 type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
 	post: CollectionEntry<"post">;
@@ -13,11 +14,12 @@ const { as: Tag = "div", post, withDesc = false } = Astro.props;
 
 <FormattedDate
 	class="min-w-30 font-semibold text-gray-600 dark:text-gray-400"
-	date={post.data.publishDate}
+	date={post.data.publishDate||post.data.date}
 />
-<Tag>
+<Tag class="flex">
 	{post.data.draft && <span class="text-red-500">(草稿) </span>}
-	<a class="cactus-link" data-astro-prefetch href={`/posts/${post.id}/`}>
+	<a class="cactus-link flex" transition:name={`title-${post.data.title}`} data-astro-prefetch href={`/posts/${post.id}/`}>
+		{<img width="60" transition:name={`img-${post.data.title}`} class="mr-2" src={post.data.thumbImg||post.data.img || siteConfig.url + `/og-image/${post.id}.png`}/>}
 		{post.data.title}
 	</a>
 </Tag>

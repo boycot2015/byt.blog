@@ -12,7 +12,10 @@ export async function getAllPosts(): Promise<CollectionEntry<"post">[]> {
  */
 export function groupPostsByYear(posts: CollectionEntry<"post">[]) {
 	return posts.reduce<Record<string, CollectionEntry<"post">[]>>((acc, post) => {
-		const year = post.data.publishDate.getFullYear();
+		const date = post.data?.publishDate || post.data?.date;
+		console.log(date, 'date');
+		
+		const year = date?.getFullYear() || new Date().getFullYear();
 		if (!acc[year]) {
 			acc[year] = [];
 		}
@@ -51,7 +54,7 @@ export function getUniqueTagsWithCount(posts: CollectionEntry<"post">[]): [strin
  *  Note: This function doesn't filter draft posts, pass it the result of getAllPosts above to do so.
  *  */
 export function getAllCategories(posts: CollectionEntry<"post">[]) {
-	return posts.flatMap((post) => [...post.data.categories.slice(-1)]);
+	return posts.flatMap((post) => [...(post.data?.categories || []).slice(-1)]);
 }
 
 /** returns all unique categories created from posts

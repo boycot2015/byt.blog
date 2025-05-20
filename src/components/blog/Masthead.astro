@@ -20,9 +20,13 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 };
 ---
 
+<h1 class="title mb-4" transition:name={`title-${data.title}`}>
+	{data.draft ? <span class="text-base text-red-500">(草稿)</span> : null}
+	{data.title}
+</h1>
 {
 	data.coverImage ? (
-		<div class="mb-6 aspect-video bg-[var(--color-global-bg)]">
+		<div class="mb-6 aspect-video bg-[var(--color-global-bg)]" transition:name={`img-${data.coverImage.src}`}>
 			<Image
 				alt={data.coverImage.alt}
 				class="object-cover"
@@ -31,7 +35,7 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 				src={data.coverImage.src}
 			/>
 		</div>
-	) : <div class="mb-6 aspect-video bg-[var(--color-global-bg)]">
+	) : <div class="mb-6 aspect-video bg-[var(--color-global-bg)]" transition:name={`img-${data.title}`}>
 			<Image
 				alt={id}
 				width={1000}
@@ -39,24 +43,21 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 				class="object-cover"
 				fetchpriority="high"
 				loading="eager"
-				src={siteConfig.url + `/og-image/${id}.png`}
+				src={data.img || siteConfig.url + `/og-image/${id}.png`}
 			/>
 		</div>
 }
-<h1 class="title">
-	{data.draft ? <span class="text-base text-red-500">(草稿)</span> : null}
-	{data.title}
-</h1>
 <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
 	<p class="font-semibold">
-		<FormattedDate date={data.publishDate} dateTimeOptions={dateTimeOptions} /> /{" "}
+		{(data.publishDate) ?<FormattedDate date={data.publishDate} dateTimeOptions={dateTimeOptions} />:null} /{" "}
+		{(data.date) ?<FormattedDate date={data.date} dateTimeOptions={dateTimeOptions} />:null} /{" "}
 		<Fragment set:html={readingTime} />
 	</p>
 	{
 		data.updatedDate && (
 			<span class="bg-quote/5 text-quote rounded-lg px-2 py-1">
 				更新时间:
-				<FormattedDate class="ms-1" date={data.updatedDate} dateTimeOptions={dateTimeOptions} />
+				<FormattedDate class="ms-1" date={data.updatedDate||data.date} dateTimeOptions={dateTimeOptions} />
 			</span>
 		)
 	}
