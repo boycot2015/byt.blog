@@ -236,3 +236,6 @@ html,body {
     line-clamp: 3;             /* 设定显示的行数 */
     overflow: hidden;                   /* 隐藏超出部分 */
 }
+:where(img):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+	margin: auto;
+}

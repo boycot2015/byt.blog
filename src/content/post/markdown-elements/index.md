@@ -162,12 +162,6 @@ function demo() {
 | Close a split         | <kbd>Ctrl+Shift+W</kbd>                    |
 | Maximize a pane       | <kbd>Ctrl+Shift+P</kbd> + Toggle pane zoom |
 
-## Images
-
-Image in the same folder: `src/content/post/markdown-elements/logo.png`
-
-![Astro theme cactus logo](./logo.png)
-
 ## Links
 
 [Content from markdown-it](https://markdown-it.github.io/)
