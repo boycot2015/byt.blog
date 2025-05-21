@@ -19,11 +19,11 @@ const isPro = import.meta.env.PROD
             data.map((item, index) => <div id={`book${index+1}`}><a href={'/eBook/'+item.title}><div class={`w-full  overflow-hidden`}  title={`${item.title}-${item.author}`}>
             <img transition:name={`img-${item.title}-${item.author}`} src={item.img} class="h-[230px] sm:h-[260px] lg:h-[160px] w-full" alt={item.title} />
             <h3 transition:name={`title-${item.title}`} class="text-center line-clamp-1 mt-2">{item.title}-{item.author}</h3></div></a>
-            {!isPro ? <div transition:animate="none" class="flex justify-center my-1"><button class="remove-btn border px-1 rounded-md text-[var(--color-accent)] border-[var(--color-accent)] cursor-pointer" data-object-id={item.objectId} data-id={`book${index+1}`}>删除</button></div> : null}
+            {!isPro ? <div class="flex justify-center my-1"><button class="remove-btn border px-1 rounded-md text-[var(--color-accent)] border-[var(--color-accent)] cursor-pointer" data-object-id={item.objectId} data-id={`book${index+1}`}>删除</button></div> : null}
             </div>)
         }
         {
-            !isPro ? <div transition:animate="none" class="add-btn cursor-pointer border border-[var(--color-accent)] px-10 text-[40px] w-[auto] justify-center items-center flex flex-col h-[230px] sm:h-[260px] lg:h-[160px] text-[var(--color-accent)]">
+            !isPro ? <div class="add-btn cursor-pointer border border-[var(--color-accent)] px-10 text-[40px] w-[auto] justify-center items-center flex flex-col h-[230px] sm:h-[260px] lg:h-[160px] text-[var(--color-accent)]">
                 +
                 <span class="text-xl">上传</span>
                 <input type="file" accept=".epub" hidden>

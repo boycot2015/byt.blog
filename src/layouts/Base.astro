@@ -22,12 +22,11 @@ const anim = {
   old: {
     name: 'pageAnimate',
     duration: '0.3s',
-    easing: 'ease-in',
+    easing: 'ease-in-out',
     direction: 'reverse',
 },
 new: {
 	name: 'pageAnimate',
-	delay: '0.2s',
     duration: '0.3s',
     easing: 'ease-in-out',
   },
@@ -65,7 +64,7 @@ const customTransition = {
 	@keyframes pageAnimate {
 	  0% {
 		opacity: 0;
-		transform: translateY(30px);
+		transform: translateY(10px);
 	  }
 	  100% {
 		opacity: 1;

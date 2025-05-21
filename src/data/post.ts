@@ -2,9 +2,13 @@ import { type CollectionEntry, getCollection } from "astro:content";
 
 /** filter out draft posts based on the environment */
 export async function getAllPosts(): Promise<CollectionEntry<"post">[]> {
-	return await getCollection("post", ({ data }) => {
+	const posts = await getCollection("post", ({ data }) => {
 		return import.meta.env.PROD ? !data.draft : true;
 	});
+	
+	// Debug: Log post IDs
+	console.log('All post IDs:', posts.map(post => post.id));
+	return posts;
 }
 
 /** groups posts by year (based on option siteConfig.sortPostsByUpdatedDate), using the year as the key

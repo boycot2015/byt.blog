@@ -18,7 +18,7 @@ const { Content } = await render(note);
 	]}
 	data-pagefind-body={isPreview ? false : true}
 >
-	<Tag class="title" class:list={{ "text-base": isPreview }} transition:name={`id-${note.id}`}>
+	<Tag class="title" class:list={{ "text-xl": isPreview }} transition:name={`id-${note.id}`}>
 		{note.data.draft && <span class="text-red-500">(草稿) </span>}
 		{
 			isPreview ? (
@@ -38,10 +38,10 @@ const { Content } = await render(note);
 			month: "2-digit",
 			day: "2-digit",
 		}}
-		date={note.data.publishDate}
+		date={note.data.publishDate||note.data.date}
 	/>
 	<div
-		transition:name={`title-${note.data.title}`}
+		transition:name={`note-content-${note.id}`}
 		class="prose prose-sm prose-cactus mt-4 max-w-none [&>p:last-of-type]:mb-0"
 		class:list={{ "line-clamp-6": isPreview }}
 	>

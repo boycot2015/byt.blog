@@ -1,7 +1,7 @@
 ---
 import 'aplayer/dist/APlayer.min.css'; // 引入 APlayer 的样式文件
 ---
-<div id="player-container" class="z-999" transition:persist>
+<div id="player-container" class="z-999" transition:name="media-player" transition:persist>
   <pre class="aplayer-lrc-content">
   </pre>
 </div>
@@ -18,8 +18,7 @@ import 'aplayer/dist/APlayer.min.css'; // 引入 APlayer 的样式文件
     import APlayer from 'aplayer';
     let player: any;
     let playerContainer;
-    // 在组件加载时初始化播放器并恢复状态
-    document.addEventListener('DOMContentLoaded', async () => {
+    const initPlayer = async () => {
       let params: {[key:string]: string|number} = {
         server: 'netease',
         type: 'playlist',
@@ -65,5 +64,9 @@ import 'aplayer/dist/APlayer.min.css'; // 引入 APlayer 的样式文件
           player.audio.muted = false
         })
       })
+    }
+    // 在组件加载时初始化播放器并恢复状态
+    document.addEventListener('DOMContentLoaded', async () => {
+      initPlayer()
     }, false);
 </script>
