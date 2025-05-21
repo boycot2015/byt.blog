@@ -20,13 +20,9 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 };
 ---
 
-<h1 class="title mb-4" transition:name={`title-${data.title}`}>
-	{data.draft ? <span class="text-base text-red-500">(草稿)</span> : null}
-	{data.title}
-</h1>
 {
 	data.coverImage ? (
-		<div class="mb-6 aspect-video bg-[var(--color-global-bg)]" transition:name={`img-${data.coverImage.src}`}>
+		<div class="mb-6 aspect-video bg-[var(--color-global-bg)]" transition:name={`img-${id}`}>
 			<Image
 				alt={data.coverImage.alt}
 				class="object-cover"
@@ -35,7 +31,7 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 				src={data.coverImage.src}
 			/>
 		</div>
-	) : <div class="mb-6 aspect-video bg-[var(--color-global-bg)]" transition:name={`img-${data.title}`}>
+	) : <div class="mb-6 aspect-video bg-[var(--color-global-bg)]" transition:name={`img-${id}`}>
 			<Image
 				alt={id}
 				width={1000}
@@ -47,6 +43,10 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 			/>
 		</div>
 }
+<h1 class="title mb-4" transition:name={`title-${id}`}>
+	{data.draft ? <span class="text-base text-red-500">(草稿)</span> : null}
+	{data.title}
+</h1>
 <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
 	<p class="font-semibold">
 		{(data.publishDate) ?<FormattedDate date={data.publishDate} dateTimeOptions={dateTimeOptions} />:null} /{" "}

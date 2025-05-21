@@ -12,7 +12,7 @@ const meta = {
 
 <PageLayout meta={meta}>
     <main class="main pace-y-2 sm:space-y-8 mx-auto flex flex-col items-center justify-center overflow-y-auto">
-      <h1 class="text-center text-xl">{title}</h1>
+      <h1 class="text-center text-xl" transition:name={`title`} transition:animate={`slide`}>{title}</h1>
       <h3>{subTitle}</h3>
       <section class="flex flex-col min-h-[52vh] sm:min-h-[35vh] w-full">
         <div class={`flex flex-1 flex-col rounded-md w-full overflow-y-auto`} id="response-content"></div>

@@ -4,8 +4,6 @@ description: 友情链接
 publishDate: "2025-02-06T11:23:00Z"
 page: true
 ---
-
-# 友情链接
 <div class="links">
 
 * [![](https://blog.boycot.top/favicon.svg)个人博客](https://blog.boycot.top)

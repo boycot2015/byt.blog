@@ -25,7 +25,7 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES) as Col
 
 <PageLayout meta={{ title: '首页' }}>
 	<section>
-		<h1 class="title mb-6">Hello, Welcome</h1>
+		<h1 class="title mb-6" transition:name={`title`} transition:animate={`slide`}>Hello, Welcome</h1>
 		<div class="mb-2">
 			Hi, I’m Boycot.
 			<h3>

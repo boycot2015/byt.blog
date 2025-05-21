@@ -21,26 +21,9 @@ const meta = {
 		`Read about my note posted on: ${link.data.publishDate?.toLocaleDateString()}`,
 	title: link.data.title,
 };
-
-// const dateTimeOptions: Intl.DateTimeFormatOptions = {
-// 	month: "long",
-// };
 ---
 
 <PageLayout meta={{comment: false, ...meta }}>
-	<!-- <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
-		<p class="font-semibold">
-			<FormattedDate date={data.publishDate} dateTimeOptions={dateTimeOptions} /> /{" "}
-		</p>
-		{
-			data.updatedDate && (
-				<span class="bg-quote/5 text-quote rounded-lg px-2 py-1">
-					更新时间:
-					<FormattedDate class="ms-1" date={data.updatedDate} dateTimeOptions={dateTimeOptions} />
-				</span>
-			)
-		}
-	</div> -->
 	<div class="prose prose-sm prose-headings:font-semibold prose-headings:text-accent-2 prose-headings:before:absolute prose-headings:before:-ms-4 prose-headings:before:text-gray-600 prose-headings:hover:before:text-accent sm:prose-headings:before:content-['#'] sm:prose-th:before:content-none max-w-3xl">
 		<Content />
 	</div>

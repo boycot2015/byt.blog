@@ -73,6 +73,7 @@ const { Content } = await render(allLinks[0]);
 	}
 </style>
 <PostLayout post={allLinks[0]} meta={{comment: true }}>
+	<h1 transition:name={`title`} transition:animate={`slide`} class="title mb-6 flex items-center gap-3">友情链接</h1>
 	<div class="link-content">
 		<Content />
 	</div>
