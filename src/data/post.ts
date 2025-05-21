@@ -5,9 +5,6 @@ export async function getAllPosts(): Promise<CollectionEntry<"post">[]> {
 	const posts = await getCollection("post", ({ data }) => {
 		return import.meta.env.PROD ? !data.draft : true;
 	});
-	
-	// Debug: Log post IDs
-	console.log('All post IDs:', posts.map(post => post.id));
 	return posts;
 }
 

@@ -25,7 +25,7 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 		<div class="mb-6 aspect-video bg-[var(--color-global-bg)]" transition:name={`img-${id}`}>
 			<Image
 				alt={data.coverImage.alt}
-				class="object-cover"
+				class="object-cover rounded"
 				fetchpriority="high"
 				loading="eager"
 				src={data.coverImage.src}
@@ -36,7 +36,7 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 				alt={id}
 				width={1000}
 				height={300}
-				class="object-cover"
+				class="object-cover rounded"
 				fetchpriority="high"
 				loading="eager"
 				src={data.img || siteConfig.url + `/og-image/${id}.png`}

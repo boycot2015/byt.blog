@@ -1,28 +1,52 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import FormattedDate from "@/components/FormattedDate.astro";
-import type { HTMLTag, Polymorphic } from "astro/types";
 import { siteConfig } from "@/site.config";
 
-type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
+type Props  = {
 	post: CollectionEntry<"post">;
 	withDesc?: boolean;
 };
-
-const { as: Tag = "div", post, withDesc = false } = Astro.props;
+const { post, withDesc = false } = Astro.props;
 ---
-<Tag class="w-full">
+<div class="w-full">
 	<a class="flex justify-between w-full" transition:name={`title-${post.id}`} data-astro-prefetch href={`/posts/${post.id}/`}>
-		{<img width="160" height="100" transition:name={`img-${post.id}`} class="mr-4" src={post.data.thumbImg||post.data.img || siteConfig.url + `/og-image/${post.id}.png`}/>}
+		{<img transition:name={`img-${post.id}`} class="rounded object-full h-24.5 w-40 mr-4" src={post.data.thumbImg||post.data.img || siteConfig.url + `/og-image/${post.id}.png`}/>}
 		<div class="flex flex-col flex-1">
 			<h3 class="line-clamp-1 mb-2 text-xl">{post.data.draft && <span class="text-red-500">(草稿) </span>}{post.data.title}</h3>
 			<p class="line-clamp-2 mb-2 ">{post.data.description||post.data.desc}</p>
-			<div class="time">
-				发布时间：
-				<FormattedDate
-					class="min-w-30 font-semibold text-gray-600 dark:text-gray-400"
-					date={post.data.publishDate||post.data.date}
-				/>
+			<div class="flex justify-between w-full">
+				<div class="time">
+					<FormattedDate
+						class="min-w-30 font-bold text-gray-600 dark:text-gray-400"
+						date={post.data.publishDate||post.data.date||new Date()}
+						dateTimeOptions={{
+							year: "numeric",
+							month: "2-digit",
+							day: "2-digit",
+						}}
+					/>
+				</div>
+				{
+					!!post.data.categories?.length && (
+						<div class="mr-1 flex">
+							<svg class="inline-block h-6 w-5 mr-1"
+								fill="none"
+								focusable="false"
+								stroke="currentColor" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="currentColor" d="M4.5 19q-.633 0-1.066-.434Q3 18.133 3 17.5V6.616q0-.633.491-1.125Q3.983 5 4.615 5h4.31q.323 0 .628.13q.305.132.522.349L11.596 7h8.731q.214 0 .357.143t.143.357t-.143.357t-.357.143h-9.133l-2-2H4.615q-.269 0-.442.173T4 6.616V18q0-.27.106-.202t.279.164l1.917-6.422q.162-.515.593-.835t.967-.32h12.823q.813 0 1.305.649q.49.649.254 1.425l-1.646 5.482q-.142.476-.545.768q-.403.291-.9.291zm.927-1h13.65q.211 0 .375-.115q.163-.116.221-.327l1.608-5.385q.096-.308-.097-.548q-.192-.24-.5-.24H7.861q-.211 0-.375.115t-.22.327zM4 11.546V6zM5.427 18l1.839-6.173q.057-.212.096-.327l.038-.115l-.067.24q-.067.24-.164.548l-1.607 5.385q-.058.211-.096.326z"/></svg>
+							{post.data.categories.slice(-1).map((category, i) => (
+								<>
+									{/* prettier-ignore */}
+									<span class="flex">
+										{i === post.data.categories.length - 1 ? <span class="cactus-link inline-block before:content-['']" data-pagefind-filter="category"><span class="sr-only">View more blogs with the category&nbsp;</span>{category}
+										</span>:<span class="line-clamp-1 before:content-['']" data-pagefind-filter="category"><span class="sr-only">View more blogs with the category&nbsp;</span>{category}
+										</span>}
+									</span>
+								</>
+							))}
+						</div>
+					)
+				}
 			</div>
 		</div>
 	</a>

@@ -1,6 +1,6 @@
 ---
 title: 为什么是Astro
-publishDate: "2025-02-06T11:23:00Z"
+publishDate: "2025-02-06"
 description: Astro 是最适合构建像博客、营销网站、电子商务网站这样的以内容驱动的网站的 Web 框架。了解为什么 Astro 可能是你下一个网站的好选择。
 coverImage:
   src: "./cover-image/astro-logo-dark.png"

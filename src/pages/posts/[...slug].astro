@@ -4,12 +4,13 @@ import Pagination from "@/components/Paginator.astro";
 import { getAllPosts } from "@/data/post";
 import PostLayout from "@/layouts/BlogPost.astro";
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import { collectionDateSort } from "@/utils/date";
 // if you're using an adaptor in SSR mode, getStaticPaths wont work -> https://docs.astro.build/en/guides/routing/#modifying-the-slug-example-for-ssr
 export const getStaticPaths = (async () => {
-	const blogEntries = await getAllPosts();
+	const blogEntries = await getAllPosts();	
 	return blogEntries.map((post) => ({
 		params: { slug: post.id },
-		props: { post, page: { data: blogEntries.reverse() } },
+		props: { post, page: { posts: [...blogEntries].sort(collectionDateSort) } },
 	}));
 }) satisfies GetStaticPaths;
 
@@ -17,27 +18,26 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 const { post, page } = Astro.props;
 const { Content } = await render(post);
-const currentIndex = page.data.findIndex(el => el.id === post.id) ?? 0
-const prev = page.data[currentIndex - 1] ?? 0
-const next = page.data[currentIndex + 1] ?? 0
-
+const currentIndex = page.posts.findIndex(el => el.id === post.id) ?? 0
+const prev = page.posts[currentIndex - 1] ?? 0
+const next = page.posts[currentIndex + 1] ?? 0
 const paginationProps = {
-	...(prev && {
-		prevUrl: {
-			text: '← ' + prev.data.title,
-			url: '/posts/' + prev.id,
-		},
-	}),
 	...(next && {
 		nextUrl: {
 			text: next.data.title + ' →',
 			url: '/posts/' + next.id,
 		},
 	}),
+	...(prev && {
+		prevUrl: {
+			text: '← ' + prev.data.title,
+			url: '/posts/' + prev.id,
+		},
+	}),
 };
 ---
 
-<PostLayout post={post} meta={{ comment: true }}>
+<PostLayout post={post}>
 	<Content />
 	<Pagination slot="footer" {...paginationProps} />
 </PostLayout>
