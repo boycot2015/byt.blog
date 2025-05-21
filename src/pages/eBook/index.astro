@@ -82,7 +82,7 @@ const isPro = import.meta.env.PROD
                             loading.onprogress(data)
                         }}).then((data:any) => {
                             const { attributes, id } = data
-                            console.log(attributes, 'data');
+                            // console.log(attributes, 'data');
                             localforage.setItem('book_' + el.name, el.arrayBuffer())
                             let alink = document.createElement('div') as HTMLDivElement
                             let removeBtnEl = bookEl.querySelectorAll('.remove-btn')
