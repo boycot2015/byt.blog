@@ -18,7 +18,7 @@ const { Content } = await render(note);
 	]}
 	data-pagefind-body={isPreview ? false : true}
 >
-	<Tag class="title" class:list={{ "text-xl": isPreview }} transition:name={`id-${note.id}`}>
+	<Tag class="title mb-3" class:list={{ "text-xl": isPreview }} transition:name={`id-${note.id}`}>
 		{note.data.draft && <span class="text-red-500">(草稿) </span>}
 		{
 			isPreview ? (

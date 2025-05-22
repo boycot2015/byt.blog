@@ -47,10 +47,15 @@ const meta = {
 			</div>
 			<div class="page flex justify-between">
 				<div class="btn-prev cursor-pointer hover:text-[var(--color-accent)]">← 上一页</div>
-				<div class="flex w-[60%]">
-					书签：<select id="marks" class="max-w-[75%]">
+				<div class="flex w-[60%] items-center">
+					<select id="marks" class="max-w-[75%]">
 						<option label="请选择"></option>
 					</select>
+					<span class="ml-2 manager-btn relative">
+						<svg class="cursor-pointer hover:text-[var(--color-accent)]" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h8.925l-2 2H5v14h14v-6.95l2-2V19q0 .825-.587 1.413T19 21zm4-6v-4.25l9.175-9.175q.3-.3.675-.45t.75-.15q.4 0 .763.15t.662.45L22.425 3q.275.3.425.663T23 4.4t-.137.738t-.438.662L13.25 15zM21.025 4.4l-1.4-1.4zM11 13h1.4l5.8-5.8l-.7-.7l-.725-.7L11 11.575zm6.5-6.5l-.725-.7zl.7.7z"/></svg>
+						<div class="booksmarks-panel flex flex-col hidden absolute right-[-100%] bottom-[120%] w-60 rounded-md bg-white shadow-2xl dark:bg-gray-800">
+						</div>
+					</span>
 				</div>
 				<div class="btn-next cursor-pointer hover:text-[var(--color-accent)]">下一页 →</div>
 			</div>
@@ -83,6 +88,8 @@ const meta = {
 		columns: any[] = []
 		columnsEl!: HTMLSelectElement
 		marksEl!: HTMLSelectElement
+		actionEl!: HTMLDivElement | null
+		booksmarksPanel!: HTMLDivElement | null
 		connectedCallback() {
 			this.init()
 		}
@@ -153,7 +160,8 @@ const meta = {
 				this.columnsEl.onchange = (e) => this.columnsChange(e)
 
 				// 切换书签
-				this.marksEl.onchange = (e) => this.changeMark(e)
+				this.marksEl.onchange = (e) => this.changeMark(e.target)
+
 			})
 			booksSelect && (booksSelect.onchange = (e:any) => {
 				window.location.href = '/eBook/' + e.target.value
@@ -249,14 +257,18 @@ const meta = {
 		}
 		loadMarks () {
 			let marksEl = this.querySelector('#marks') as HTMLSelectElement
+			marksEl.innerHTML = '<option label="请选择"></option>'
 			this.bookmarks.filter(el => el.label).map(el => {
 				let optionEl = document.createElement('option') as HTMLOptionElement
 				optionEl.label = el.label
 				optionEl.value = el.start.cfi
 				marksEl.appendChild(optionEl)
 			})
+			if (this.bookmarks.length && marksEl.value) this.changeMark(marksEl)
 			marksEl.value = this.bookmarks[0]?.start.cfi || ''
 			this.marksEl = marksEl
+			// 书签管理
+			this.renderBookMarksPanel()
 		}
 		// 渲染电子书后调用
 		registerTheme () {
@@ -277,18 +289,21 @@ const meta = {
 			}
 			// console.log(this.columns, this.rendition.location.start, mark, 'rendition.location.start');
 			let has = this.bookmarks.find(el => el.label === mark.label)
-			!has && this.bookmarks.unshift(mark)
-			let optionEl = document.createElement('option') as HTMLOptionElement
-			optionEl.label = mark.label
-			optionEl.value = mark.start.cfi
-			this.marksEl.appendChild(optionEl)
-			// console.log(this.data, 'data');
-			localforage.setItem('book_marks_' + this.data.data.title, this.bookmarks)
-			this.data.objectId && $api.book.saveMark(this.data.objectId, this.bookmarks)
+			if (!has) {
+				this.bookmarks.unshift(mark)
+				let optionEl = document.createElement('option') as HTMLOptionElement
+				optionEl.label = mark.label
+				optionEl.value = mark.start.cfi
+				this.marksEl.appendChild(optionEl)
+				// console.log(this.data, 'data');
+				localforage.setItem('book_marks_' + this.data.data.title, this.bookmarks)
+				this.data.objectId && $api.book.saveMark(this.data.objectId, this.bookmarks)
+				this.renderBookMarksPanel()
+			}
 			alert(has ? '书签已存在': '添加成功')
 		}
-		changeMark (e: Event) {
-			let target = e.target as any
+		changeMark (target: any) {
+			if (!target.value) return
 			this.jumpTo(target.value || '')
 			let has = this.bookmarks.find(el => el.start.cfi === target.value)
 			let hasIndex = this.bookmarks.findIndex(el => el.start.cfi === target.value)
@@ -327,6 +342,57 @@ const meta = {
 				let location = this.rendition.currentLocation()
 				this.columnsEl.value = section?.href || location.start?.href
 			})
+		}
+		deleteBookmark(index: number) {
+			this.bookmarks.splice(index, 1);
+			localforage.setItem('book_marks_' + this.data.data.title, this.bookmarks);
+			this.data.objectId && $api.book.saveMark(this.data.objectId, this.bookmarks);
+			this.loadMarks();
+		}
+		clearBookmarks() {
+			this.bookmarks = [];
+			localforage.setItem('book_marks_' + this.data.data.title, this.bookmarks);
+			this.data.objectId && $api.book.saveMark(this.data.objectId, this.bookmarks);
+			this.loadMarks();
+		}
+		renderBookMarksPanel () {
+			this.actionEl = document.querySelector('.manager-btn')
+			this.booksmarksPanel = document.querySelector('.booksmarks-panel')
+			this.actionEl?.addEventListener('click', (e) => {
+				e.preventDefault()
+				this.booksmarksPanel?.classList.remove('hidden')
+			})
+			if (this.booksmarksPanel) {
+				let container = `<div class="pb-1"><div class="flex border-b-1 border-[var(--color-accent)] p-2 mb-2">
+						<span class="flex-2">书签管理</span>
+						<span class="flex hover:text-[var(--color-accent)] clear-btn">
+							清空
+							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"/></svg>
+						</span>
+					</div><div class="max-h-30 overflow-y-auto my-2 px-2 space-y-2">`
+				this.booksmarksPanel.innerHTML = container + this.bookmarks.map((el:any, index: number) => `<div class="flex items-center">
+					<span class="flex-2 line-clamp-1">${el.label}</span>
+					<svg class="del-btn cursor-pointer hover:text-[var(--color-accent)]" data-index="${index}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><!-- Icon from Material Symbols by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="M6.4 19L5 17.6l5.6-5.6L5 6.4L6.4 5l5.6 5.6L17.6 5L19 6.4L13.4 12l5.6 5.6l-1.4 1.4l-5.6-5.6z"/></svg>
+				</div>`).join('') + '</div></div>'
+			}
+			this.actionEl?.classList[this.bookmarks.length?'remove':'add']('hidden')
+			document.addEventListener('click', (e) => {
+				if (!this.actionEl?.contains(e.target as Node)) {
+					this.booksmarksPanel?.classList.add('hidden');
+				}
+			});
+			let panelmarks = this.booksmarksPanel?.querySelectorAll('.del-btn') || []
+			let panelmarksClearEl = this.booksmarksPanel?.querySelector('.clear-btn')
+			for (let index = 0; index < panelmarks.length; index++) {
+				panelmarks[index]?.addEventListener('click', (e) => {
+					let target = e.target as HTMLElement
+					let index = target.getAttribute('data-index') || '0'
+					this.deleteBookmark(parseInt(index))
+				});
+			}
+			panelmarksClearEl?.addEventListener('click', () => {
+				this.clearBookmarks()
+			});
 		}
 	}
 	customElements.define('book-component', BookComponent)
