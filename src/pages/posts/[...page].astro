@@ -71,7 +71,7 @@ const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 							<span class="sr-only">Posts in</span>
 							{yearKey}
 						</h2>
-						<ul class="mt-5 mb-16 space-y-4 divide-y divide-[var(--color-global-text)] text-start">
+						<ul class="mt-5 mb-5 space-y-2 text-start">
 							{groupedByYear[yearKey]?.map((p) => (
 								<li class="grid gap-2 pb-4 last:pb-0 sm:grid-cols-[1fr_auto] sm:[&_q]:col-start-2">
 									<PostPreview post={p} />

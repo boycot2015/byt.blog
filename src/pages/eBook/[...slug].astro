@@ -67,6 +67,8 @@ const meta = {
 	import localforage from 'localforage'
 	import { siteConfig } from '@/site.config'
 	import Loading from '@/utils/Loading'
+	import Message from '@/utils/Message'
+    const message = new Message()
 	const loading = new Loading()
     const $api = siteConfig.$api;
 	interface TreeObj  {
@@ -300,7 +302,7 @@ const meta = {
 				this.data.objectId && $api.book.saveMark(this.data.objectId, this.bookmarks)
 				this.renderBookMarksPanel()
 			}
-			alert(has ? '书签已存在': '添加成功')
+			message.show({ text: has ? '书签已存在' : '添加成功' , type: has ? 'warning' : 'success' })
 		}
 		changeMark (target: any) {
 			if (!target.value) return

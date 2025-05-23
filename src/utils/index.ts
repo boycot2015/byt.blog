@@ -36,3 +36,15 @@ export const debounce = (func:()=> void, wait:number, immediate?:boolean) => {
     var uuid = s.join('')
     return uuid
 }
+
+export function decodeBase64(base64:string) {   
+    // 创建一个缓冲区
+    const buff = Buffer.from(base64, 'base64');
+
+    // 将缓冲区解码为 UTF-8
+    const str = buff.toString('utf-8');
+
+    // 输出普通字符串
+    console.log(str); // Base64 Encoding in Node.js
+    return str
+ }

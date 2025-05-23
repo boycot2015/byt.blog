@@ -4,12 +4,15 @@ import PostPreview from "@/components/blog/PostPreview.astro";
 import Note from "@/components/note/Note.astro";
 import { getAllPosts } from "@/data/post";
 import { getAllNotes } from "@/data/note";
+import { getAllProjects } from "@/data/project";
 
 import PageLayout from "@/layouts/Base.astro";
 import { collectionDateSort } from "@/utils/date";
+// import { decodeBase64 } from "@/utils";
 import SocialList from "@/components/SocialList.astro";
-
-// import { siteConfig } from "@/site.config";
+// projects
+const projects = await getAllProjects();
+// console.log(projects, 'projects');
 // Posts
 const MAX_POSTS = 8;
 const allPosts = await getAllPosts();
@@ -25,18 +28,31 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES) as Col
 
 <PageLayout meta={{ title: '首页' }}>
 	<section>
-		<h1 class="title mb-6" transition:name={`title`} transition:animate={`slide`}>Hello, Welcome</h1>
+		<h1 class="title mb-6" transition:name={`title`} transition:animate={`slide`}>作品集</h1>
 		<div class="mb-2">
-			Hi, I’m Boycot.
+			<ul class="grid grid-cols-2 gap-4 mb-3" role="list">
+				{
+					projects.map((p:any) => (
+						<li class="grid gap-2 last:pb-0 p-2 mb-2 backdrop-blur overflow-hidden relative transition transform duration-500 ease-in-out hover:-translate-y-1 rounded shadow-md hover:shadow-xl drop-shadow-lg">
+							<a href={p.url} target="_blank" rel="noopener noreferrer">
+								<img src={p.img} alt="">
+								<h3 class="text-xl line-clamp-1 mb-2">{p.name}</h3>
+								<p class="desc line-clamp-2 mb-2">{p.description}</p>
+								<span class="star rounded-bl text-[var(--color-accent)] px-2 flex items-center space-x-2 absolute right-0 top-0 p-0"><svg class="mr-1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="m7.625 6.4l2.8-3.625q.3-.4.713-.587T12 2t.863.188t.712.587l2.8 3.625l4.25 1.425q.65.2 1.025.738t.375 1.187q0 .3-.088.6t-.287.575l-2.75 3.9l.1 4.1q.025.875-.575 1.475t-1.4.6q-.05 0-.55-.075L12 19.675l-4.475 1.25q-.125.05-.275.063T6.975 21q-.8 0-1.4-.6T5 18.925l.1-4.125l-2.725-3.875q-.2-.275-.288-.575T2 9.75q0-.625.363-1.162t1.012-.763zM8.85 8.125L4 9.725L7.1 14.2L7 18.975l5-1.375l5 1.4l-.1-4.8L20 9.775l-4.85-1.65L12 4zM12 11.5"/></svg>{p.star}</span>
+							</a>
+						</li>
+					))
+				}
+			</ul>
 			<h3>
-				If you want to know more about me, click on link below and it will take you to my repo 
+				欢迎点赞关注
 				<SocialList className="inline-block scale-[0.7] !ml-0 align-middle" />.
 			</h3>
 		</div>
 	</section>
 	<section class="mt-12">
 		<h2 class="title text-accent mb-6 text-xl"><a href="/posts/">文章</a></h2>
-		<ul class="space-y-4 divide-y divide-[var(--color-global-text)]" role="list">
+		<ul class="space-y-2" role="list">
 			{
 				allPostsByDate.map((p) => (
 					<li class="grid gap-2 pb-4 last:pb-0">

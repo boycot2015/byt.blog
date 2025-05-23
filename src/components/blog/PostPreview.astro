@@ -2,14 +2,14 @@
 import type { CollectionEntry } from "astro:content";
 import FormattedDate from "@/components/FormattedDate.astro";
 import { siteConfig } from "@/site.config";
-
-type Props  = {
+interface Props {
 	post: CollectionEntry<"post">;
+	as?: string;
 	withDesc?: boolean;
-};
-const { post, withDesc = false } = Astro.props;
+}
+const { as: Tag = 'div', post, withDesc = false } = Astro.props;
 ---
-<div class="w-full">
+<Tag>
 	<a class="flex justify-between w-full" transition:name={`title-${post.id}`} data-astro-prefetch href={`/posts/${post.id}/`}>
 		{<img transition:name={`img-${post.id}`} class="rounded object-full h-24.8 w-40 mr-4" src={post.data.thumbImg||post.data.img || siteConfig.url + `/og-image/${post.id}.png`}/>}
 		<div class="flex flex-col flex-1">

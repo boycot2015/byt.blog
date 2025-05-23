@@ -16,18 +16,18 @@ const isPro = import.meta.env.PROD
     <h1 transition:name={`title`} transition:animate={`slide`} class="title mb-6 flex items-center gap-3">电子书</h1>
     <div id="books" class="books grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {
-            data.map((item, index) => <div id={`book${index+1}`} data-id={item.objectId}><a href={'/eBook/'+item.title}><div class={`w-full  overflow-hidden`}  title={`${item.title}-${item.author}`}>
+            !isPro ? <div class="add-btn cursor-pointer border border-[var(--color-accent)] px-10 text-[40px] w-[auto] justify-center items-center flex flex-col h-[230px] sm:h-[260px] lg:h-[160px] text-[var(--color-accent)]">
+                +
+                <span class="text-xl">上传</span>
+                <input type="file" accept=".epub" hidden />
+            </div> : null
+        }
+        {
+            data.map((item, index) => <div id={`book${index+1}`} data-id={item.objectId} class="book-item"><a href={'/eBook/'+item.title}><div class={`w-full  overflow-hidden`}  title={`${item.title}-${item.author}`}>
             <img transition:name={`img-${item.title}-${item.author}`} src={item.img} class="h-[230px] sm:h-[260px] lg:h-[160px] w-full" alt={item.title} />
             <h3 transition:name={`title-${item.title}`} class="text-center line-clamp-1 mt-2">{item.title}-{item.author}</h3></div></a>
             {!isPro ? <div class="flex justify-center my-1"><button class="remove-btn border px-1 rounded-md text-[var(--color-accent)] border-[var(--color-accent)] cursor-pointer" data-object-id={item.objectId} data-id={`book${index+1}`}>删除</button></div> : null}
             </div>)
-        }
-        {
-            !isPro ? <div class="add-btn cursor-pointer border border-[var(--color-accent)] px-10 text-[40px] w-[auto] justify-center items-center flex flex-col h-[230px] sm:h-[260px] lg:h-[160px] text-[var(--color-accent)]">
-                +
-                <span class="text-xl">上传</span>
-                <input type="file" accept=".epub" hidden>
-            </div> : null
         }
     </div>
 </PageLayout>
@@ -40,7 +40,7 @@ const isPro = import.meta.env.PROD
     import Message from '@/utils/Message'
     import Sortable from 'sortablejs'
 
-    const $api = siteConfig.$api;
+    const $api = siteConfig.$api
     const loading = new Loading()
     const message = new Message()
     document.addEventListener('astro:page-load', () => {
@@ -49,10 +49,10 @@ const isPro = import.meta.env.PROD
         let bookEl = document.querySelector('#books') as HTMLDivElement
 
         // 初始化 SortableJS
-        if (bookEl) {
+        if (!import.meta.env.PROD && bookEl) {
             Sortable.create(bookEl, {
                 animation: 150,
-                filter: ".add-btn",
+                draggable: ".book-item",
                 onEnd: async () => {
                     const items = Array.from(bookEl.children).map((el: any) => el.getAttribute('data-id')).filter(el => !!el);
                     try {

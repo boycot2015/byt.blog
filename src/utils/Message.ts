@@ -26,8 +26,9 @@ class Message {
 
     show(options?:MessageProps) {
         options = options || this.options
+        if (document.body.querySelector('.message-info')) return
         let messageEl = document.createElement('div') as HTMLDivElement
-        messageEl.setAttribute('class', `fixed top-[5vh] left-[50%] z-999 text-[white]`)
+        messageEl.setAttribute('class', `message-info fixed top-[5vh] left-[50%] z-999 text-[white]`)
         messageEl.innerHTML = `<div class="flex rounded-md items-center p-2 justify-center ${options.class} ${this.typeClass[options.type || 'default']}" style="${options.style}"><span>${options.icon||''}</span><span class="flex">${options.text}</span></div>`
         document.body.appendChild(messageEl)
         this.messageEl = messageEl
