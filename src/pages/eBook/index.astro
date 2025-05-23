@@ -16,7 +16,7 @@ const isPro = import.meta.env.PROD
     <h1 transition:name={`title`} transition:animate={`slide`} class="title mb-6 flex items-center gap-3">电子书</h1>
     <div id="books" class="books grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {
-            data.map((item, index) => <div id={`book${index+1}`}><a href={'/eBook/'+item.title}><div class={`w-full  overflow-hidden`}  title={`${item.title}-${item.author}`}>
+            data.map((item, index) => <div id={`book${index+1}`} data-id={item.objectId}><a href={'/eBook/'+item.title}><div class={`w-full  overflow-hidden`}  title={`${item.title}-${item.author}`}>
             <img transition:name={`img-${item.title}-${item.author}`} src={item.img} class="h-[230px] sm:h-[260px] lg:h-[160px] w-full" alt={item.title} />
             <h3 transition:name={`title-${item.title}`} class="text-center line-clamp-1 mt-2">{item.title}-{item.author}</h3></div></a>
             {!isPro ? <div class="flex justify-center my-1"><button class="remove-btn border px-1 rounded-md text-[var(--color-accent)] border-[var(--color-accent)] cursor-pointer" data-object-id={item.objectId} data-id={`book${index+1}`}>删除</button></div> : null}
@@ -38,6 +38,7 @@ const isPro = import.meta.env.PROD
     import Epub from 'epubjs'
     import Loading from '@/utils/Loading'
     import Message from '@/utils/Message'
+    import Sortable from 'sortablejs'
 
     const $api = siteConfig.$api;
     const loading = new Loading()
@@ -46,6 +47,30 @@ const isPro = import.meta.env.PROD
         let targetEl = document.querySelector('.add-btn') as HTMLDivElement
         let fileEl = document.querySelector('input') as HTMLInputElement
         let bookEl = document.querySelector('#books') as HTMLDivElement
+
+        // 初始化 SortableJS
+        if (bookEl) {
+            Sortable.create(bookEl, {
+                animation: 150,
+                filter: ".add-btn",
+                onEnd: async () => {
+                    const items = Array.from(bookEl.children).map((el: any) => el.getAttribute('data-id')).filter(el => !!el);
+                    try {
+                        await Promise.all(items.map((el, index) => $api.book.update(el, { order: index + 1 })));
+                        message.show({
+                            text: '排序已保存！',
+                            type: 'success'
+                        });
+                    } catch (error) {
+                        message.show({
+                            text: '保存排序失败，请重试！',
+                            type: 'error'
+                        });
+                    }
+                }
+            });
+        }
+
         targetEl && (targetEl.onclick = () => {
             fileEl.click()
         })

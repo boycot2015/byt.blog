@@ -4,16 +4,40 @@ AV.init({
     appKey: "mbNoKxkqSI3raGFUKAR1acV6",
     serverURL: "https://ufdaemkl.lc-cn-n1-shared.com",
 });
+type Book = {
+    title: string;
+    author: string;
+    order: number;
+    marks: any[];
+    url?:string;
+    fileId?:string;
+    img?:string;
+    imgId?:string;
+}
 const { Query, File } = AV;
 const Book = AV.Object.extend("Book");
 const get = () => {
     const query = new Query("Book");
     query.descending("createdAt");
     return query.find().then(function (data) {
-        // console.log("操作成功", data);
-        return data
+        console.log("操作成功", data);
+        return data.sort((a:any, b:any) => a.attributes.order - b.attributes.order);
     }, function (err) {
         console.error("操作失败", err);
+    });
+};
+const update = (id:string, data: any) => {
+    const book = AV.Object.createWithoutData('Book', id);
+    for (const key in data) {
+        if (data[key]) {
+            book.set(key, data[key]);
+        }
+    }
+    return book.save().then(function (res) {
+        console.log("保存成功", res);
+        return res
+    }, function (err) {
+        console.error("保存失败", err);
     });
 };
 const upload = async (filename:string, data:string|Blob|Buffer, options: { cover?:any, onprogress?:any }) => {
@@ -22,6 +46,7 @@ const upload = async (filename:string, data:string|Blob|Buffer, options: { cover
     const { cover, onprogress } = options;
     book.set("title", filename.split('_')[0]);
     book.set("author", filename.split('_')[1] || '');
+    book.set("order", 0);
     book.set("marks", []);
     if (cover) {
         const coverFile = new File(filename.split('.')[0] + '_cover.png', cover);
@@ -87,6 +112,7 @@ const getById = (id:string) => {
 };
 export {
     get,
+    update,
     upload,
     handleDelete,
     saveMark,

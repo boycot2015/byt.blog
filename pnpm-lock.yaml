@@ -95,6 +95,9 @@ importers:
       sharp:
         specifier: ^0.33.5
         version: 0.33.5
+      sortablejs:
+        specifier: ^1.15.6
+        version: 1.15.6
       unified:
         specifier: ^11.0.5
         version: 11.0.5
@@ -3773,6 +3776,9 @@ packages:
 
   smoothscroll@0.4.0:
     resolution: {integrity: sha512-sggQ3U2Un38b3+q/j1P4Y4fCboCtoUIaBYoge+Lb6Xg1H8RTIif/hugVr+ErMtIDpvBbhQfTjtiTeYAfbw1ZGQ==}
+
+  sortablejs@1.15.6:
+    resolution: {integrity: sha512-aNfiuwMEpfBM/CN6LY0ibyhxPfPbyFeBTYJKCvzkJ2GkUpazIt3H+QIPAMHwqQ7tMKaHz1Qj+rJJCqljnf4p3A==}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -8667,6 +8673,8 @@ snapshots:
       sax: 1.4.1
 
   smoothscroll@0.4.0: {}
+
+  sortablejs@1.15.6: {}
 
   source-map-js@1.2.1: {}
 
