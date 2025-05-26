@@ -28,7 +28,7 @@ export async function getAllProjects() {
     const projectsRes = await fetch(`https://api.github.com/users/boycot2015/repos?client_id=${auth.client_id}&client_secret=${auth.client_secret}`);
     let projects = await projectsRes.json();
     projects = projects.length ? projects : template;
-    console.log(projects, 'projects');
+    // console.log(projects, 'projects');
     
     return projects?.filter((el:any) => !el.private && el.description && !el.fork && el.stargazers_count).map((el:any) => {
         let star = el.stargazers_count;

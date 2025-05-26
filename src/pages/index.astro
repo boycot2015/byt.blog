@@ -8,11 +8,11 @@ import { getAllProjects } from "@/data/project";
 
 import PageLayout from "@/layouts/Base.astro";
 import { collectionDateSort } from "@/utils/date";
-// import { decodeBase64 } from "@/utils";
 import SocialList from "@/components/SocialList.astro";
-// projects
+
+// Projects
 const projects = await getAllProjects();
-// console.log(projects, 'projects');
+
 // Posts
 const MAX_POSTS = 8;
 const allPosts = await getAllPosts();
