@@ -4,6 +4,7 @@ description: 本地php环境安装
 publishDate: "2025-03-12T11:23:00Z"
 categories: ['后端', 'php']
 tags: ['php']
+img: https://plus.unsplash.com/premium_vector-1734450619114-3f562e539869?q=80&w=1548&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
 ---
 我们这里以apple m2 系统为例子。
 我们以https://github.com/shivammath...第三方tap源为例子，官方的brew速度太慢了。

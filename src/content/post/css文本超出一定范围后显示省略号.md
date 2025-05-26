@@ -4,6 +4,7 @@ description: css文本超出一定范围后显示省略号
 publishDate: "2025-03-11"
 categories: ['前端', 'css']
 tags: ['css', 'ellipsis']
+img: https://plus.unsplash.com/premium_vector-1734450619106-3338b4ae3a56?q=80&w=1548&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
 ---
 
 在CSS中，如果你希望文本超出一定范围后显示省略号，可以使用以下的样式来实现：

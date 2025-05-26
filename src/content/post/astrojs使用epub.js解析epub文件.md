@@ -4,6 +4,7 @@ description: astrojs使用epub.js解析epub文件
 publishDate: "2025-02-25T11:23:00Z"
 categories: ['前端', '插件', 'equb.js']
 tags: ['astro', 'equb.js']
+img: https://plus.unsplash.com/premium_vector-1683133603975-60193704cb08?q=80&w=1637&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
 ---
 
 使用 `epub.js` 解析 EPUB 文件在 JavaScript 环境下可以非常方便，尤其是结合像 Astro.js 这样的现代框架。以下是一个简单的指导，帮助你在 Astro.js 项目中使用 `epub.js` 解析和展示 EPUB 文件。

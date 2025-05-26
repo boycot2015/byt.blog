@@ -4,6 +4,7 @@ publishDate: "2025-02-17"
 ai: true
 categories: ['前端', '游戏']
 tags: ['游戏', 'javascript']
+img: https://plus.unsplash.com/premium_vector-1721522713858-2d8b773fd24d?q=80&w=1480&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
 ---
 > 本文由ai自动生成，仅供参考。
 
