@@ -7,6 +7,10 @@
 <script>
     import Valine from 'valine';
     document.addEventListener('astro:page-load', () => {
+      if (document.querySelector('#valine-comment') === null) {
+        console.warn('Valine comment element not found!');
+        return;
+      }
       const APP_ID = 'UFDAemKla2uvRCDNCBEGsVnA-gzGzoHsz';
       const APP_KEY = 'mbNoKxkqSI3raGFUKAR1acV6';
       new Valine({

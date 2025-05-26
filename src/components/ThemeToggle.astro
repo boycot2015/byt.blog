@@ -66,58 +66,25 @@
 			this.linkEl = document.querySelector('link[rel="icon"]') as HTMLLinkElement
 			this.linkEl.href = !rootInDarkMode() ? '/favicon.svg' : '/favicon-dark.svg'
 			// button event
-			this.button.addEventListener("click", (e:any) => {
+			this.button.addEventListener("click", (e:MouseEvent) => {
 				this.toggleTheme(e)
 			});
 		}
-		toggleTheme(event:any) {
-			const x = event.clientX
-			const y = event.clientY
-			const endRadius = Math.hypot(
-				Math.max(x, innerWidth - x),
-				Math.max(y, innerHeight - y),
-			)
+		toggleTheme(e:MouseEvent) {
 			// invert theme
 			let themeChangeEvent = new CustomEvent("theme-change", {
 				detail: {
+					clientX: e.clientX,
+					clientY: e.clientY,
 					theme: rootInDarkMode() ? "light" : "dark",
 				},
 			});
-			const toogle = () => {
-				// dispatch event -> ThemeProvider.astro
-				document.dispatchEvent(themeChangeEvent);
-				
-				// set the aria-checked attribute
-				this.button.setAttribute("aria-checked", String(rootInDarkMode()));
-				this.linkEl.href = !rootInDarkMode() ? '/favicon.svg' : '/favicon-dark.svg'
-			}
-			// 兼容性处理
-			if (!document.startViewTransition) {
-				toogle()
-				return
-			}
-			const transition = document.startViewTransition(async () => {
-				toogle()
-				return endRadius
-			})
-			transition.ready.then(() => {
-				const clipPath = [
-				`circle(0px at ${x}px ${y}px)`,
-				`circle(${endRadius}px at ${x}px ${y}px)`,
-				]
-				document.documentElement.animate(
-				{
-					clipPath: !rootInDarkMode() ? [...clipPath].reverse() : clipPath,
-				},
-				{
-					duration: 400,
-					easing: 'ease-in',
-					pseudoElement: !rootInDarkMode()
-					? '::view-transition-old(root)'
-					: '::view-transition-new(root)',
-				},
-				)
-			})
+			// dispatch event -> ThemeProvider.astro
+			document.dispatchEvent(themeChangeEvent);
+			
+			// set the aria-checked attribute
+			this.button.setAttribute("aria-checked", String(rootInDarkMode()));
+			this.linkEl.href = !rootInDarkMode() ? '/favicon.svg' : '/favicon-dark.svg'
 		}
 	}
 

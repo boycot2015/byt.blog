@@ -19,17 +19,17 @@ const {
 } = Astro.props;
 
 const anim = {
-  old: {
-    name: 'pageAnimate',
-    duration: '0.3s',
-    easing: 'ease-in-out',
-    direction: 'reverse',
-},
-new: {
-	name: 'pageAnimate',
-    duration: '0.3s',
-    easing: 'ease-in-out',
-  },
+  	old: {
+		name: 'pageAnimate',
+		duration: '0.3s',
+		easing: 'ease-in-out',
+		direction: 'reverse',
+	},
+	new: {
+		name: 'pageAnimate',
+		duration: '0.3s',
+		easing: 'ease-in-out',
+	},
 };
 const customTransition = {
   forwards: anim,
@@ -43,7 +43,7 @@ const customTransition = {
 		<!-- <ViewTransitions fallback="none"/> -->
 	</head>
 	<body
-		class="bg-global-bg text-global-text mx-auto flex min-h-screen max-w-3xl flex-col px-4 pt-4 sm:pt-16 font-mono text-sm font-normal antialiased sm:px-8"
+		class="bg-global-bg text-global-text mx-auto flex min-h-screen max-w-4xl flex-col px-4 pt-4 sm:pt-16 font-mono text-sm font-normal antialiased sm:px-8"
 	>
 		<ThemeProvider />
 		<SkipLink />
@@ -51,9 +51,9 @@ const customTransition = {
 		<!-- transition:animate={customTransition} -->
 		<main id="main" class="min-h-[calc(100vh-320px)] sm:min-h-[calc(100vh-380px)]" transition:animate={customTransition}>
 			<slot />
-			{comment && <div class="comment mt-4">
-				<ValineComment />
-			</div>}
+			<div class="comment mt-4" class:list={{'hidden': !comment}}>
+				<ValineComment comment={comment} />
+			</div>
 		</main>
 	</body>
 	<Footer />

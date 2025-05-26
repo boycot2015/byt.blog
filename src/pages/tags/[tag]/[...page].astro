@@ -60,9 +60,9 @@ const paginationProps = {
 		<h2 id={`tags-${tag}`} class="sr-only">Tag List</h2>
 		<ul class="space-y-4">
 			{
-				page.data.map((p) => (
+				page.data.map((p, index: number) => (
 					<li class="grid gap-2 sm:grid-cols-[1fr_auto]">
-						<PostPreview as="h2" post={p} />
+						<PostPreview as="h2" post={p} index={index} />
 					</li>
 				))
 			}

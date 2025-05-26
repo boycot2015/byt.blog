@@ -39,7 +39,7 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 				class="object-cover rounded"
 				fetchpriority="high"
 				loading="eager"
-				src={data.img || siteConfig.url + `/og-image/${id}.png`}
+				src={data.img || data.ogImage || siteConfig.url + `/og-image/${id}.png`}
 			/>
 		</div>
 }

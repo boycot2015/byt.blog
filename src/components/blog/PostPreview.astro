@@ -5,16 +5,17 @@ import { siteConfig } from "@/site.config";
 interface Props {
 	post: CollectionEntry<"post">;
 	as?: string;
+	index: number;
 	withDesc?: boolean;
 }
-const { as: Tag = 'div', post, withDesc = false } = Astro.props;
+const { as: Tag = 'div', post, index, withDesc = false } = Astro.props;
 ---
 <Tag>
-	<a class="flex justify-between w-full" transition:name={`title-${post.id}`} data-astro-prefetch href={`/posts/${post.id}/`}>
-		{<img transition:name={`img-${post.id}`} class="rounded object-full h-24.8 w-40 mr-4" src={post.data.thumbImg||post.data.img || siteConfig.url + `/og-image/${post.id}.png`}/>}
-		<div class="flex flex-col flex-1">
+	<a class="flex justify-between rounded overflow-hidden w-full shadow transition transform hover:-translate-y-1 duration-500 ease-in-out hover:shadow-xl drop-shadow-lg" transition:name={`title-${post.id}`} data-astro-prefetch href={`/posts/${post.id}/`}>
+		{<img transition:name={`img-${post.id}`} class:list={{'order-2': index % 2 == 0}} class="object-fill sm:h-32 sm:w-56 h-28 w-42" src={post.data.thumbImg || post.data.img || post.data.ogImage || siteConfig.url + `/og-image/${post.id}.png`}/>}
+		<div class="flex flex-col flex-1 p-2">
 			<h3 class="line-clamp-1 mb-1.5 text-lg sm:text-xl">{post.data.draft && <span class="text-red-500">(草稿) </span>}{post.data.title}</h3>
-			<p class="line-clamp-2 mb-1">{post.data.description||post.data.desc}</p>
+			<p class="line-clamp-2 mb-3 sm:h-10 h-6">{post.data.description||post.data.desc}</p>
 			<div class="flex justify-between w-full">
 				<div class="time">
 					<FormattedDate

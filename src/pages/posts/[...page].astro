@@ -65,16 +65,16 @@ const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 	<div class="grid sm:grid-cols-[3fr_1fr] sm:gap-x-8 sm:gap-y-16">
 		<div>
 			{
-				descYearKeys.map((yearKey) => (
+				descYearKeys.map((yearKey, pIdx: number) => (
 					<section aria-labelledby={`year-${yearKey}`}>
 						<h2 id={`year-${yearKey}`} class="title text-lg">
 							<span class="sr-only">Posts in</span>
 							{yearKey}
 						</h2>
 						<ul class="mt-5 mb-5 space-y-2 text-start">
-							{groupedByYear[yearKey]?.map((p) => (
+							{groupedByYear[yearKey]?.map((p, index: number) => (
 								<li class="grid gap-2 pb-4 last:pb-0 sm:grid-cols-[1fr_auto] sm:[&_q]:col-start-2">
-									<PostPreview post={p} />
+									<PostPreview post={p} index={pIdx !== index ? index : pIdx } />
 								</li>
 							))}
 						</ul>
