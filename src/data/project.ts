@@ -3,19 +3,19 @@ let template:any = [{
     name: 'music_mobile',
     description: '基于react开发的网易云web移动端',
     stargazers_count: 1,
-    url: 'https://github.com/boycot2015/music_mobile'
+    html_url: 'https://github.com/boycot2015/music_mobile'
 },{
-    url: 'https://github.com/boycot2015/nest_blog',
+    html_url: 'https://github.com/boycot2015/nest_blog',
     name: 'nest_blog',
     stargazers_count: 6,
     description: '基于nodejs + nextjs + nestjs + typeorm + minio (文件存储) 个人博客全栈项目',
 },{
-    url: 'https://github.com/boycot2015/web-os',
+    html_url: 'https://github.com/boycot2015/web-os',
     name: 'web-os',
     stargazers_count: 1,
     description: '基于Svelte 开发的web桌面，支持添加自定义应用，动态设置壁纸',
 },{
-    url: 'https://github.com/boycot2015/blog-admin',
+    html_url: 'https://github.com/boycot2015/blog-admin',
     name: 'blog-admin',
     stargazers_count: 1,
     description: '基于Vue3+acro.design 开发的博客后台管理系统，后端服务采用nestjs,Resultful风格',

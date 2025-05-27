@@ -34,7 +34,7 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES) as Col
 				{
 					projects.map((p:any) => (
 						<li class="grid gap-2 last:pb-0 p-2 mb-2 backdrop-blur overflow-hidden relative transition transform duration-500 ease-in-out hover:-translate-y-1 rounded shadow-md hover:shadow-xl drop-shadow-lg">
-							<a href={p.url} target="_blank" rel="noopener noreferrer">
+							<a href={p.html_url} target="_blank" rel="noopener noreferrer">
 								<img src={p.img} alt="">
 								<h3 class="text-xl line-clamp-1 mb-2">{p.name}</h3>
 								<p class="desc line-clamp-2 mb-2">{p.description}</p>

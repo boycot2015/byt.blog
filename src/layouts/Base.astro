@@ -51,9 +51,9 @@ const customTransition = {
 		<!-- transition:animate={customTransition} -->
 		<main id="main" class="min-h-[calc(100vh-320px)] sm:min-h-[calc(100vh-380px)]" transition:animate={customTransition}>
 			<slot />
-			<div class="comment mt-4" class:list={{'hidden': !comment}}>
-				<ValineComment comment={comment} />
-			</div>
+			{comment && <div class="comment mt-4">
+				<ValineComment />
+			</div>}
 		</main>
 	</body>
 	<Footer />
