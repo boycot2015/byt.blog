@@ -114,7 +114,6 @@ const meta = {
 			// await book.loaded;
 			book.ready.then(() => {
 				bookContainer.innerHTML = ''
-				bookContainer && loading.hide()
 				// 创建一个 Rendition，并指定要渲染 EPUB 的 HTML 元素
 				const rendition = book.renderTo(bookContainer, {
 					flow: "paginated", // paginated、scrolled-doc
@@ -163,6 +162,8 @@ const meta = {
 
 				// 切换书签
 				this.marksEl.onchange = (e) => this.changeMark(e.target)
+
+				bookContainer && loading.hide()
 
 			})
 			booksSelect && (booksSelect.onchange = (e:any) => {

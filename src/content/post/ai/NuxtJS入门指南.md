@@ -4,6 +4,7 @@ publishDate: "2025-02-17"
 updatedDate: "2025-02-20"
 categories: ['前端', '框架', 'NuxtJS']
 tags: ['NuxtJS', 'javascript']
+img: https://nuxt.com/assets/design-kit/logo-green-black.svg
 ai: true
 ---
 > 本文由ai自动生成，仅供参考。
