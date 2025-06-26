@@ -239,3 +239,6 @@ html,body {
 article img {
 	margin: auto;
 }
+.prose {
+	max-width: 100%;
+}

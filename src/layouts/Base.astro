@@ -43,7 +43,7 @@ const customTransition = {
 		<!-- <ViewTransitions fallback="none"/> -->
 	</head>
 	<body
-		class="bg-global-bg text-global-text mx-auto flex min-h-screen max-w-4xl flex-col px-4 pt-4 sm:pt-16 font-mono text-sm font-normal antialiased sm:px-8"
+		class="bg-global-bg text-global-text mx-auto flex min-h-screen max-w-4xl 2xl:max-w-[1200px] flex-col px-4 pt-4 sm:pt-16 font-mono text-sm font-normal antialiased sm:px-8"
 	>
 		<ThemeProvider />
 		<SkipLink />
@@ -58,7 +58,7 @@ const customTransition = {
 	</body>
 	<Footer />
 	<BackTotop />
-	<Aplayer />
+	{siteConfig.aplayer && <Aplayer />}
 </html>
 <style is:global>
 	@keyframes pageAnimate {

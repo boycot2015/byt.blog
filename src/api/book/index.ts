@@ -18,9 +18,10 @@ const { Query, File } = AV;
 const Book = AV.Object.extend("Book");
 const get = () => {
     const query = new Query("Book");
+    query.select(["title", "author", "order", "marks", "url", "fileId", "img", "imgId", "createdAt"]);
     query.descending("createdAt");
     return query.find().then(function (data) {
-        console.log("操作成功", data);
+        // console.log("操作成功", data);
         return data.sort((a:any, b:any) => a.attributes.order - b.attributes.order);
     }, function (err) {
         console.error("操作失败", err);
@@ -34,7 +35,7 @@ const update = (id:string, data: any) => {
         }
     }
     return book.save().then(function (res) {
-        console.log("保存成功", res);
+        // console.log("保存成功", res);
         return res
     }, function (err) {
         console.error("保存失败", err);
@@ -63,7 +64,7 @@ const upload = async (filename:string, data:string|Blob|Buffer, options: { cover
         book.set("url", file.url() || '');
         book.set("fileId", file.id || '');
         return book.save().then((res) => {
-            console.log("上传成功", file.url(), res);
+            // console.log("上传成功", file.url(), res);
             return res
         })
     }, function (err) {
@@ -85,7 +86,7 @@ const saveMark = (id:string, data:any) => {
     const book = AV.Object.createWithoutData('Book', id);
     book.set("marks", data);
     return book.save().then(function (res) {
-        console.log("保存成功", res);
+        // console.log("保存成功", res);
         return res
     }, function (err) {
         console.error("保存失败", err);
@@ -95,7 +96,7 @@ const updateMark = (id:string, data:any) => {
     const book = AV.Object.createWithoutData('Book', id);
     book.set("marks", data);
     return book.save().then(function (res) {
-        console.log("保存成功", res);
+        // console.log("保存成功", res);
         return res
     }, function (err) {
         console.error("保存失败", err);

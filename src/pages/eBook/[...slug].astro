@@ -22,7 +22,7 @@ const meta = {
 <PageLayout meta={{comment: false, ...meta }}>
 	<!-- 将消息存储为数据属性。 -->
 	<book-component data-book={JSON.stringify(book)}>
-		<div class="flex flex-col">
+		<div class="relative flex flex-col">
 			<div transition:name={`title-${book.data.title}`} class="flex flex-col">
 				<div class="flex justify-between items-center pb-2 border-b mb-4 border-b-[var(--color-accent)]">
 					<select id="books">
@@ -47,13 +47,13 @@ const meta = {
 			</div>
 			<div class="page flex justify-between">
 				<div class="btn-prev cursor-pointer hover:text-[var(--color-accent)]">← 上一页</div>
-				<div class="flex w-[60%] items-center">
-					<select id="marks" class="max-w-[75%]">
+				<div class="flex w-[60%] md:w-[auto] min-w-[80px] md:absolute right-[80px] top-[4px] items-center">
+					<select id="marks" class="max-w-[150px]">
 						<option label="请选择"></option>
 					</select>
 					<span class="ml-2 manager-btn relative">
 						<svg class="cursor-pointer hover:text-[var(--color-accent)]" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h8.925l-2 2H5v14h14v-6.95l2-2V19q0 .825-.587 1.413T19 21zm4-6v-4.25l9.175-9.175q.3-.3.675-.45t.75-.15q.4 0 .763.15t.662.45L22.425 3q.275.3.425.663T23 4.4t-.137.738t-.438.662L13.25 15zM21.025 4.4l-1.4-1.4zM11 13h1.4l5.8-5.8l-.7-.7l-.725-.7L11 11.575zm6.5-6.5l-.725-.7zl.7.7z"/></svg>
-						<div class="booksmarks-panel flex flex-col hidden absolute right-[-100%] bottom-[120%] w-60 rounded-md bg-[var(--color-global-bg)] shadow-2xl">
+						<div class="booksmarks-panel flex flex-col hidden absolute right-[-100%] bottom-[120%] md:bottom-[-140px] w-60 rounded-md bg-[var(--color-global-bg)] shadow-2xl">
 						</div>
 					</span>
 				</div>
@@ -122,7 +122,7 @@ const meta = {
 					stylesheet: '../../../css/global.css',
 					spread: true,
 					// defaultDirection: '',
-					// minSpreadWidth: 600,
+					minSpreadWidth: 1200,
 					allowScriptedContent: true
 				});
 				this.data = data

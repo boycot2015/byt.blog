@@ -14,7 +14,7 @@ const isPro = import.meta.env.PROD
 
 <PageLayout meta={meta}>
     <h1 transition:name={`title`} transition:animate={`slide`} class="title mb-6 flex items-center gap-3">电子书</h1>
-    <div id="books" class="books grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-4">
+    <div id="books" class="books grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8 gap-4">
         {
             !isPro ? <div class="add-btn cursor-pointer border border-[var(--color-accent)] px-10 text-[40px] w-[auto] justify-center items-center flex flex-col h-[230px] sm:h-[260px] lg:h-[160px] text-[var(--color-accent)]">
                 +

@@ -37,12 +37,13 @@ export const siteConfig: SiteConfig = {
 	},
 	apiUrl,
 	// 播放器配置
-	aplayer: {
-		id: '',
-		autoPlay: true,
-		loop: false,
-		preload: true,
-	},
+	aplayer: false,
+	// aplayer: {
+	// 	id: '',
+	// 	autoPlay: true,
+	// 	loop: false,
+	// 	preload: true,
+	// },
 	$api: api
 };
 

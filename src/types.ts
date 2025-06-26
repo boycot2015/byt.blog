@@ -19,7 +19,7 @@ export interface SiteConfig {
 		autoPlay: true;
 		loop: false;
 		preload: true;
-	};
+	} | boolean;
 	$api?: any
 }
 
