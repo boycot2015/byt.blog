@@ -2,16 +2,20 @@
 interface Props {
   className?: string;
 }
-
+const res = await fetch('https://zhongguose.com/colors.json', {})
+const colors = await res.json()
 const { className } = Astro.props;
-const colors = [
-  { name: 'red', value: '#ef4444' },
-  { name: 'orange', value: '#f97316' },
-  // { name: 'yellow', value: 'yellow' },
-  { name: 'green', value: '#10b981' },
-  { name: 'blue', value: '#3b82f6' },
-  { name: 'purple', value: '#8b5cf6' },
-];
+colors.map((el: { value: any; hex: any; }) => {
+  el.value = el.hex
+})
+// const colors = [
+//   { name: 'red', value: '#ef4444' },
+//   { name: 'orange', value: '#f97316' },
+//   // { name: 'yellow', value: 'yellow' },
+//   { name: 'green', value: '#10b981' },
+//   { name: 'blue', value: '#3b82f6' },
+//   { name: 'purple', value: '#8b5cf6' },
+// ];
 
 const getCurrentColor = () => {
   if (typeof window !== 'undefined') {
@@ -49,15 +53,17 @@ getCurrentColor()
     </svg>
   </button>
   
-  <div class="theme-colors flex hidden absolute right-0 top-full w-40 rounded-md bg-white p-2 shadow-lg dark:bg-gray-800">
-    {colors.map((color) => (
-      <button
-        class="h-8 w-8 cursor-pointer mx-0"
+  <div class="theme-colors flex flex-wrap max-h-[200px] z-999 overflow-y-auto hidden absolute right-0 top-full w-60 rounded-md bg-white p-2 shadow-lg dark:bg-gray-800">
+    {colors.map((color: { value: any; name: any; }) => (
+      <div class="flex flex-col text-center m-1 mx-[auto]">
+        <button
+        class="h-8 w-8 cursor-pointer mx-[auto]"
         style={`background-color: ${color.value}`}
         data-color={color.value}
         aria-label={`Set theme color to ${color.name}`}
       />
-    ))}
+      <span class="line-clamp-1 w-[50px] mt-1">{color.name}</span>
+      </div>))}
   </div>
 </theme-color-toggle>
 

@@ -9,7 +9,7 @@ const isCurrent = (url:string, target:string) => {
 	return target !== '/' ? url.includes(target) : target === url
 }
 ---
-<header class="group relative mb-14 sm:mb-22 flex items-center" id="main-header">
+<header class="group relative mb-14 sm:mb-12 flex items-center" id="main-header">
 	<div class="flex sm:flex-col">
 		<a
 			aria-current={Astro.url.pathname === "/" ? "page" : false}

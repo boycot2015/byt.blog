@@ -27,6 +27,8 @@ const latestNotes = allNotes.sort(collectionDateSort).slice(0, MAX_NOTES) as Col
 ---
 
 <PageLayout meta={{ title: '首页' }}>
+	<div class="text-2xl mb-3 text-right"><span id="jinrishici-sentence">正在加载今日诗词....</span></div>
+	<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
 	<section>
 		<h1 class="title mb-6" transition:name={`title`} transition:animate={`slide`}>作品集</h1>
 		<div class="mb-2">
