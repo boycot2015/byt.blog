@@ -11,7 +11,7 @@ page: true
 * [![](https://music.boycot.top/favicon.ico)网易云音乐](https://music.boycot.top)
 * [![](https://api-docs.boycot.top/favicon.svg)API文档](https://api-docs.boycot.top)
 * [![](https://web-group.boycot.top/favicon.ico)web-group](https://web-group.boycot.top/)
-* [![](https://news.boycot.top/homepage.ico)热点新闻](https://news.boycot.top/)
+* [![](https://news.boycot.top/favicon.svg)热点新闻](https://news.boycot.top/)
 * [![](https://www.jinrishici.com/img/icon-small.png)今日诗词](https://www.jinrishici.com/)
 * [![](https://hitokoto.cn/favicon.ico)hitokoto博客](https://hitokoto.cn)
 
