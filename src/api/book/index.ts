@@ -1,8 +1,8 @@
-import AV  from 'leancloud-storage';
+import AV from 'leancloud-storage';
 AV.init({
     appId: "UFDAemKla2uvRCDNCBEGsVnA-gzGzoHsz",
     appKey: "mbNoKxkqSI3raGFUKAR1acV6",
-    serverURL: "https://ufdaemkl.lc-cn-n1-shared.com",
+    serverURL: "cloud.boycot.top",
 });
 type Book = {
     title: string;

@@ -6,9 +6,9 @@ page: true
 ---
 <div class="links">
 
-* [![](https://blog.boycot.top/favicon.svg)个人博客](https://blog.boycot.top)
+* [![](https://boycot.top/favicon.svg)个人博客](https://blog.boycot.top)
 * [![](https://nav.boycot.top/favicon.svg)网站导航](https://nav.boycot.top)
-* [![](https://music.boycot.top/favicon.ico)网易云音乐](https://music.boycot.top)
+* [![](https://music.boycot.top/favicon.svg)网易云音乐](https://music.boycot.top)
 * [![](https://api-docs.boycot.top/favicon.svg)API文档](https://api-docs.boycot.top)
 * [![](https://web-group.boycot.top/favicon.ico)web-group](https://web-group.boycot.top/)
 * [![](https://news.boycot.top/favicon.svg)热点新闻](https://news.boycot.top/)
