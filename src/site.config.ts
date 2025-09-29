@@ -7,7 +7,7 @@ let apiUrl = 'http://localhost:8088'
 
 if (import.meta.env.PROD) {
 	apiUrl = 'https://ai.boycot.top'
-	siteUrl = 'https://boycot.top'
+	siteUrl = 'https://dailynote.boycot.top'
 }	
 export const siteConfig: SiteConfig = {
 	// Used as both a meta property (src/components/BaseHead.astro L:31 + L:49) & the generated satori png (src/pages/og-image/[slug].png.ts)
