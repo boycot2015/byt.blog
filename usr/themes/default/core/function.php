@@ -1,321 +1,553 @@
 <?php
+
+/**
+ * Harmony Hues主题
+ *
+ * @author  星语社长
+ * @link  https://biibii.cn
+ * @update  2024-7-6 18:00:04
+ */
+if ( ! defined('__TYPECHO_ROOT_DIR__')) {
+    exit;
+}
+
+use Utils\Helper;
+
+?>
+<?php
 /* 获取主题当前版本号 */
-function _getVersion()
-{
-  return "7.7.1";
+function getVersion() {
+    try {
+        $themeInfo = Typecho_Plugin::parseInfo(dirname(__DIR__).'/index.php');
+        return $themeInfo['version'];
+    } catch (Exception $e) {
+        return '获取主题版本失败'.$e;
+    }
 };
 
 /* 获取资源路径 */
-function _getAssets($assets, $type = true)
-{
-  $assetsURL = "";
-  // 是否本地化资源
-  if (Helper::options()->JAssetsURL) {
-    $assetsURL = Helper::options()->JAssetsURL . '/' . $assets;
-  } else {
-    $assetsURL = Helper::options()->themeUrl . '/' . $assets;
-  }
-  if ($type) echo $assetsURL;
-  else return  $assetsURL;
-}
-
-/* 判断是否是手机 */
-function _isMobile()
-{
-  if (isset($_SERVER['HTTP_X_WAP_PROFILE']))
-    return true;
-  if (isset($_SERVER['HTTP_VIA'])) {
-    return stristr($_SERVER['HTTP_VIA'], "wap") ? true : false;
-  }
-  if (isset($_SERVER['HTTP_USER_AGENT'])) {
-    $clientkeywords = array('nokia', 'sony', 'ericsson', 'mot', 'samsung', 'htc', 'sgh', 'lg', 'sharp', 'sie-', 'philips', 'panasonic', 'alcatel', 'lenovo', 'iphone', 'ipod', 'blackberry', 'meizu', 'android', 'netfront', 'symbian', 'ucweb', 'windowsce', 'palm', 'operamini', 'operamobi', 'openwave', 'nexusone', 'cldc', 'midp', 'wap', 'mobile');
-    if (preg_match("/(" . implode('|', $clientkeywords) . ")/i", strtolower($_SERVER['HTTP_USER_AGENT'])))
-      return true;
-  }
-  if (isset($_SERVER['HTTP_ACCEPT'])) {
-    if ((strpos($_SERVER['HTTP_ACCEPT'], 'vnd.wap.wml') !== false) && (strpos($_SERVER['HTTP_ACCEPT'], 'text/html') === false || (strpos($_SERVER['HTTP_ACCEPT'], 'vnd.wap.wml') < strpos($_SERVER['HTTP_ACCEPT'], 'text/html')))) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/* 根据评论agent获取浏览器类型 */
-function _getAgentBrowser($agent)
-{
-  if (preg_match('/MSIE\s([^\s|;]+)/i', $agent, $regs)) {
-    $outputer = 'Internet Explore';
-  } else if (preg_match('/FireFox\/([^\s]+)/i', $agent, $regs)) {
-    $outputer = 'FireFox';
-  } else if (preg_match('/Maxthon([\d]*)\/([^\s]+)/i', $agent, $regs)) {
-    $outputer = 'MicroSoft Edge';
-  } else if (preg_match('#360([a-zA-Z0-9.]+)#i', $agent, $regs)) {
-    $outputer = '360 Fast Browser';
-  } else if (preg_match('/Edge([\d]*)\/([^\s]+)/i', $agent, $regs)) {
-    $outputer = 'MicroSoft Edge';
-  } else if (preg_match('/UC/i', $agent)) {
-    $outputer = 'UC Browser';
-  } else if (preg_match('/QQ/i', $agent, $regs) || preg_match('/QQ Browser\/([^\s]+)/i', $agent, $regs)) {
-    $outputer = 'QQ Browser';
-  } else if (preg_match('/UBrowser/i', $agent, $regs)) {
-    $outputer = 'UC Browser';
-  } else if (preg_match('/Opera[\s|\/]([^\s]+)/i', $agent, $regs)) {
-    $outputer = 'Opera';
-  } else if (preg_match('/Chrome([\d]*)\/([^\s]+)/i', $agent, $regs)) {
-    $outputer = 'Google Chrome';
-  } else if (preg_match('/safari\/([^\s]+)/i', $agent, $regs)) {
-    $outputer = 'Safari';
-  } else {
-    $outputer = 'Google Chrome';
-  }
-  echo $outputer;
-}
-
-/* 根据评论agent获取设备类型 */
-function _getAgentOS($agent)
-{
-  $os = "Linux";
-  if (preg_match('/win/i', $agent)) {
-    if (preg_match('/nt 6.0/i', $agent)) {
-      $os = 'Windows Vista';
-    } else if (preg_match('/nt 6.1/i', $agent)) {
-      $os = 'Windows 7';
-    } else if (preg_match('/nt 6.2/i', $agent)) {
-      $os = 'Windows 8';
-    } else if (preg_match('/nt 6.3/i', $agent)) {
-      $os = 'Windows 8.1';
-    } else if (preg_match('/nt 5.1/i', $agent)) {
-      $os = 'Windows XP';
-    } else if (preg_match('/nt 10.0/i', $agent)) {
-      $os = 'Windows 10';
+function getAssets($assetPath, $echo = true) {
+    $options = Helper::options();
+    $baseUrl = $options->AssetsURL ? $options->AssetsURL : $options->themeUrl;
+    $fullUrl = rtrim($baseUrl, '/').'/'.ltrim($assetPath, '/');
+    if ($echo) {
+        echo $fullUrl;
     } else {
-      $os = 'Windows X64';
+        return $fullUrl;
     }
-  } else if (preg_match('/android/i', $agent)) {
-    if (preg_match('/android 9/i', $agent)) {
-      $os = 'Android Pie';
-    } else if (preg_match('/android 8/i', $agent)) {
-      $os = 'Android Oreo';
+}
+
+/**
+ * 初始化主题
+ */
+function themeInit($self) {
+    // 设置评论排序为最新优先
+    Helper::options()->commentsOrder = 'DESC';
+
+    // 定义路由规则
+    $routes = array(
+        '/sitemap.xml' => 'sitemap.php',
+        '/golink' => 'golink.php',
+    );
+
+    // 手机文章数量
+    if (isMobile()) {
+        $self->parameter->pageSize += 1;
+    }
+
+    // 获取当前请求路径
+    $pathInfo = $self->request->getPathInfo();
+
+    // 匹配路由并设置主题文件
+    if (array_key_exists($pathInfo, $routes)) {
+        $self->setThemeFile($routes[$pathInfo]);
+        $self->response->setStatus(200);
+    }
+
+    // 随机一篇文章
+    if ($self->request->isGet() && $self->request->get('random')) {
+        header('Location: '.randomPost('return'));
+        exit;
+    }
+
+    // 添加文章锚点功能
+    if ($self->is('single')) {
+        $self->content = parseContens($self->content); // 解析内容
+    }
+}
+
+/* 建站天数 */
+function getWebsiteAgeInDays($launchDate) {
+    // 获取当前日期
+    $currentDate = date('Y-m-d');
+
+    // 将日期转换为时间戳
+    $launchTimestamp = strtotime($launchDate);
+    $currentTimestamp = strtotime($currentDate);
+
+    // 计算两个日期之间的时间差（以秒为单位）
+    $diffInSeconds = $currentTimestamp - $launchTimestamp;
+
+    // 将秒转换为天
+    $diffInDays = floor($diffInSeconds / (60 * 60 * 24));
+
+    return $diffInDays;
+}
+
+/* 获取管理员或站长是否在线 */
+function isAdminOnline() {
+    // 查询数据库
+    $db = Typecho_Db::get();
+    $row = $db->fetchRow($db->select('activated')
+            ->from('table.users')
+            ->where('uid = ?', 1));
+
+    if ($row) {
+        $loggedTime = $row['activated']; // 获取登录时间戳
+
+        // 获取今天的开始和结束时间戳
+        $todayStart = strtotime('today');
+        $todayEnd = strtotime('tomorrow') - 1;
+
+        // 判断登录时间是否在今天范围内
+        if ($loggedTime >= $todayStart && $loggedTime <= $todayEnd) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/* 获取主题模式 */
+function getThemeMode() {
+    // 获取 Cookie 中的 theme 值
+    $theme = $_COOKIE['theme'] ?? 'light'; // 默认值为 'light'
+    $systemTheme = $_COOKIE['system_theme'] ?? '';
+    $theme = $theme === 'system' ? $systemTheme : $theme;
+
+    return htmlspecialchars($theme);
+}
+
+/* 获取文章浏览量 */
+function PostViewCount($archive) {
+    $postId = $archive->cid;
+    $db = Typecho_Db::get();
+    $prefix = $db->getPrefix();
+
+    // 检查是否存在 views 字段
+    $columns = $db->fetchRow($db->select()->from('table.contents'));
+    if ( ! array_key_exists('views', $columns)) {
+        $db->query('ALTER TABLE `'.$prefix.'contents` ADD `views` INT(10) DEFAULT 0;');
+        echo 0;
+        return;
+    }
+
+    // 获取当前文章的 views 值
+    $row = $db->fetchRow($db->select('views')->from('table.contents')->where('cid = ?', $postId));
+    $views = $row['views'];
+
+    if ($archive->is('single')) {
+        $cookieViews = Typecho_Cookie::get('extend_contents_views');
+        $viewedPosts = empty($cookieViews) ? array() : explode(',', $cookieViews);
+
+        // 如果当前文章未被查看过，则增加 views 值
+        if ( ! in_array($postId, $viewedPosts)) {
+            $db->query($db->update('table.contents')->rows(array('views' => (int) $views + 1))->where('cid = ?', $postId));
+            $views++;
+            array_push($viewedPosts, $postId);
+            Typecho_Cookie::set('extend_contents_views', implode(',', $viewedPosts)); // 记录查看 cookie
+        }
+    }
+
+    echo $views;
+}
+
+/* 随机文章 */
+function randomPost($type = 'echo') {
+    $db = Typecho_Db::get();
+    $result = $db->fetchRow($db->select()->from('table.contents')->where('type=?', 'post')->where('status=?', 'publish')->limit(1)->order('RAND()'));
+    if ($result) {
+        $f = Helper::widgetById('Contents', $result['cid']);
+        $permalink = $f->permalink;
+        if ($type == 'return') {
+            return $permalink;
+        } else {
+            echo $permalink;
+        }
     } else {
-      $os = 'Android';
+        if ($type == 'return') {
+            return false;
+        } else {
+            echo '没有文章可随机';
+        }
     }
-  } else if (preg_match('/ubuntu/i', $agent)) {
-    $os = 'Ubuntu';
-  } else if (preg_match('/linux/i', $agent)) {
-    $os = 'Linux';
-  } else if (preg_match('/iPhone/i', $agent)) {
-    $os = 'iPhone';
-  } else if (preg_match('/mac/i', $agent)) {
-    $os = 'MacOS';
-  } else if (preg_match('/fusion/i', $agent)) {
-    $os = 'Android';
-  } else {
-    $os = 'Linux';
-  }
-  echo $os;
+}
+
+/* 时间格式化 */
+function ueTime($date) {
+    $timestamp = strtotime($date->format('Y-m-d H:i:s'));
+    $current_time = time();
+    $time_diff = $current_time - $timestamp;
+
+    // 几秒前
+    if ($time_diff < 60) {
+        return $time_diff.'秒前';
+    }
+
+    // 几分钟前
+    if ($time_diff < 3600) {
+        return floor($time_diff / 60).'分钟前';
+    }
+
+    // 几小时前
+    if ($time_diff < 86400) {
+        return floor($time_diff / 3600).'小时前';
+    }
+
+    // 几天前-》30天以内
+    if ($time_diff < 2592000) {
+        return floor($time_diff / 86400).'天前';
+    }
+
+    // 几个月前-》1年内
+    if ($time_diff < 31536000) {
+        return floor($time_diff / 2592000).'个月前';
+    }
+
+    // 超过3年显示具体日期
+    return $date->format('Y-m-d');
+}
+
+/* 时间格式化Mini */
+function ueTimeMini($date) {
+    $current_year = date('Y');
+    $date_year = $date->format('Y');
+
+    // 如果是今年，返回 "月-日"
+    if ($date_year == $current_year) {
+        return $date->format('m-d');
+    }
+
+    // 否则返回 "年-月-日"
+    return $date->format('Y-m-d');
+}
+
+/* 个人社交信息 */
+function socialInfo() {
+    $socialInfo = Helper::options()->socialInfo;
+    $socialArray = json_decode('['.trim($socialInfo).']', true);
+    $html = '';
+    foreach ($socialArray as $social) {
+        $html .= '<a href="'.htmlspecialchars($social['link']).'" title="'.htmlspecialchars($social['name']).'" target="_blank"><i class="iconfont '.htmlspecialchars($social['icon']).'"></i></a>';
+    }
+
+    return $html;
 }
 
 /* 获取全局懒加载图 */
-function _getLazyload($type = true)
-{
-  if ($type) echo Helper::options()->JLazyload;
-  else return Helper::options()->JLazyload;
+function getLazyload($type = true) {
+    $Lazyload = Helper::options()->lazyload;
+    if ( ! $Lazyload) {
+        $Lazyload = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+    }
+    if ($type) {
+        echo $Lazyload;
+    } else {
+        return $Lazyload;
+    }
 }
 
 /* 获取头像懒加载图 */
-function _getAvatarLazyload($type = true)
-{
-  $str = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAC/VBMVEUAAAD87++g2veg2ff++fmg2feg2fb75uag2fag2fag2fag2fag2feg2vah2fef2POg2feg2vag2fag2fag2fag2fag2vah2fag2vb7u3Gg2fag2fb0tLSg2fb3vHig2ff0s7P2wMD0s7Og2fXzs7Pzs7Of2fWh2veh2vf+/v7///+g2vf9/f2e1/ag2fSg2/mg3PT3r6+30tSh2fb+0Hj76ev4u3P6u3K11dr60H3UyKr+/v766On80Hz49vj2xcXm5u3z0IfUx6v2u7vazKTn0pfi6PKg2fbztLT///+g2faf2fag2vf///+g2feg2fe63O6l3vb///+g2fb80Kb8um+x1uD80Hv86er+0Hf73tb0s7P10YX/0Hiq2Or+/v6g2vbe0qL60YT+/v6y1NzuvoS20dSz09ru0Y6z3fTI1MDbxp+h2fag2fb////O4PDuv4XA3/LOz7bh06Du0o/1t7ex3PP+/v6h2ffSzrLdxZ3s5u3/2qag2fb7+/z40NCg2fb9/f2f2PWf2PX0tLT+/v70s7P+/v7M7Pyf1/b1s7P////zs7P0tbWZ2fL20dH+/v7+0Hep2vWl2O+x2/P+/v641tbI1b7C1cf8xpCz0tj1wMD1x8fTya392KPo0ZT56ez4vXbN1bn26Orh0p3x8/jbxZ/CzcT8xo7327DV1tHt0Y7u8/n759661tLyy6L049710IK8z870s7PX1a3xvX/y6OzA1cvBzsXI1cG30dP+38D73Mn/0oX3ysrpwYzv5+zo0pXv5+zH4PDW4e/n5O3+/v786+vN4vP9/f30s7P9/f2f2fSu0er//Pzgu8X///+4zOD////z8/OW0vCq1f+g2fb86er0s7P+z3f8um/+/v72xcX948ym2O/85+T839D8v3v86ej54eH828X+3Kz80qz8w4T8u3Oq2/Wq1ees2Ob64OCx1d/F2N785tv529v94MH82b/1vb382bj93LD91pf91ZH+04b+0X2p2er+2aH8zJ78yZX8yJU3IRXQAAAA1nRSTlMA8PbEz5vhv1X6Y0wzrX9A8/DJt6mHsnH98uzo4NzY19DJwKGAf3tpZmVVSD86LysgIP787ejn4uHf29jW1M3MysnHxcK+vbywn5ONg39wW0AlIBr8+/f29PTx7+rm5eTj4+Df29nX1tLR0dHQz8zKyMXFxcPCwL+9u7u5t7KsqaObmH1wbWBcVVJQSUAwFA34+Pbz8vHx8O7u7ero6Ofl4ODf3t7d3Nvb2djY19fU1NLS0M/NzcrJycjHx8LCwcHAwL68uraxr5SSkId4X1NTNTItFREGybAGmgAABQNJREFUWMOl13N0HEEcwPFp2lzTpElq20jTpLZt27Zt27Zt27b7m9vbpqlt+3Xvdvd2ZncWufv+e+993t7saJFJ0wL8M1UKjJ4yTpyU0QMrZfIPmIa8qLZ/edBU3r+2Z1pY5qGg09DMYVHmsicCwxJljxIXnABMSxBsmcsxAiw1IoclLtQXLOcbau75tYAo1MLPzMsEUSyTsZceolx6Iy86eFB0fS8ZeFQyPS85eFhythcfPC4+y0sIXpRQ6yUGr0qs9vzBy/xpLwC8LsDghXj/YvzApJdgHrmsB4BuzfaXKVkwT6u6+VL1KNXOEBygeNVBrwJlm3LOlj13OEtV6r6BWN10Cc/rwEl9rOMQy1fIYFGbTZk9Mzm5iEYOubYFTKdOPPa/LckpvccP3WLSUnpgPOkIAVb1CnJEGP9xKHXWE8VDpgowekt5PzD+5CDSG8gqLrALaHvdhCP7hnHkQ1Jcyga7OL3YwGgNR/UUY1yHBOvmYouxdbatBRzdRwF84CBrq7+NpQZN91vR3s9HWOifw3wYUyOUE7St4uh+Y6x5xHzALCeaCNo2q8AI7OoZJbJHcSLKDJp+cepXIhb5nATXMcHMKAg0zedUc0buATl1kjLBIOQLmlqqn08RXxAic+PxRYyL5XLS+4rJnhD/+hXzIsraGYhV8j0C00U+kx7yxd937P3BBprqu5fw10dY04Mnn748exKJMRO0oVhA16l3h40u8ef3L5HYqO2DetXTgLGQD1CVFajDOCIi4j02a6HDkb+NGvRR3ZA4Z0OwlcQtd5Hm3pRSO2GOWvKKiLNRNXlSoq7kLsi5arjVCniEuXt3pU68Thxn/T9vEMGVqpOPWinysVTUgrfDIdVetVKygFIeGTxhDm6SwYEUmIU8AZpxUgN7mnqnIL8EHqfPAPKmflDy8syGwSZe3n4wSAJTUfd36ibXWwJPAtiKGINnANo4pHKTdzrqLrxT9PqAUD9D7ywIHUgqgu2omzF5qDR0eWXB1WkDb7W4XneJw1iGPFLIu9c2J9dU+DkJOCunP4A2EGu/1wn2UN+/RoNYH2G+9PIRPBGEnnnZXom4irA+lSAeArnRiHF1SOIe5DklGNyK7kCV6+2r+8qkYX2C5iZ2yI6DG9BcgxIvLXyYBtNbpAASZDllAj3a130WGBWMpAIpkNpyEwTVrnmh3Ja1xYoVG3atFgqtVl7fC2R/9vj4EFz2kKojeaL+VW/FrhTH/NNnFBP0rZExBq/pfMabVeKyvFFIKcxGgNIYpr6asbFdAh9/XlxRBmPaG2cMDdR6tjACJDexONLjXU9ht8vgG3sK1NoN2u27p1bTgFkQVaAK9Btutysg/jA8K6+AQuP8NG+ErqaNAoOz3ZNBORpMN5YWbTWRKvfvcV0erwKbt6bBvvz4YPrLUVNCBQzKxtPg48/pkBrkswWRd2tGCWQwdY3CIki9FBoszfOFa8R1z1fEzFecNlC9Iq8C8YfHvAbkR1ZzH3U6VRaveJN5AqSiQX6yuJVWRrq5RiWgmwJG09bI7iwtL9QtQLwFG5QYIN54XgbZKSCf1QaxsiPDYkPl/tbBYVfi3UEm3Z3AWwfnTkDmjbUEFuddVUUWylrYKtg8K7LU7cszLIEXpyOr1arILzEGj/HnQswUmgyZeimNnpZmTHjIDeRB4WMYZoVx4ciLwqdMypChQroUwmOlq5Ahw6QpZuP2HxxXd11eM9wcAAAAAElFTkSuQmCC";
-  if ($type) echo $str;
-  else return $str;
+function getAvatarLazyload($type = true) {
+    $avatarBase64 = 'data:image/jpeg;base64,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gQPmzjvvNN4Asj4wgKykirXDAEpmAJ3h3HDDDebmm282jUaj2MqWrNcTTzxh7r77brN///5cI8MAcuHK3RgDKKkB+GENDg76O+HM1VdfnXthy9LhxRdfNFu2bDEvvODvgs7/wADyM8vTAwMosQF0hnbBBReY6667zqxduzbP2va17auvvjp9ae/ZZ58VjQMDEOHr2RkDqIABdIZ43nnnmWuvvdZcc801PRe2Xw127NhhHn/8cfPcc88FGQIGEATjvCIYQIUMoDPUk08+2Vx11VVm3bp1pbh/4L333jNPPfWUefrpp80bb7wRtGIxgKA4jxDDACpoAN1DPvfcc83ll19u/IeMzj//6P1a9ltvvWW2bdtmnn/+eePf9bUeGIAW2UO6GEDFDaB7+EuXLjWrV682K1euNP68gTeHUI/du3cbf1z/0ksvGX9iL/Q7/XzjxABCreDcOhhAjQxg9lSOOeYYc+aZZ5rh4eHpKwreIE455RSzZMkSc+KJJ5oTTjjh8y7+ppyPPvrIfPjhh9OX6t59912zZ88e/yMnZufOneaDDz7QrcTyrQMfBurLiod90VJ/GCjsVOupRgLQXVcSQPneeXRXvGLqGIDugmEAGIBuhQnVMQAhwB7dMQAMQLfChOoYgBAgBlDsRzn6WHi6K14x9T6uAycBK1Yrcw2Xk4AVX0QMQHcBOQTgEEC3woTqGIAQIIcAHALolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCIAHolpCuOgagy5cEQALQrTChOgYgBEgCMCcUQbhp06blZ5xxxk8X6dvpMzIy8k+S/vQ1ps/r8Fjd16DuCaDu68f8ICAigAGI8NEZAtUmgAFUe/0YPQREBDAAET46Q6DaBDCAaq8fo4eAiAAGIMJHZwhUmwAGUO31Y/QQEBHAAET46AyBahPAAKq9foweAiICGIAIH50hUG0CGEC114/RQ0BEAAMQ4aMzBKpNAAOo9voxegiICGAAInx0hkC1CWAA1V4/Rg8BEQEMQISPzhCoNoH/B7lEP3mCxdXNAAAAAElFTkSuQmCC';
+    if ($type) {
+        echo $avatarBase64;
+    } else {
+        return $avatarBase64;
+    }
 }
 
-/* 查询文章浏览量 */
-function _getViews($item, $type = true)
-{
-  $db = Typecho_Db::get();
-  $result = $db->fetchRow($db->select('views')->from('table.contents')->where('cid = ?', $item->cid))['views'];
-  if ($type) echo number_format($result);
-  else return number_format($result);
-}
-
-/* 查询文章点赞量 */
-function _getAgree($item, $type = true)
-{
-  $db = Typecho_Db::get();
-  $result = $db->fetchRow($db->select('agree')->from('table.contents')->where('cid = ?', $item->cid))['agree'];
-  if ($type) echo number_format($result);
-  else return number_format($result);
+/* 获取随机图 */
+function getRandImg($type = true) {
+    $randImg = getAssets('assets/images/scenery/'.rand(1, 20).'.webp', false);
+    if ($type) {
+        echo $randImg;
+    } else {
+        return $randImg;
+    }
 }
 
 /* 页面开始计时 */
-function _startCountTime()
-{
-  global $timeStart;
-  $mTime     = explode(' ', microtime());
-  $timeStart = $mTime[1] + $mTime[0];
-  return true;
+function startCountTime() {
+    global $timeStart;
+    $mTime = explode(' ', microtime());
+    $timeStart = $mTime[1] + $mTime[0];
+    return true;
 }
 
 /* 页面结束计时 */
-function _endCountTime($precision = 3)
-{
-  global $timeStart, $timeEnd;
-  $mTime     = explode(' ', microtime());
-  $timeEnd   = $mTime[1] + $mTime[0];
-  $timeTotal = number_format($timeEnd - $timeStart, $precision);
-  echo $timeTotal < 1 ? $timeTotal * 1000 . 'ms' : $timeTotal . 's';
+function endCountTime($precision = 3) {
+    global $timeStart, $timeEnd;
+    $mTime = explode(' ', microtime());
+    $timeEnd = $mTime[1] + $mTime[0];
+    $timeTotal = number_format($timeEnd - $timeStart, $precision);
+    echo $timeTotal < 1 ? $timeTotal * 1000 .'ms' : $timeTotal.'s';
 }
 
-
-/* 通过邮箱生成头像地址 */
-function _getAvatarByMail($mail)
-{
-  $gravatarsUrl = Helper::options()->JCustomAvatarSource ? Helper::options()->JCustomAvatarSource : 'https://gravatar.helingqi.com/wavatar/';
-  $mailLower = strtolower($mail);
-  $md5MailLower = md5($mailLower);
-  $qqMail = str_replace('@qq.com', '', $mailLower);
-  if (strstr($mailLower, "qq.com") && is_numeric($qqMail) && strlen($qqMail) < 11 && strlen($qqMail) > 4) {
-    echo 'https://thirdqq.qlogo.cn/g?b=qq&nk=' . $qqMail . '&s=100';
-  } else {
-    echo $gravatarsUrl . $md5MailLower . '?d=mm';
-  }
-};
-
-/* 获取侧边栏随机一言 */
-function _getAsideAuthorMotto()
-{
-  $JMottoRandom = explode("\r\n", Helper::options()->JAside_Author_Motto);
-  echo $JMottoRandom[array_rand($JMottoRandom, 1)];
-}
-
-/* 获取文章摘要 */
-function _getAbstract($item, $type = true)
-{
-  $abstract = "";
-  if ($item->password) {
-    $abstract = "加密文章，请前往内页查看详情";
-  } else {
-    if ($item->fields->abstract) {
-      $abstract = $item->fields->abstract;
-    } else {
-      $abstract = strip_tags($item->excerpt);
-      if (strpos($abstract, '{hide') !== false) {
-        $abstract = preg_replace('/{hide[^}]*}([\s\S]*?){\/hide}/', '隐藏内容，请前往内页查看详情', $abstract);
-      }
-    }
-  }
-  if ($abstract === '') $abstract = "暂无简介";
-  if ($type) echo $abstract;
-  else return $abstract;
-}
-
-/* 获取列表缩略图 */
-function _getThumbnails($item)
-{
-  $result = [];
-  $pattern = '/\<img.*?src\=\"(.*?)\"[^>]*>/i';
-  $patternMD = '/\!\[.*?\]\((http(s)?:\/\/.*?(jpg|jpeg|gif|png|webp))/i';
-  $patternMDfoot = '/\[.*?\]:\s*(http(s)?:\/\/.*?(jpg|jpeg|gif|png|webp))/i';
-  /* 如果填写了自定义缩略图，则优先显示填写的缩略图 */
-  if ($item->fields->thumb) {
-    $fields_thumb_arr = explode("\r\n", $item->fields->thumb);
-    foreach ($fields_thumb_arr as $list) $result[] = $list;
-  }
-  /* 如果匹配到正则，则继续补充匹配到的图片 */
-  if (preg_match_all($pattern, $item->content, $thumbUrl)) {
-    foreach ($thumbUrl[1] as $list) $result[] = $list;
-  }
-  if (preg_match_all($patternMD, $item->content, $thumbUrl)) {
-    foreach ($thumbUrl[1] as $list) $result[] = $list;
-  }
-  if (preg_match_all($patternMDfoot, $item->content, $thumbUrl)) {
-    foreach ($thumbUrl[1] as $list) $result[] = $list;
-  }
-  /* 如果上面的数量不足3个，则直接补充3个随即图进去 */
-  if (sizeof($result) < 3) {
-    $custom_thumbnail = Helper::options()->JThumbnail;
-    /* 将for循环放里面，减少一次if判断 */
-    if ($custom_thumbnail) {
-      $custom_thumbnail_arr = explode("\r\n", $custom_thumbnail);
-      for ($i = 0; $i < 3; $i++) {
-        $result[] = $custom_thumbnail_arr[array_rand($custom_thumbnail_arr, 1)] . "?key=" . mt_rand(0, 1000000);
-      }
-    } else {
-      for ($i = 0; $i < 3; $i++) {
-        $result[] = _getAssets('assets/thumb/' . rand(1, 42) . '.jpg', false);
-      }
-    }
-  }
-  return $result;
-}
-
-
-
-/* 获取父级评论 */
-function _getParentReply($parent)
-{
-  if ($parent !== "0") {
+/**
+ * 评论添加 @
+ * @param $coid
+ * @return void
+ */
+function getCommentAt($coid, $type = 'html') {
     $db = Typecho_Db::get();
-    $commentInfo = $db->fetchRow($db->select('author')->from('table.comments')->where('coid = ?', $parent));
-    echo '<div class="parent"><span style="vertical-align: 1px;">@</span> ' . $commentInfo['author'] . '</div>';
-  }
-}
-
-/* 获取侧边栏作者随机文章 */
-function _getAsideAuthorNav()
-{
-  if (Helper::options()->JAside_Author_Nav && Helper::options()->JAside_Author_Nav !== "off") {
-    $limit = Helper::options()->JAside_Author_Nav;
-    $db = Typecho_Db::get();
-    $prefix = $db->getPrefix();
-    $sql = "SELECT * FROM `{$prefix}contents` WHERE cid >= (SELECT floor( RAND() * ((SELECT MAX(cid) FROM `{$prefix}contents`)-(SELECT MIN(cid) FROM `{$prefix}contents`)) + (SELECT MIN(cid) FROM `{$prefix}contents`))) and type='post' and status='publish' and (password is NULL or password='') ORDER BY cid LIMIT $limit";
-    $result = $db->query($sql);
-    if ($result instanceof Traversable) {
-      foreach ($result as $item) {
-        $item = Typecho_Widget::widget('Widget_Abstract_Contents')->push($item);
-        $title = htmlspecialchars($item['title']);
-        $permalink = $item['permalink'];
-        echo "
-						<li class='item'>
-							<a class='link' href='{$permalink}' title='{$title}'>{$title}</a>
-							<svg class='icon' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='16' height='16'><path d='M448.12 320.331a30.118 30.118 0 0 1-42.616-42.586L552.568 130.68a213.685 213.685 0 0 1 302.2 0l38.552 38.551a213.685 213.685 0 0 1 0 302.2L746.255 618.497a30.118 30.118 0 0 1-42.586-42.616l147.034-147.035a153.45 153.45 0 0 0 0-217.028l-38.55-38.55a153.45 153.45 0 0 0-216.998 0L448.12 320.33zM575.88 703.67a30.118 30.118 0 0 1 42.616 42.586L471.432 893.32a213.685 213.685 0 0 1-302.2 0l-38.552-38.551a213.685 213.685 0 0 1 0-302.2l147.065-147.065a30.118 30.118 0 0 1 42.586 42.616L173.297 595.125a153.45 153.45 0 0 0 0 217.027l38.55 38.551a153.45 153.45 0 0 0 216.998 0L575.88 703.64zm-234.256-63.88L639.79 341.624a30.118 30.118 0 0 1 42.587 42.587L384.21 682.376a30.118 30.118 0 0 1-42.587-42.587z'/></svg>
-						</li>
-					";
-      }
+    $prow = $db->fetchRow(
+        $db
+            ->select('parent')
+            ->from('table.comments')
+            ->where('coid = ? AND status = ?', $coid, 'approved')
+    );
+    $parent = @$prow['parent'];
+    if ($prow && $parent != '0') {
+        $arow = $db->fetchRow(
+            $db
+                ->select('author,url')
+                ->from('table.comments')
+                ->where('coid = ? AND status = ?', $parent, 'approved')
+        );
+        if ($type == 'html') {
+            echo '<span class="repy-to-author mr-1"><a href="'.$arow['url'].'" title="'.$arow['author'].'">@'.$arow['author'].'</a>: </span>';
+        } elseif ($type == 'a') {
+            echo '<a href="'.$arow['url'].'" title="'.$arow['author'].'">'.$arow['author'].'</a>';
+        }
     }
-  }
 }
 
-function _curl($url)
-{
-  $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, $url);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  curl_setopt($ch, CURLOPT_NOSIGNAL, 1);
-  curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, 3000);
-  curl_setopt($ch, CURLOPT_TIMEOUT_MS, 3000);
-  if (strpos($url, 'https') !== false) {
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-  }
-  curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36');
-  $result = curl_exec($ch);
-  curl_close($ch);
-  return $result;
+/* 解析头像 */
+function getGravatar($email) {
+    $defaultAvatar = Helper::options()->Gravatars; // 默认头像
+    $gravatarBaseUrl = 'https://'.$defaultAvatar.'/';
+    $lowercaseEmail = strtolower($email); // 转为小写
+    $emailHash = md5($lowercaseEmail);
+    $cleanedEmail = str_replace('@qq.com', '', $lowercaseEmail);
+
+    if (strstr($lowercaseEmail, 'qq.com') && is_numeric($cleanedEmail) && strlen($cleanedEmail) < 11 && strlen($cleanedEmail) > 4) {
+        $avatarUrl = '//thirdqq.qlogo.cn/g?b=qq&nk='.$cleanedEmail.'&s=100';
+    } else {
+        $avatarUrl = $gravatarBaseUrl.$emailHash.'?d=mm';
+    }
+
+    return $avatarUrl;
 }
 
-/* 判断敏感词是否在字符串内 */
-function _checkSensitiveWords($words_str, $str)
-{
-  $words = explode("||", $words_str);
-  if (empty($words)) {
+/* 生成goLins外链 */
+function getGoLink($url) {
+    // 判断是否开启
+    if (empty(Helper::options()->isGoLink)) {
+        return $url;
+    }
+
+    $siteUrl = Helper::options()->siteUrl; // 获取本站URL
+    $siteUrl = rtrim($siteUrl, '/'); // 去除末尾的斜杠
+
+    // 判断是否为本站链接
+    if (strpos($url, $siteUrl) === 0) {
+        return $url;
+    }
+
+    // 判断是否为 http 或 https 链接
+    if (strpos($url, 'http://') !== 0 && strpos($url, 'https://') !== 0) {
+        return $url;
+    }
+
+    // 对url进行Base64加密
+    $encodedUrl = base64_encode($url);
+
+    // 构造新的href
+    $newUrl = $siteUrl.'/golink?target='.urlencode($encodedUrl);
+
+    return $newUrl;
+}
+
+/**
+ * 评论者主页链接新窗口打开
+ * 调用<?php CommentAuthor($comments); ?>
+ */
+function CommentAuthor($obj, $autoLink = NULL, $noFollow = NULL) {
+    $options = Helper::options();
+    $autoLink = $autoLink ? $autoLink : $options->commentsShowUrl;
+    $noFollow = $noFollow ? $noFollow : $options->commentsUrlNofollow;
+    if ($obj->url && $autoLink) {
+        echo '<a href="'.$obj->url.'"'.($noFollow ? '
+  rel="external nofollow"' : NULL).(strstr($obj->url, $options->index) == $obj->url ? NULL : ' target="_blank"').'
+  title="'.$obj->author.'">'
+        .$obj->author.'</a>';
+    } else {
+        echo $obj->author;
+    }
+}
+
+/* 过滤表情包 */
+function formatEmoji($text, $type = true) {
+    $text = preg_replace_callback(
+        '/\:\(owo=(3dyanjing|lpl|aoye|baozha|buhaoyisi|qinqin|sanbing|yiqiangxiao|toutoukan|zaijian|chujiaren|jiaban|mianqiangxiao|weixian|fahongbao|chishou|chigua|tuxie|chaojia|youhou|ziyaxiao|hashiqi|hashiqishiquyishi|hashiqishiwang|kuqi|changge|xihuan|heiha|daxiao|shiwang|toutu|fendou|haoqi|haode|haixiu|xiaochou|xiaotou|ganga|yingyuan|kaixin|yinqibushi|weixiao|sikao|exin|jingxia|jingya|gandong|fennu|wokanhaoni|shoujixiangji|damie|dapai|tuosai|fue|koubi|taiyanjing|wuzuixiao|wulian|cahan|doujiyan|zhihuideyanshen|yuebing|youmeiyougaocuo|leiben|shensi|huaji|huajiheshui|huajinaicha|huajiningmeng|huajikuanghan|huajibeizi|fannao|xiongmao|xiongmaochangge|xiongmaoxihuan|xiongmaoshiwang|niunianjinbao|goutou|goutouweibo|goutoushiwang|goutoupangci|goutouhua|goutoucao|zhutou|shengbing|dianhua|yiwen|tengtong|kanchuanyiqie|xuanyun|shuijiao|jinyan|xiaoku|jiujie|lvmao|shuaku|huzi|caigou|caigouhua|beida|liekai|songfu|songhua|yinxian|nanyizhixin|guilian|heixian|guzhang)\)/is',
+        function ($match) use ($type) {
+            if ($type) {
+                return '<img class="emoji-image lazy" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+  data-original="'.getAssets('assets/emoji/Heo/', false).$match[1].'.webp" alt="'.$match[1].'" no-view />';
+            } else {
+                return '<img class="emoji-image" src="'.getAssets('assets/emoji/Heo/', false).$match[1].'.webp" alt="'.$match[1].'"
+  style="width:20px;height:auto;" />';
+            }
+        },
+        $text
+    );
+
+    return $text;
+}
+
+/**
+ * @description: 父级菜单是否高亮
+ * @param {*} $activeSlug 选中的菜单slug，也就是名称
+ * @param {*} $category 父级分类信息
+ * @param {*} $children 子级分类信息
+ */
+function isParentActive($activeSlug, $category, $children) {
+    foreach ($children as $mid) {
+        $child = $category->getCategory($mid);
+        if ($child['slug'] === $activeSlug) {
+            return true;
+        }
+    }
     return false;
-  }
-  foreach ($words as $word) {
-    if (false !== strpos($str, trim($word))) {
-      return true;
-    }
-  }
-  return false;
 }
+
+// 判断是否为同一路径
+function isSamePath($url1, $url2) {
+    $path1 = parse_url($url1, PHP_URL_PATH);
+    $path2 = parse_url($url2, PHP_URL_PATH);
+    return $path1 === $path2;
+}
+
+/** 自定义菜单导航栏 */
+function getCustomMenu($currentUrl = '') {
+    $navbarInfo = Helper::options()->navbarInfo;
+    if (empty($navbarInfo)) {
+        return '';
+    }
+
+    $cnavbarArray = json_decode('['.trim($navbarInfo).']', true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return '导航栏菜单 JSON 解析失败: '.json_last_error_msg();
+    }
+
+    $navhtml = '';
+    foreach ($cnavbarArray as $item) {
+        $isActive = isSamePath($currentUrl, $item['link']);
+        if ( ! $isActive && isset($item['sub'])) {
+            foreach ($item['sub'] as $subItem) {
+                if (isSamePath($currentUrl, $subItem['link'])) {
+                    $isActive = true;
+                    break;
+                }
+            }
+        }
+
+        $navhtml .= '<li class="nav-item '.($item['class'] ?? '').'">';
+        $navhtml .= '<a class="nav-a '.($isActive ? 'active' : '').'" href="'.$item['link'].'" target="'.$item['target'].'"
+    title="'.$item['name'].'">'.$item['name'].(isset($item['sub'])
+                ? '<i class="iconfont nav-icon icon-xiala"></i>' :
+            '').'</a>';
+
+        if (isset($item['sub']) && is_array($item['sub'])) {
+            $navhtml .= '<div class="pt-md-4 sub-menu">';
+            $navhtml .= '<ul class="d-md-flex flex-md-wrap p-md-2">';
+            foreach ($item['sub'] as $subItem) {
+                $subIsActive = isSamePath($currentUrl, $subItem['link']);
+                $navhtml .= '<li class="p-2 '.($subIsActive ? 'active' : '').' '.($subItem['class'] ?? '').'"><a
+          href="'.$subItem['link'].'" target="'.$subItem['target'].'" title="'.$subItem['name'].'">'.
+                    $subItem['name'].'</a></li>';
+            }
+            $navhtml .= '</ul>
+  </div>';
+        }
+        $navhtml .= '</li>';
+    }
+
+    return $navhtml;
+}
+
+/** 处理文章缩略图 */
+function getThumbnails($contx, $imgnum) {
+    $rand = rand(1, 20);
+    $pattern = '/\<img.*?src\=\"(.*?)\"[^>]*>/i';
+    $patternMD = '/\!\[.*?\]\((http(s)?:\/\/.*?(jpg|jpeg|png))/i';
+    $patternMDfoot = '/\[.*?\]:\s*(http(s)?:\/\/.*?(jpg|jpeg|png))/i';
+    //如果文章内有插图，则调用插图
+    if (preg_match_all($pattern, $contx, $thumbUrl)) {
+        return $thumbUrl[1][$imgnum];
+    }
+    //如果是内联式markdown格式的图片
+    elseif (preg_match_all($patternMD, $contx, $thumbUrl)) {
+        return $thumbUrl[1][$imgnum];
+    }
+    //如果是脚注式markdown格式的图片
+    elseif (preg_match_all($patternMDfoot, $contx, $thumbUrl)) {
+        return $thumbUrl[1][$imgnum];
+    }
+    //如果真的没有图片，就调用一张随机图片
+    else {
+        $adimg = getAssets("assets/images/thumb/$rand.webp", false); // 缩略图路径
+        return $adimg;
+    }
+}
+
+function getImgLink($archive) {
+    $thumb = $archive->fields->thumb;
+    if ( ! $thumb) {
+        $thumb = getThumbnails($archive->content, 0);
+    }
+    return $thumb;
+}
+
+// 显示文章目录
+function getCatalog() {
+    global $catalog;
+
+    if ( ! $catalog) {
+        return '暂无目录';
+    }
+
+    $str = '<ul class="atoc-list">';
+    $prev_depth = '';
+    $to_depth = 0;
+    foreach ($catalog as $catalog_item) {
+        $catalog_depth = $catalog_item['depth'];
+        if ($prev_depth) {
+            if ($catalog_depth == $prev_depth) {
+                $str .= '</li>';
+            } elseif ($catalog_depth > $prev_depth) {
+                $to_depth++;
+                $str .= '<ul class="sub-list ml-2">';
+            } else {
+                $to_depth2 = ($to_depth > ($prev_depth - $catalog_depth)) ? ($prev_depth - $catalog_depth) : $to_depth;
+                if ($to_depth2) {
+                    for ($i = 0; $i < $to_depth2; $i++) {$str .= '</li></ul>';
+                        $to_depth--;}
+                }
+                $str .= '</li>';
+            }
+        }
+        $str
+        .= '<li class="atoc-item"><a class="atoc-link" href="#cl-'.$catalog_item['count'].'"
+        data-target="cl-'.$catalog_item['count'].'" title="'.$catalog_item['text'].'">'.$catalog_item['text'].'</a>';
+        $prev_depth = $catalog_item['depth'];
+    }
+    for ($i = 0; $i <= $to_depth; $i++) {$str .= '</li></ul>';}
+    return $str;
+}
+ /* 判断评论敏感词是否在字符串内 */function
+checkSensitiveWords($words_str, $str) {$words = explode('|', $words_str);if (empty($words)) {return false;}
+    foreach ($words as $word) {if (false !== strpos($str, trim($word))) {return true;}}
+    return false;}
+?>
