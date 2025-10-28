@@ -10,7 +10,7 @@ import type { SiteMeta } from "@/types";
 import BackTotop from "@/components/BackTotop.astro";
 import Aplayer from "@/components/Aplayer.astro";
 import ValineComment from "@/components/ValineComment.astro";
-
+import Analytics from '@vercel/analytics/astro'
 interface Props {
 	meta: SiteMeta;
 }
@@ -58,6 +58,7 @@ const customTransition = {
 	</body>
 	<Footer />
 	<BackTotop />
+	<Analytics />
 	{siteConfig.aplayer && <Aplayer />}
 </html>
 <style is:global>
