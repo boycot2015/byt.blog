@@ -343,7 +343,8 @@ const meta = {
 		}
 		jumpTo (value: string, type = 'display') {
 			this.rendition[type](value || '').then((section: { href: string }) => {
-				let location = this.rendition.currentLocation()
+				// let location = this.rendition.currentLocation()
+				let location = this.rendition.location
 				this.columnsEl.value = section?.href || location.start?.href
 			})
 		}
