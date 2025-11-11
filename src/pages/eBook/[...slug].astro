@@ -104,6 +104,7 @@ const meta = {
 			booksSelect && (booksSelect.value = data.id)
 			let bookdata:any = await localforage.getItem('book_' + data.data.title)
 			let bookmarks = await localforage.getItem('book_marks_' + data.data.title) as any || []
+			let currentPage = await localforage.getItem('book_current_page_' + data.data.title) as any || 2
 			if (!bookdata) {
 				let file = await fetch(data.data.file).then((res) => res.arrayBuffer())
 				localforage.setItem('book_' + data.data.title, file)
@@ -142,7 +143,7 @@ const meta = {
 				this.loadMarks()
 
 				// 加载页面
-				this.jumpTo((bookmarks[0]?.start?.cfi)|| 2)
+				this.jumpTo((currentPage || bookmarks[0]?.start?.cfi)|| 2)
 
 				// 事件处理
 				let prevBtn = this.querySelector('.btn-prev') as HTMLDivElement
@@ -268,7 +269,7 @@ const meta = {
 				marksEl.appendChild(optionEl)
 			})
 			if (this.bookmarks.length && marksEl.value) this.changeMark(marksEl)
-			marksEl.value = this.bookmarks[0]?.start.cfi || ''
+			// marksEl.value = this.bookmarks[0]?.start.cfi || ''
 			this.marksEl = marksEl
 			// 书签管理
 			this.renderBookMarksPanel()
@@ -322,6 +323,7 @@ const meta = {
 		}
 		pageChange (type = 'prev') {
 			let pager = this.querySelector('.pager') as HTMLInputElement
+			this.marksEl.value = ''
 			if (type === 'pager') {
 				if (pager.value) {
 					this.jumpTo(pager.value)
@@ -335,6 +337,7 @@ const meta = {
 		}
 		columnsChange (e: Event) {
 			let target = e.target as any
+			this.marksEl.value = ''
 			this.jumpTo(target.value || '')
 			this.toTop()
 		}
@@ -346,6 +349,7 @@ const meta = {
 				// let location = this.rendition.currentLocation()
 				let location = this.rendition.location
 				this.columnsEl.value = section?.href || location.start?.href
+				location && localforage.setItem('book_current_page_' + this.data.data.title, location.start?.cfi || '')
 			})
 		}
 		deleteBookmark(index: number) {
