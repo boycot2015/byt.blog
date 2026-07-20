@@ -137,7 +137,8 @@
     src: url('/font/black.ttf') format("truetype");
 }
 html,body {
-	font-family: 'Boycot', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+	/* font-family: 'Boycot', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; */
+	font-family: lxgw wenkai screen,sans-serif;
 }
 .p-3 {
 	padding: calc(var(--spacing)* 3);
